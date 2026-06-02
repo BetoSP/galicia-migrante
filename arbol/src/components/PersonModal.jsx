@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+const DATE_PRECISION = ["Exactamente", "Antes de", "Después de", "Alrededor de"];
+
 function computeSurnames(surname_1, surname_2, surname_married, gender) {
     const base = [surname_1, surname_2].filter(Boolean).join(" ");
     if (gender === "female" && surname_married) {
@@ -8,17 +10,62 @@ function computeSurnames(surname_1, surname_2, surname_married, gender) {
     return base || null;
 }
 
-export default function PersonModal({ person, onSave, onDelete, onClose, suggestedSurname1, suggestedSurname2 }) {
+function DateFields({ label, precision, onPrecision, day, onDay, month, onMonth, year, onYear }) {
+    return (
+        <div className="modal-field-row" style={{ flexDirection: "column", gap: 6 }}>
+            <label className="modal-label">{label}</label>
+            <div className="modal-field-row">
+                <div className="modal-field modal-field--sm">
+                    <select className="form-select" value={precision} onChange={(e) => onPrecision(e.target.value)}>
+                        {DATE_PRECISION.map((p) => <option key={p} value={p}>{p}</option>)}
+                    </select>
+                </div>
+                <div className="modal-field modal-field--sm">
+                    <input className="form-input" type="number" min="1" max="31" placeholder="Día" value={day} onChange={(e) => onDay(e.target.value)} />
+                </div>
+                <div className="modal-field modal-field--sm">
+                    <select className="form-select" value={month} onChange={(e) => onMonth(e.target.value)}>
+                        <option value="">Mes</option>
+                        {["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"].map((m, i) => (
+                            <option key={i} value={i + 1}>{m}</option>
+                        ))}
+                    </select>
+                </div>
+                <div className="modal-field modal-field--sm">
+                    <input className="form-input" type="number" min="1000" max="2100" placeholder="Año" value={year} onChange={(e) => onYear(e.target.value)} />
+                </div>
+            </div>
+        </div>
+    );
+}
+
+export default function PersonModal({ person, onSave, onDelete, onClose }) {
     const isEditing = person !== null && person !== undefined;
 
-    const [nombre, setNombre] = useState(isEditing ? (person.name ?? "") : "");
-    const [surname1, setSurname1] = useState(isEditing ? (person.surname_1 ?? "") : (suggestedSurname1 ?? ""));
-    const [surname2, setSurname2] = useState(isEditing ? (person.surname_2 ?? "") : (suggestedSurname2 ?? ""));
-    const [surnameMarried, setSurnameMarried] = useState(isEditing ? (person.surname_married ?? "") : "");
-    const [dia, setDia] = useState(isEditing ? (person.birth_day ?? "") : "");
-    const [mes, setMes] = useState(isEditing ? (person.birth_month ?? "") : "");
-    const [anio, setAnio] = useState(isEditing ? (person.birth_year ?? "") : "");
     const [gender, setGender] = useState(isEditing ? (person.gender ?? "male") : "male");
+    const [prefix, setPrefix] = useState(isEditing ? (person.prefix ?? "") : "");
+    const [nombre, setNombre] = useState(isEditing ? (person.name ?? "") : "");
+    const [suffix, setSuffix] = useState(isEditing ? (person.suffix ?? "") : "");
+    const [surname1, setSurname1] = useState(isEditing ? (person.surname_1 ?? "") : "");
+    const [surname2, setSurname2] = useState(isEditing ? (person.surname_2 ?? "") : "");
+    const [surnameMarried, setSurnameMarried] = useState(isEditing ? (person.surname_married ?? "") : "");
+
+    const [birthPrec, setBirthPrec] = useState("Exactamente");
+    const [birthDay, setBirthDay] = useState(isEditing ? (person.birth_day ?? "") : "");
+    const [birthMonth, setBirthMonth] = useState(isEditing ? (person.birth_month ?? "") : "");
+    const [birthYear, setBirthYear] = useState(isEditing ? (person.birth_year ?? "") : "");
+    const [birthPlace, setBirthPlace] = useState(isEditing ? (person.birth_place ?? "") : "");
+
+    const [isAlive, setIsAlive] = useState(isEditing ? (person.is_alive ?? true) : true);
+
+    const [deathPrec, setDeathPrec] = useState("Exactamente");
+    const [deathDay, setDeathDay] = useState(isEditing ? (person.death_day ?? "") : "");
+    const [deathMonth, setDeathMonth] = useState(isEditing ? (person.death_month ?? "") : "");
+    const [deathYear, setDeathYear] = useState(isEditing ? (person.death_year ?? "") : "");
+    const [deathPlace, setDeathPlace] = useState(isEditing ? (person.death_place ?? "") : "");
+    const [deathCause, setDeathCause] = useState(isEditing ? (person.death_cause ?? "") : "");
+    const [burialPlace, setBurialPlace] = useState(isEditing ? (person.burial_place ?? "") : "");
+
     const [adopted, setAdopted] = useState(isEditing ? (person.adopted ?? false) : false);
     const [confirmDelete, setConfirmDelete] = useState(false);
 
@@ -34,11 +81,21 @@ export default function PersonModal({ person, onSave, onDelete, onClose, suggest
             surname_2: s2,
             surname_married: sm,
             surnames: computeSurnames(s1, s2, sm, gender),
-            birth_day: dia ? Number(dia) : null,
-            birth_month: mes ? Number(mes) : null,
-            birth_year: anio ? Number(anio) : null,
+            prefix: prefix.trim() || null,
+            suffix: suffix.trim() || null,
             gender,
             adopted,
+            is_alive: isAlive,
+            birth_day: birthDay ? Number(birthDay) : null,
+            birth_month: birthMonth ? Number(birthMonth) : null,
+            birth_year: birthYear ? Number(birthYear) : null,
+            birth_place: birthPlace.trim() || null,
+            death_day: !isAlive && deathDay ? Number(deathDay) : null,
+            death_month: !isAlive && deathMonth ? Number(deathMonth) : null,
+            death_year: !isAlive && deathYear ? Number(deathYear) : null,
+            death_place: !isAlive ? (deathPlace.trim() || null) : null,
+            death_cause: !isAlive ? (deathCause.trim() || null) : null,
+            burial_place: !isAlive ? (burialPlace.trim() || null) : null,
         });
     }
 
@@ -78,17 +135,19 @@ export default function PersonModal({ person, onSave, onDelete, onClose, suggest
                     ))}
                 </div>
 
-                {/* Nombre */}
+                {/* Prefijo + Nombre + Sufijo */}
                 <div className="modal-field-row">
-                    <div className="modal-field modal-field--full">
+                    <div className="modal-field modal-field--sm">
+                        <label className="modal-label">Prefijo</label>
+                        <input className="form-input" type="text" value={prefix} onChange={(e) => setPrefix(e.target.value)} placeholder="Dr., Sr..." />
+                    </div>
+                    <div className="modal-field">
                         <label className="modal-label">Nombre/s</label>
-                        <input
-                            className="form-input"
-                            type="text"
-                            value={nombre}
-                            onChange={(e) => setNombre(e.target.value)}
-                            placeholder="Nombre/s"
-                        />
+                        <input className="form-input" type="text" value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder="Nombre/s" autoFocus />
+                    </div>
+                    <div className="modal-field modal-field--sm">
+                        <label className="modal-label">Sufijo</label>
+                        <input className="form-input" type="text" value={suffix} onChange={(e) => setSuffix(e.target.value)} placeholder="Jr., III..." />
                     </div>
                 </div>
 
@@ -96,85 +155,84 @@ export default function PersonModal({ person, onSave, onDelete, onClose, suggest
                 <div className="modal-field-row">
                     <div className="modal-field">
                         <label className="modal-label">Primer apellido</label>
-                        <input
-                            className="form-input"
-                            type="text"
-                            value={surname1}
-                            onChange={(e) => setSurname1(e.target.value)}
-                            placeholder="Primer apellido"
-                        />
+                        <input className="form-input" type="text" value={surname1} onChange={(e) => setSurname1(e.target.value)} placeholder="Primer apellido" />
                     </div>
                     <div className="modal-field">
                         <label className="modal-label">Segundo apellido</label>
-                        <input
-                            className="form-input"
-                            type="text"
-                            value={surname2}
-                            onChange={(e) => setSurname2(e.target.value)}
-                            placeholder="Segundo apellido"
-                        />
+                        <input className="form-input" type="text" value={surname2} onChange={(e) => setSurname2(e.target.value)} placeholder="Segundo apellido" />
                     </div>
                 </div>
                 {gender === "female" && (
                     <div className="modal-field-row">
                         <div className="modal-field modal-field--full">
                             <label className="modal-label">Apellido de casada (opcional)</label>
-                            <input
-                                className="form-input"
-                                type="text"
-                                value={surnameMarried}
-                                onChange={(e) => setSurnameMarried(e.target.value)}
-                                placeholder="Apellido de casada"
-                            />
+                            <input className="form-input" type="text" value={surnameMarried} onChange={(e) => setSurnameMarried(e.target.value)} placeholder="Apellido de casada" />
                         </div>
                     </div>
                 )}
 
                 {/* Fecha de nacimiento */}
+                <DateFields
+                    label="Fecha de nacimiento"
+                    precision={birthPrec} onPrecision={setBirthPrec}
+                    day={birthDay} onDay={setBirthDay}
+                    month={birthMonth} onMonth={setBirthMonth}
+                    year={birthYear} onYear={setBirthYear}
+                />
+
+                {/* Lugar de nacimiento */}
                 <div className="modal-field-row">
-                    <div className="modal-field modal-field--sm">
-                        <label className="modal-label">Día</label>
-                        <input
-                            className="form-input"
-                            type="number"
-                            min="1" max="31"
-                            value={dia}
-                            onChange={(e) => setDia(e.target.value)}
-                            placeholder="Día"
-                        />
-                    </div>
-                    <div className="modal-field modal-field--sm">
-                        <label className="modal-label">Mes</label>
-                        <input
-                            className="form-input"
-                            type="number"
-                            min="1" max="12"
-                            value={mes}
-                            onChange={(e) => setMes(e.target.value)}
-                            placeholder="Mes"
-                        />
-                    </div>
-                    <div className="modal-field modal-field--md">
-                        <label className="modal-label">Año</label>
-                        <input
-                            className="form-input"
-                            type="number"
-                            min="1000" max="2100"
-                            value={anio}
-                            onChange={(e) => setAnio(e.target.value)}
-                            placeholder="Año"
-                        />
+                    <div className="modal-field modal-field--full">
+                        <label className="modal-label">Lugar de nacimiento</label>
+                        <input className="form-input" type="text" value={birthPlace} onChange={(e) => setBirthPlace(e.target.value)} placeholder="Ciudad, País..." />
                     </div>
                 </div>
+
+                {/* Vivo / Fallecido */}
+                <div className="modal-field-row">
+                    <label className="modal-radio-label">
+                        <input type="radio" name="isAlive" checked={isAlive} onChange={() => setIsAlive(true)} />
+                        Vivo
+                    </label>
+                    <label className="modal-radio-label">
+                        <input type="radio" name="isAlive" checked={!isAlive} onChange={() => setIsAlive(false)} />
+                        Fallecido
+                    </label>
+                </div>
+
+                {/* Campos de fallecimiento */}
+                {!isAlive && (
+                    <>
+                        <DateFields
+                            label="Fecha de fallecimiento"
+                            precision={deathPrec} onPrecision={setDeathPrec}
+                            day={deathDay} onDay={setDeathDay}
+                            month={deathMonth} onMonth={setDeathMonth}
+                            year={deathYear} onYear={setDeathYear}
+                        />
+                        <div className="modal-field-row">
+                            <div className="modal-field modal-field--full">
+                                <label className="modal-label">Lugar de fallecimiento</label>
+                                <input className="form-input" type="text" value={deathPlace} onChange={(e) => setDeathPlace(e.target.value)} placeholder="Ciudad, País..." />
+                            </div>
+                        </div>
+                        <div className="modal-field-row">
+                            <div className="modal-field">
+                                <label className="modal-label">Causa de fallecimiento</label>
+                                <input className="form-input" type="text" value={deathCause} onChange={(e) => setDeathCause(e.target.value)} placeholder="Causa..." />
+                            </div>
+                            <div className="modal-field">
+                                <label className="modal-label">Lugar de sepultura</label>
+                                <input className="form-input" type="text" value={burialPlace} onChange={(e) => setBurialPlace(e.target.value)} placeholder="Cementerio..." />
+                            </div>
+                        </div>
+                    </>
+                )}
 
                 {/* Adoptado */}
                 <div className="modal-field-row">
                     <label className="modal-radio-label">
-                        <input
-                            type="checkbox"
-                            checked={adopted}
-                            onChange={(e) => setAdopted(e.target.checked)}
-                        />
+                        <input type="checkbox" checked={adopted} onChange={(e) => setAdopted(e.target.checked)} />
                         Esta persona fue adoptada
                     </label>
                 </div>

@@ -47,10 +47,69 @@ function DateFields({ label, precision, onPrecision, day, onDay, month, onMonth,
     );
 }
 
+// Formulario inline para crear un nuevo progenitor
+function NewParentForm({ gender, onGenderChange, onData }) {
+    const [nombre, setNombre] = useState("");
+    const [surname1, setSurname1] = useState("");
+    const [surname2, setSurname2] = useState("");
+
+    function handleChange(field, value) {
+        const data = {
+            nombre: field === "nombre" ? value : nombre,
+            surname1: field === "surname1" ? value : surname1,
+            surname2: field === "surname2" ? value : surname2,
+            gender,
+        };
+        onData(data);
+        if (field === "nombre") setNombre(value);
+        if (field === "surname1") setSurname1(value);
+        if (field === "surname2") setSurname2(value);
+    }
+
+    return (
+        <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 8, padding: "12px", background: "var(--color-surface-alt, #f5f5f5)", borderRadius: 8 }}>
+            <div className="modal-field-row">
+                {[
+                    { value: "male", label: "Hombre" },
+                    { value: "female", label: "Mujer" },
+                    { value: "unknown", label: "Desconocido" },
+                ].map((opt) => (
+                    <label key={opt.value} className="modal-radio-label">
+                        <input
+                            type="radio"
+                            name="newParentGender"
+                            value={opt.value}
+                            checked={gender === opt.value}
+                            onChange={() => onGenderChange(opt.value)}
+                        />
+                        {opt.label}
+                    </label>
+                ))}
+            </div>
+            <div className="modal-field-row">
+                <div className="modal-field">
+                    <label className="modal-label">Nombre/s</label>
+                    <input className="form-input" type="text" value={nombre} placeholder="Nombre/s" onChange={(e) => handleChange("nombre", e.target.value)} />
+                </div>
+            </div>
+            <div className="modal-field-row">
+                <div className="modal-field">
+                    <label className="modal-label">Primer apellido</label>
+                    <input className="form-input" type="text" value={surname1} placeholder="Primer apellido" onChange={(e) => handleChange("surname1", e.target.value)} />
+                </div>
+                <div className="modal-field">
+                    <label className="modal-label">Segundo apellido</label>
+                    <input className="form-input" type="text" value={surname2} placeholder="Segundo apellido" onChange={(e) => handleChange("surname2", e.target.value)} />
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export default function AddRelativeModal({
     slotType,
     fromPerson,
-    otherParent,
+    otherParentOptions = [],
     suggestedSurname1,
     suggestedSurname2,
     onSave,
@@ -75,7 +134,6 @@ export default function AddRelativeModal({
     const [nombre, setNombre] = useState("");
     const [suffix, setSuffix] = useState("");
 
-    // Apellidos estructurados
     const [surname1, setSurname1] = useState(suggestedSurname1 ?? "");
     const [surname2, setSurname2] = useState(suggestedSurname2 ?? "");
     const [surnameMarried, setSurnameMarried] = useState("");
@@ -103,9 +161,16 @@ export default function AddRelativeModal({
     const [marriageYear, setMarriageYear] = useState("");
     const [marriagePlace, setMarriagePlace] = useState("");
 
+    // Selector de otro progenitor
+    const defaultOtherParent = otherParentOptions.find((p) => p.isActive)
+        ?? otherParentOptions[0]
+        ?? null;
+
     const [otherParentChoice, setOtherParentChoice] = useState(
-        otherParent ? String(otherParent.id) : "none"
+        defaultOtherParent ? String(defaultOtherParent.id) : "none"
     );
+    const [newParentGender, setNewParentGender] = useState("male");
+    const [newParentData, setNewParentData] = useState(null);
 
     function getTitle() {
         const name = fromPerson?.name ?? "";
@@ -156,21 +221,44 @@ export default function AddRelativeModal({
             burial_place: !isAlive ? (burialPlace.trim() || null) : null,
         };
 
-        const relationship = isSpouse ? {
-            type: "spouse",
-            marriage_day: marriageDay ? Number(marriageDay) : null,
-            marriage_month: marriageMonth ? Number(marriageMonth) : null,
-            marriage_year: marriageYear ? Number(marriageYear) : null,
-            marriage_place: marriagePlace.trim() || null,
-            notes: spouseType !== "married" ? spouseType : null,
-        } : isChild ? {
-            type: slotType,
-            otherParentId: otherParentChoice !== "none" && otherParentChoice !== "new"
-                ? otherParentChoice
-                : null,
-        } : {
-            type: slotType,
-        };
+        let relationship;
+
+        if (isSpouse) {
+            relationship = {
+                type: "spouse",
+                marriage_day: marriageDay ? Number(marriageDay) : null,
+                marriage_month: marriageMonth ? Number(marriageMonth) : null,
+                marriage_year: marriageYear ? Number(marriageYear) : null,
+                marriage_place: marriagePlace.trim() || null,
+                notes: spouseType !== "married" ? spouseType : null,
+            };
+        } else if (isChild) {
+            if (otherParentChoice === "new" && newParentData?.nombre?.trim()) {
+                const np = newParentData;
+                const ns1 = np.surname1?.trim() || null;
+                const ns2 = np.surname2?.trim() || null;
+                relationship = {
+                    type: slotType,
+                    otherParentNew: {
+                        name: np.nombre.trim(),
+                        surname_1: ns1,
+                        surname_2: ns2,
+                        surname_married: null,
+                        surnames: computeSurnames(ns1, ns2, null, np.gender),
+                        gender: np.gender,
+                        adopted: false,
+                        is_alive: true,
+                    },
+                };
+            } else {
+                relationship = {
+                    type: slotType,
+                    otherParentId: otherParentChoice !== "none" ? otherParentChoice : null,
+                };
+            }
+        } else {
+            relationship = { type: slotType };
+        }
 
         onSave({ person, relationship });
     }
@@ -186,7 +274,7 @@ export default function AddRelativeModal({
                     <button className="modal-close" onClick={onClose}>✕</button>
                 </div>
 
-                {/* Género — bloqueado para tipos específicos */}
+                {/* Género */}
                 <div className="modal-field-row">
                     {[
                         { value: "male", label: "Hombre" },
@@ -315,13 +403,27 @@ export default function AddRelativeModal({
                                 value={otherParentChoice}
                                 onChange={(e) => setOtherParentChoice(e.target.value)}
                             >
-                                {otherParent && (
-                                    <option value={String(otherParent.id)}>
-                                        {otherParent.name} {otherParent.surnames ?? ""}
+                                {otherParentOptions.map((p) => (
+                                    <option key={p.id} value={String(p.id)}>
+                                        {p.name} {p.surnames ?? ""}
+                                        {p.isActive ? " (pareja actual)" : " (pareja anterior)"}
                                     </option>
-                                )}
-                                <option value="none">No hay {otherParentLabel.toLowerCase()} (Familia uniparental)</option>
+                                ))}
+                                <option value="new">➕ Crear nuevo/a {otherParentLabel.toLowerCase()}</option>
+                                <option value="none">Sin {otherParentLabel.toLowerCase()} conocido/a</option>
                             </select>
+
+                            {/* Formulario inline si elige "nuevo" */}
+                            {otherParentChoice === "new" && (
+                                <NewParentForm
+                                    gender={newParentGender}
+                                    onGenderChange={(g) => {
+                                        setNewParentGender(g);
+                                        setNewParentData((prev) => ({ ...prev, gender: g }));
+                                    }}
+                                    onData={setNewParentData}
+                                />
+                            )}
                         </div>
                     </div>
                 )}

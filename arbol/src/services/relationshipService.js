@@ -10,6 +10,17 @@ export async function fetchRelationships() {
   return data;
 }
 
+export async function fetchRelationshipsByPersonIds(ids) {
+  if (!ids || ids.length === 0) return [];
+  const { data, error } = await supabase
+    .from("relationships")
+    .select("*")
+    .or(`person_a_id.in.(${ids.join(",")}),person_b_id.in.(${ids.join(",")})`);
+
+  if (error) throw error;
+  return data;
+}
+
 export async function addRelationship({
   person_a_id, person_b_id, type,
   since_year, until_year, notes,
@@ -18,7 +29,6 @@ export async function addRelationship({
   let a = person_a_id;
   let b = person_b_id;
 
-  // DECISIONS.md [003]: orden canónico para spouse
   if (type === "spouse") {
     a = Math.min(person_a_id, person_b_id);
     b = Math.max(person_a_id, person_b_id);

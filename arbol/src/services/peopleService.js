@@ -10,6 +10,17 @@ export async function fetchPeople() {
   return data;
 }
 
+export async function fetchPeopleByIds(ids) {
+  if (!ids || ids.length === 0) return [];
+  const { data, error } = await supabase
+    .from("people")
+    .select("*")
+    .in("id", ids);
+
+  if (error) throw error;
+  return data;
+}
+
 export async function addPerson({
   name, surnames, surname_1, surname_2, surname_married, prefix, suffix,
   birth_day, birth_month, birth_year, birth_place,
