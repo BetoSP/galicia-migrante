@@ -292,6 +292,7 @@ export default function GraphView({
     if (didPan.current) { didPan.current = false; return; }
   }
 
+  // ── Calcular unionCount por persona ───────────────────────────────────────
   const personUnionCount = useMemo(() => {
     const count = new Map();
     for (const node of layout.nodes) {
@@ -303,6 +304,8 @@ export default function GraphView({
     return count;
   }, [layout.nodes]);
 
+  // ── Personas que son "secundarias" en su grupo (cónyuge externo) ──────────
+  // Estas son las que el layout posiciona a la derecha de su pareja principal
   const personHasAncestors = useMemo(() => {
     const result = new Set();
     for (const edge of layout.edges) {
@@ -312,6 +315,17 @@ export default function GraphView({
     }
     return result;
   }, [layout.edges]);
+
+  // ── hasExternalTree: mostrar simbolito cuando la persona es cónyuge ───────
+  // Regla: mostrar en cualquier persona que participa en un union node
+  // EXCEPTO si es la persona principal del árbol actual (focusNodeId)
+  // y EXCEPTO si no tiene ningún ancestro ni está en ningún union (persona suelta sin vínculos)
+  function computeHasExternalTree(node) {
+    const unions = personUnionCount.get(node.id) ?? 0;
+    if (unions === 0) return false; // no tiene pareja — no mostrar
+    if (node.id === String(focusNodeId)) return false; // es el foco actual
+    return true; // tiene al menos una pareja — mostrar simbolito
+  }
 
   const activeNode = activeGhostNodeId ? nodeMap.get(activeGhostNodeId) : null;
   const ghostSlots = activeNode ? getVacantSlots(activeGhostNodeId, layout.edges, layout.nodes) : [];
@@ -391,7 +405,7 @@ export default function GraphView({
                         isFocus={focusNodeId === node.id}
                         isGhostActive={activeGhostNodeId === node.id}
                         unionCount={personUnionCount.get(node.id) ?? 0}
-                        hasExternalTree={!personHasAncestors.has(node.id) && (personUnionCount.get(node.id) ?? 0) > 0}
+                        hasExternalTree={computeHasExternalTree(node)}
                         onSelect={onSelectNode ?? (() => { })}
                         onAddRelative={handleAddRelative}
                         onEditPerson={onEditPerson ?? (() => { })}

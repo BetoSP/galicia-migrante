@@ -653,12 +653,12 @@
 /* ── Canvas ──────────────────────────────────────────────────────────────── */
 .canvas-wrapper {
   border-radius: var(--radius-xl);
-  overflow: auto;
+  overflow: hidden;
   background: var(--color-canvas-bg);
   box-shadow: var(--shadow-canvas);
   border: 1px solid var(--color-card-border);
   flex: 1;
-  min-height: var(--canvas-min-height);
+  min-height: 0;
 }
 
 .canvas-wrapper--relative {
@@ -718,6 +718,8 @@
 .graph-col {
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-height: 0;
   gap: var(--spacing-5);
 }
 
