@@ -43,6 +43,8 @@ El árbol genealógico es el **módulo estrella** del ecosistema Galicia Migrant
 ✔ Apellidos estructurados: surname_1, surname_2, surname_married
 ✔ Sugerencia automática de apellidos basada en progenitores
 ✔ Design system con variables CSS
+✔ Espaciado simétrico entre generaciones (gap padre→línea = gap línea→hijo)
+✔ getVacantSlots detecta todos los PARENT_TYPES (adoptive, step, foster)
 
 ---
 
@@ -130,9 +132,8 @@ Devuelve IDs de ancestros, descendientes y cónyuges del focus_id.
 ## 🚧 Pendiente de implementación — en orden de prioridad
 
 ### Bugs críticos
-- CRUD de relaciones inaccesible desde la UI (modalRelacion nunca se abre)
-- Línea co_parent aparece roja en lugar de punteada violeta
-- Pérdida de filiación visual cuando un hijo casado es "secundario" en su grupo
+- CRUD de relaciones inaccesible desde la UI — diferido a implementación del sidebar (ver LEGADO_FUTURO [BUG-01] y [BUG-02])
+- Pérdida de filiación visual cuando un hijo casado es "secundario" en su grupo — ver LEGADO_FUTURO [BUG-03]
 
 ### Features pendientes del módulo árbol
 - Tipos parentales extendidos en constraint Supabase (adoptive_father, stepfather, etc.)

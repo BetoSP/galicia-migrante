@@ -103,6 +103,19 @@ La función SQL `get_subgraph` aplica esta regla excluyendo del resultado a cual
 
 ---
 
+## Detección de padre/madre en slots vacantes
+
+`getVacantSlots` debe usar `PARENT_TYPES` para detectar si una persona ya tiene padre o madre — no comparaciones de string literales. Un nodo con `adoptive_father` no debe mostrar "Agregar padre".
+
+```javascript
+// ✅ Correcto
+const hasFather = edges.some((e) => e.target === nodeId && PARENT_TYPES.has(e.type) && e.type.includes("father"));
+// ❌ Incorrecto — no cubre tipos extendidos
+const hasFather = edges.some((e) => e.target === nodeId && e.type === "father");
+```
+
+---
+
 ## Prohibiciones
 
 - NO inferir jerarquía visual en backend

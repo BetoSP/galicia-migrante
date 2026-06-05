@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import GraphView from "./components/GraphView";
 import TopNavBar from "./components/TopNavBar";
+import FooterBar from "./components/FooterBar";
 import TreeContextBar from "./components/TreeContextBar";
 import TreeControlPanel from "./components/TreeControlPanel";
 import PersonModal from "./components/PersonModal";
@@ -448,6 +449,8 @@ export default function App() {
           searchQuery={searchQuery}
         />
       </main>
+
+      <FooterBar />
 
       {modalPersona !== null && (
         <PersonModal

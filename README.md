@@ -89,11 +89,12 @@ brother, sister
 ✔ Motor de grafo (buildFamilyGraph)
 ✔ Layout engine bottom-up (layoutFamilyGraph)
 ✔ Visualización SVG con pan & zoom
-✔ Nodos fantasma para agregar familiares
+✔ Nodos fantasma para agregar familiares — detecta todos los PARENT_TYPES (adoptive, step, foster)
 ✔ Buscador de personas existentes (padre, madre, cónyuge)
-✔ Tipos de vínculo de pareja explícitos
+✔ Tipos de vínculo de pareja explícitos (7 COUPLE_TYPES, 8 PARENT_TYPES)
 ✔ Foco por subgrafo via RPC get_subgraph
-✔ Design system con variables CSS
+✔ Design system con variables CSS — todas las constantes dimensionales en geometry.js
+✔ Espaciado simétrico entre generaciones (padre→línea horizontal = línea→hijo)
 
 ---
 

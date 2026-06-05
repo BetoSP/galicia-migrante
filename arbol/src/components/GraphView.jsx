@@ -1,6 +1,6 @@
 import { useEffect, useRef, useMemo, useState, useCallback } from "react";
 import { layoutFamilyGraph } from "../graph/layoutFamilyGraph.js";
-import { COUPLE_TYPES } from "../graph/relationshipTypes.js";
+import { COUPLE_TYPES, PARENT_TYPES } from "../graph/relationshipTypes.js";
 import {
   PERSON_W, PERSON_H,
   AVATAR_CX, AVATAR_CY, AVATAR_R, TEXT_X,
@@ -63,8 +63,8 @@ function PersonAvatar({ cx, cy, r }) {
 }
 
 function getVacantSlots(nodeId, edges, nodes) {
-  const hasFather = edges.some((e) => e.target === nodeId && e.type === "father");
-  const hasMother = edges.some((e) => e.target === nodeId && e.type === "mother");
+  const hasFather = edges.some((e) => e.target === nodeId && PARENT_TYPES.has(e.type) && e.type.includes("father"));
+  const hasMother = edges.some((e) => e.target === nodeId && PARENT_TYPES.has(e.type) && e.type.includes("mother"));
   const hasSpouse = edges.some((e) =>
     COUPLE_TYPES.has(e.type) && (
       e.source === nodeId ||

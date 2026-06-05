@@ -370,6 +370,31 @@ CREATE TABLE derived_relationships (
 
 ---
 
+## [032] getVacantSlots detecta padre/madre usando PARENT_TYPES
+
+**Decisión:** `getVacantSlots` en `GraphView.jsx` usa `PARENT_TYPES.has(e.type) && e.type.includes("father/mother")` en lugar de comparaciones literales `e.type === "father"`.
+
+**Razón:** con el modelo extendido de PARENT_TYPES (`adoptive_father`, `stepfather`, `foster_father`, etc.), comparar solo con `"father"` hacía que una persona con `adoptive_father` siguiera viendo el slot "Agregar padre". La detección correcta requiere cubrir todos los tipos del conjunto.
+
+**Implementación:** `GraphView.jsx` importa `PARENT_TYPES` de `relationshipTypes.js`.
+
+---
+
+## [033] Edición de relaciones y disolución de pareja — diferidas al sidebar
+
+**Decisión:** la edición de relaciones (Bug 2) y la disolución de pareja (Bug 3) se implementarán como parte del sidebar de persona al estilo MyHeritage — no como una acción sobre el union node ni como un modal independiente.
+
+**Razón:** investigación en `myheritage.md` confirmó que MyHeritage no tiene un union node clickeable. La gestión de relaciones ocurre desde el sidebar de la persona (pestaña "Relaciones"). Este patrón es superior a abrir un modal desde el union node porque:
+- Es consistente con cómo el usuario ya piensa en relaciones (desde la persona)
+- Permite ver todas las relaciones de una persona en un solo panel
+- Escala a múltiples parejas sin multiplicar modales
+
+**Descartado:** click en union node → modal de relación (propuesto inicialmente en Prompt 009, descartado tras revisar myheritage.md).
+
+**Código muerto hasta implementar:** `DissolveCell` en `GraphView.jsx`, `setModalRelacion` en `App.jsx`.
+
+---
+
 ## 📌 Regla general del archivo
 
 Este archivo contiene únicamente decisiones técnicas ya tomadas o en proceso de implementación.

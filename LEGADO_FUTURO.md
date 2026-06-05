@@ -30,11 +30,26 @@ galicia-migrante/
 
 ## 🐛 Bugs conocidos
 
-- CRUD de relaciones inaccesible desde la UI (modalRelacion nunca se abre)
-- Línea co_parent aparece roja y llena en lugar de punteada violeta
-- Pérdida de filiación visual cuando un hijo casado es "secundario" en su grupo (líneas diagonales cruzadas)
-- Nodos fantasma con coordenadas negativas quedan parcialmente ocultos (overflow: hidden)
-- El slider de generaciones no filtra sin foco activo
+### [BUG-01] CRUD de relaciones inaccesible desde la UI
+`modalRelacion` en `App.jsx` nunca se abre — `setModalRelacion` solo se llama con `null`. Diferido a la implementación del sidebar completo al estilo MyHeritage (ver [BUG-02]).
+
+### [BUG-02] Edición de relaciones y disolución de pareja sin UI
+`DissolveCell` en `GraphView.jsx` está definido pero nunca se renderiza (código muerto desde que se eliminó la tabla de relaciones). La edición/disolución de relaciones se implementará en el sidebar de persona — patrón MyHeritage: la relación se gestiona desde la pestaña "Relaciones" del sidebar de cualquiera de los dos cónyuges.
+
+### [BUG-03] Pérdida de filiación visual — hijos casados como secundarios (líneas diagonales)
+**Causa raíz:** cuando un hijo está casado y su cónyuge tiene ancestros en el árbol, ese hijo es marcado como `isSecondaryInGroup` en `layoutFamilyGraph.js`. Al quedar excluido de `getSortedChildren`, su posición X queda determinada por el layout de su cónyuge, no por el de sus padres. El edge `child_of` sigue existiendo y dibuja una línea diagonal.
+
+**Ubicación:** `layoutFamilyGraph.js` → `getSortedChildren()` → `.filter((cid) => !isSecondaryInGroup.has(cid) ...)`
+
+**Fix correcto:** refactorizar `placeSubtree` para que hijos casados-secundarios se posicionen considerando ambas restricciones (filiación + matrimonio). Afecta las funciones `calcSubtreeWidth`, `placeSubtree` y potencialmente la detección de `isSecondaryInGroup`. Alcance: 1–2 sesiones dedicadas.
+
+**Fix alternativo (parche cosmético):** suprimir el edge `child_of` para nodos secundarios en el render — evita la diagonal a costa de no mostrar la conexión filiación. No recomendado.
+
+### [BUG-04] Nodos fantasma con coordenadas negativas ocultos
+Nodos fantasma con `dx` negativo quedan parcialmente ocultos si el nodo activo está cerca del borde izquierdo del canvas (overflow: hidden en el wrapper SVG).
+
+### [BUG-05] Slider de generaciones no filtra sin foco activo
+El slider de generaciones existe en la UI pero no tiene efecto cuando no hay foco activo — muestra siempre el árbol completo.
 
 ---
 
