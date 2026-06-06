@@ -13,18 +13,18 @@ Este módulo es el **corazón emocional** del ecosistema Galicia Migrante — el
 ```
 galicia-migrante/
 ├── portal/              ← compartido por todos los módulos
-│   ├── auth/            ← autenticación (creado por este módulo)
-│   ├── design-system/   ← variables CSS, tipografía, colores
-│   ├── payments/        ← planes, límites, feature flags
-│   └── i18n/            ← textos en es/gl/en
+│   ├── auth/
+│   ├── design-system/
+│   ├── payments/
+│   └── i18n/
 ├── modulos/
 │   ├── arbol/           ← ESTE MÓDULO
-│   ├── territorio/      ← Tu lugar en Galicia (futuro)
-│   ├── comunidad/       ← Asociaciones, micrositios (futuro)
+│   ├── territorio/      ← futuro
+│   ├── comunidad/       ← futuro
 │   └── ...
 ```
 
-El módulo se desarrolla de forma independiente hasta madurez completa. Al integrarse al portal expone un único componente raíz:
+Al integrarse al portal expone un único componente raíz:
 
 ```jsx
 <ArbolGenealogico user={user} plan={plan} />
@@ -32,9 +32,27 @@ El módulo se desarrolla de forma independiente hasta madurez completa. Al integ
 
 ---
 
+## 🖥️ Navegación del módulo
+
+Una sola barra con dos filas, presente en todas las secciones:
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│ [Logo GM]  [Nombre del árbol ▾] [controles]   [👤 Usuario] [...]  │
+├──────────────────────────────────────────────────────────────────┤
+│   Genealogía | Mi Árbol | Fotos | Administrar | Estadísticas     │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+- **Logo GM** → único para todo el portal y sus módulos
+- **Genealogía** → página de inicio del módulo (dashboard)
+- **Usuario** → solo informativo; login y cuenta se gestionan desde el portal
+
+---
+
 ## 🎯 Objetivo
 
-Construir el módulo genealógico más completo, eficiente y profesional posible. Cada decisión de arquitectura está tomada con escala de miles de registros en cientos de árboles en mente desde el primer día.
+Construir el módulo genealógico más completo, eficiente y profesional posible. Cada decisión está tomada con escala de miles de registros en cientos de árboles en mente desde el primer día.
 
 ---
 
@@ -54,7 +72,7 @@ people        → nodos base (personas)
 relationships → edges base (relaciones)
 union nodes   → nodos derivados en runtime (vínculos de pareja)
 child_of      → edges derivados cuando ambos padres son pareja
-derived_relationships → tabla de relaciones precalculadas (pendiente)
+derived_relationships → tabla precalculada (pendiente)
 ```
 
 Supabase es la única fuente de verdad. El frontend solo transforma y visualiza.
@@ -63,17 +81,15 @@ Supabase es la única fuente de verdad. El frontend solo transforma y visualiza.
 
 ## 🗄️ Tipos de relación
 
-### Vínculos de pareja (COUPLE_TYPES — generan union nodes)
+### Vínculos de pareja (COUPLE_TYPES)
 ```
 married, partner, co_parent, separated, divorced, widowed, unknown
 ```
 
-### Vínculos parentales (PARENT_TYPES — establecen jerarquía)
+### Vínculos parentales (PARENT_TYPES)
 ```
-father, mother,
-adoptive_father, adoptive_mother,
-stepfather, stepmother,
-foster_father, foster_mother
+father, mother, adoptive_father, adoptive_mother,
+stepfather, stepmother, foster_father, foster_mother
 ```
 
 ### Fraternales
@@ -85,21 +101,19 @@ brother, sister
 
 ## ⚙️ Estado funcional actual
 
-✔ CRUD completo de personas y relaciones
-✔ Motor de grafo (buildFamilyGraph) con hasHiddenParents para badge de vinculación
-✔ Layout engine bottom-up (layoutFamilyGraph)
+✔ CRUD completo de personas (incluyendo name_2) y relaciones
+✔ Motor de grafo con displayName, displaySurnames, dateDisplay, hasHiddenParents
+✔ Layout engine bottom-up con espaciado simétrico
 ✔ Visualización SVG con pan & zoom
-✔ Espaciado simétrico entre generaciones
-✔ Nodos fantasma — detecta todos los PARENT_TYPES (adoptive, step, foster)
-✔ Buscador de personas existentes (padre, madre, cónyuge)
-✔ 7 COUPLE_TYPES y 8 PARENT_TYPES implementados
-✔ Click en nodo → foco: centra vista + actualiza barra de contexto
-✔ Badge de vinculación con lógica correcta (hasHiddenParents || unionCount > 1)
-✔ Foco por subgrafo via RPC get_subgraph (incluye hermanos, excluye ancestros de cónyuges)
-✔ Apellidos en nodo con lógica display correcta (surname_1+2 o "de casada")
-✔ computeDisplaySurnames y computeFullSurnames en personUtils.js
+✔ Barra de género en nodo (franja vertical por género)
+✔ Símbolos genealógicos (* nacimiento, † fallecimiento)
+✔ Abreviación progresiva del nombre (5 niveles)
+✔ Bloqueo automático de género en modal
+✔ Nodos fantasma con detección de todos los PARENT_TYPES
+✔ Click en nodo → foco: centra vista + barra de contexto
+✔ Badge de vinculación con lógica correcta
+✔ get_subgraph con hermanos, sin ancestros de cónyuges
 ✔ Design system con variables CSS — cero valores hardcodeados
-✔ Constantes dimensionales en geometry.js
 ✔ Footer minimalista
 
 ---
@@ -109,41 +123,41 @@ brother, sister
 ```
 src/
 ├── components/
-│   ├── GraphView.jsx         — canvas SVG, pan/zoom, nodos, edges, badge
-│   ├── PersonModal.jsx       — modal editar/crear persona
-│   ├── AddRelativeModal.jsx  — modal agregar familiar
-│   ├── RelationshipModal.jsx — modal editar relaciones (pendiente BUG-01)
-│   ├── TopNavBar.jsx         — (mover a portal/ al integrar)
-│   ├── TreeContextBar.jsx    — barra de contexto con foco y selección
+│   ├── GraphView.jsx
+│   ├── PersonModal.jsx
+│   ├── AddRelativeModal.jsx
+│   ├── RelationshipModal.jsx     — pendiente BUG-01
+│   ├── TopNavBar.jsx             — reemplazar por ModuleNavBar
+│   ├── TreeContextBar.jsx
 │   ├── TreeControlPanel.jsx
-│   └── FooterBar.jsx         — footer minimalista
+│   └── FooterBar.jsx
 ├── graph/
-│   ├── buildFamilyGraph.js   — transforma datos en grafo
-│   ├── layoutFamilyGraph.js  — algoritmo de layout
-│   ├── geometry.js           — constantes dimensionales
-│   └── relationshipTypes.js  — COUPLE_TYPES, PARENT_TYPES, PARENT_EDGE_TYPES
+│   ├── buildFamilyGraph.js
+│   ├── layoutFamilyGraph.js
+│   ├── geometry.js
+│   └── relationshipTypes.js
 ├── services/
 │   ├── peopleService.js
 │   └── relationshipService.js
 ├── utils/
-│   └── personUtils.js        — computeDisplaySurnames, computeFullSurnames
+│   └── personUtils.js
 ├── lib/
 │   └── supabase.js
 ├── App.jsx
 ├── App.css
-└── index.css                 — design system (variables CSS)
+└── index.css
 ```
 
 ---
 
 ## 📚 Documentación interna
 
-- `DECISIONS.md` — decisiones de arquitectura tomadas
-- `ENGINE_RULES.md` — reglas del motor de grafo (incluye regla cardinal del subgrafo)
-- `PROJECT_CONTEXT.md` — estado actual, esquema de DB y pendientes priorizados
-- `LEGADO_FUTURO.md` — deuda técnica, bugs conocidos y funcionalidades futuras
+- `DECISIONS.md` — decisiones de arquitectura (incluye [034]-[038]: name_2, abreviación, barra del módulo, menú)
+- `ENGINE_RULES.md` — reglas del motor de grafo
+- `PROJECT_CONTEXT.md` — estado actual, esquema de DB y pendientes
+- `LEGADO_FUTURO.md` — deuda técnica y funcionalidades futuras
 - `CLAUDE.md` — instrucciones base para Claude Code
-- `myheritage.md` — referencia técnica completa de MyHeritage v3.0
+- `myheritage.md` — referencia técnica completa v3.0
 
 ---
 

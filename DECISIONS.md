@@ -63,18 +63,13 @@ galicia-migrante/
 - Si el portal ya tiene el componente → el árbol lo hereda
 - Si no existe → el árbol lo crea en `portal/` para que lo compartan los módulos futuros
 
-**Lo que hereda del portal:** auth, design system, payments, shell (TopNavBar/Footer), i18n
-**Lo que es propio:** motor de grafo, visualización SVG, servicios de datos, modales genealógicos
+**Lo que hereda del portal:** auth, design system, payments, i18n
+**Lo que es propio:** motor de grafo, visualización SVG, servicios de datos, modales genealógicos, barra del módulo
 
 **Interfaz de integración:**
 ```jsx
 <ArbolGenealogico user={user} plan={plan} />
 ```
-
-**Razón:**
-- El árbol es el primer módulo — sienta las bases compartidas
-- Evita reimplementar auth, estilos y pagos en cada módulo
-- Permite integración limpia al portal sin reescribir
 
 ---
 
@@ -83,11 +78,6 @@ galicia-migrante/
 **Decisión:**
 - `person_a_id` = progenitor
 - `person_b_id` = hijo
-
-**Razón:**
-- La relación es inherentemente direccional
-- Permite validaciones y constraints por tipo
-- Facilita reconstrucción del grafo genealógico
 
 ---
 
@@ -98,33 +88,15 @@ galicia-migrante/
 - `until_year` = fin (NULL = activo)
 - `end_reason` = causa del fin (ver [026])
 
-**Razón:**
-- Permite reconstrucción histórica
-- Permite múltiples relaciones en el tiempo
-- Base para futuras vistas tipo timeline
-
 ---
 
 ## [007] — SUPERSEDIDA por [025]
-
-**Estado:** la decisión original de que `spouse` no representa estado civil fue revertida.
-Ver [025].
 
 ---
 
 ## [008] Union nodes como entidades derivadas
 
-**Decisión:** los vínculos de pareja NO existen como entidades persistidas.
-
-Se generan en runtime como:
-- Nodos derivados del grafo
-- Identificados por `union-${min_id}-${max_id}`
-- Generados para todos los tipos en `COUPLE_TYPES`
-
-**Razón:**
-- Evita redundancia en base de datos
-- Mantiene modelo relacional limpio
-- Permite flexibilidad total en visualización
+**Decisión:** los vínculos de pareja NO existen como entidades persistidas. Se generan en runtime para todos los tipos en `COUPLE_TYPES`.
 
 ---
 
@@ -136,34 +108,19 @@ Se generan en runtime como:
 - `union nodes` → nodos derivados en runtime
 - `child_of` → edges derivados desde union nodes cuando aplica
 
-**Razón:**
-- Permite representar familias complejas
-- Soporta múltiples padres, adopciones y matrimonios históricos
-- Base sólida para visualización y búsquedas avanzadas
-- Preparado para migración a Neo4j en tercera etapa del portal
-
 ---
 
 ## [010] Absorción de relaciones parentales en union nodes
 
 **Decisión:** cuando existe una pareja (cualquier `COUPLE_TYPE`), las relaciones parentales duales se reemplazan por `union node → child` (`child_of`).
 
-**Reglas:**
-- Si ambos padres están en COUPLE_TYPES → hijo conectado al union node
-- Si solo existe un padre/madre → edge directo persona → hijo
-
 ---
 
 ## [011] Fechas en columnas separadas (día, mes, año)
 
-**Decisión:** almacenar fechas en tres columnas separadas para nacimiento, fallecimiento y matrimonio.
+**Decisión:** almacenar fechas en tres columnas separadas. Permite fechas parciales.
 
-**Razón:**
-- Permite registrar fechas parciales (solo año, o año y mes)
-- Compatible con datos genealógicos reales
-- Facilita búsquedas por rango de año
-
-**Descartado:** columna única de tipo DATE (requiere fecha completa)
+**Descartado:** columna única de tipo DATE.
 
 ---
 
@@ -171,16 +128,11 @@ Se generan en runtime como:
 
 **Decisión:** los servicios exponen operaciones completas. Los componentes nunca llaman a Supabase directamente.
 
-- `peopleService.js` → fetchPeople, fetchPeopleByIds, addPerson, updatePerson, deletePerson
-- `relationshipService.js` → fetchRelationships, fetchRelationshipsByPersonIds, addRelationship, updateRelationship, deleteRelationship, dissolveRelationship
-
 ---
 
 ## [013] Modales en lugar de formularios en vista principal
 
-**Decisión:** los formularios de carga son modales flotantes.
-
-**Razón:** el árbol siempre es el protagonista de la UI.
+**Decisión:** los formularios de carga son modales flotantes. El árbol siempre es el protagonista de la UI.
 
 ---
 
@@ -188,37 +140,19 @@ Se generan en runtime como:
 
 **Decisión:** al hacer click en `+`, aparecen nodos fantasma mostrando solo las relaciones vacantes.
 
-**Reglas:**
-- Si ya tiene padre → no muestra "Agregar padre"
-- Si ya tiene madre → no muestra "Agregar madre"
-- Si ya tiene pareja → muestra "Agregar otra pareja"
-- "Agregar hijo/a", "Agregar hermano/a" aparecen siempre
-
 ---
 
 ## [015] Design system heredado del portal
 
-**Decisión:** el módulo árbol no define colores, tipografía ni espaciado propios. Hereda todo del `portal/design-system/`.
-
-**Mientras el portal no exista:** las variables CSS viven en `index.css` con nombres compatibles con el sistema del portal, listas para ser migradas sin cambios en los componentes.
-
-**Razón:**
-- Consistencia visual entre módulos del portal
-- Un solo lugar para cambiar la identidad de marca
+**Decisión:** el módulo árbol no define colores, tipografía ni espaciado propios. Hereda todo del `portal/design-system/`. Mientras el portal no exista, las variables CSS viven en `index.css`.
 
 ---
 
 ## [016] — SUPERSEDIDA por [027]
 
-**Estado:** la decisión original de usar solo `father`/`mother` con campo `adopted` fue revertida.
-Ver [027].
-
 ---
 
 ## [017] — SUPERSEDIDA por [027]
-
-**Estado:** el campo `adopted` en `people` fue reemplazado por tipos de relación explícitos.
-Ver [027].
 
 ---
 
@@ -228,7 +162,7 @@ Ver [027].
 
 ## [019] Separación de nombre y apellidos
 
-**Decisión:** campos separados: `name`, `surname_1`, `surname_2`, `surname_married`, `surnames` (calculado).
+**Decisión:** campos separados: `name`, `name_2`, `surname_1`, `surname_2`, `surname_married`, `surnames` (calculado).
 
 ---
 
@@ -256,34 +190,22 @@ Ver [027].
 
 ## [023] Nivelación de generaciones de cónyuges en layout
 
-**Decisión:** si dos personas en `COUPLE_TYPES` están en generaciones distintas, ambas se elevan a la mayor. Se repite hasta convergencia.
+**Decisión:** si dos personas en `COUPLE_TYPES` están en generaciones distintas, ambas se elevan a la mayor.
 
 ---
 
 ## [024] Layout bottom-up con grupos
 
-**Decisión:** el layout usa dos pasadas:
-1. Bottom-up: calcula el ancho del subárbol de cada grupo (persona + cónyuges + hijos)
-2. Top-down: asigna posiciones X reales, centrando padres sobre sus hijos
-
-Los grupos se ordenan por año de nacimiento. Dentro de cada grupo: hijo primero, cónyuges a la derecha en orden cronológico.
+**Decisión:** el layout usa dos pasadas: bottom-up (anchos) y top-down (posiciones X). Padres centrados sobre sus hijos.
 
 ---
 
 ## [025] Tipos de vínculo de pareja explícitos en DB
 
-**Decisión:** tipos específicos que reflejan la realidad del vínculo:
+**Decisión:**
 ```
-married     — matrimonio formal
-partner     — pareja de hecho
-co_parent   — co-padres sin vínculo formal
-separated   — separados
-divorced    — divorciados
-widowed     — viudo/a (relación terminada por muerte)
-unknown     — vínculo desconocido
+married, partner, co_parent, separated, divorced, widowed, unknown
 ```
-
-**Razón:** toda la información debe guardarse en la DB para búsquedas y estadísticas.
 
 **Migración:** `UPDATE relationships SET type = 'married' WHERE type = 'spouse';`
 
@@ -291,44 +213,23 @@ unknown     — vínculo desconocido
 
 ## [026] Campo end_reason en relationships
 
-**Decisión:** columna `end_reason TEXT CHECK (end_reason IN ('death', 'divorce', 'separation', 'annulment'))`.
-
-**Razón:** registra la causa del fin de la relación — información valiosa para búsquedas históricas.
+**Decisión:** `end_reason TEXT CHECK (end_reason IN ('death', 'divorce', 'separation', 'annulment'))`.
 
 ---
 
 ## [027] Tipos de relación parental explícitos en DB
 
-**Decisión:** tipos específicos que reflejan la naturaleza real del vínculo:
+**Decisión:**
 ```
-father, mother                         — biológico
-adoptive_father, adoptive_mother       — adoptivo
-stepfather, stepmother                 — padrastro/madrastra
-foster_father, foster_mother           — tutor/guardián
+father, mother, adoptive_father, adoptive_mother,
+stepfather, stepmother, foster_father, foster_mother
 ```
-
-**Razón:** la distinción biológico/adoptivo/legal es relevante para búsquedas y estadísticas. No puede derivarse de un flag booleano.
 
 **Impacto:** el campo `adopted` en `people` queda obsoleto.
-**Pendiente:** migración de datos y actualización de constraint en Supabase.
 
 ---
 
 ## [028] Tabla derived_relationships para búsquedas escalables
-
-**Decisión:** implementar tabla que precalcula relaciones derivadas:
-```sql
-CREATE TABLE derived_relationships (
-  person_a_id       bigint,
-  person_b_id       bigint,
-  relationship_type text,
-  distance          int,
-  path              jsonb,
-  calculated_at     timestamp
-);
-```
-
-**Razón:** con miles de registros, navegar el grafo en tiempo real para cada búsqueda es ineficiente. Esta tabla se actualiza en background cuando se modifica una relación.
 
 **Pendiente de implementación.**
 
@@ -336,62 +237,175 @@ CREATE TABLE derived_relationships (
 
 ## [029] Foco por defecto al cargar
 
-**Decisión:** al arrancar sin foco activo, se setea automáticamente el foco en la primera persona cargada.
-
-**Implementación:** `focusInitialized` y `focusWasCleared` en `App.jsx` como `useRef`. Si el usuario limpia el foco explícitamente, no se vuelve a aplicar el foco por defecto.
+**Decisión:** foco automático en la primera persona. `focusInitialized` y `focusWasCleared` como `useRef` en `App.jsx`.
 
 ---
 
 ## [030] Desarrollo independiente con integración planificada
 
-**Decisión:** el módulo árbol se desarrolla hasta madurez completa como proyecto independiente. Cuando esté maduro, se integra al portal Galicia Migrante como módulo.
-
-**Razón:**
-- El árbol es el corazón emocional del portal — debe llegar maduro a la integración
-- Desarrollar árbol + ecosistema en paralelo genera complejidad excesiva
-- El árbol es el primer módulo — sienta las bases técnicas del portal
-
-**Condición para integrar:** árbol con CRUD completo, layout estable, GEDCOM, tipos parentales completos, perfil extendido, campos territoriales básicos.
+**Decisión:** el módulo árbol se desarrolla hasta madurez completa antes de integrarse al portal.
 
 ---
 
 ## [031] Display de apellidos en nodos del grafo
 
-**Decisión:** en el nodo visual, los apellidos se muestran con lógica distinta a `surnames` del DB:
-- Si existe `surname_1` → mostrar `surname_1 + " " + surname_2` (ignorar `surname_married`)
+**Decisión:**
+- Si existe `surname_1` → mostrar `surname_1 + " " + surname_2`
 - Si no hay `surname_1` pero hay `surname_married` → mostrar `de surname_married`
-- Ninguno → no mostrar línea de apellidos
 
-**Razón:** el campo DB `surnames` incluye `"de [casada]"` para mujeres (útil para búsquedas y nombre completo), pero en el nodo el espacio es limitado y mostrar el apellido de casada junto a los de origen genera líneas muy largas. La información completa sigue disponible en el campo `people.surnames`.
-
-**Implementación:** calculado en `buildFamilyGraph.js` (`node.data.surnames`), distinto de `person.surnames` (campo DB).
-
-**Tipografía:** nombre y apellidos usan las mismas variables CSS (`--node-font-name`, `--node-text-name`) y el mismo peso (`fontWeight="700"`). Decisión del usuario — contradice el spec inicial del Prompt 003 que pedía "sin negrita".
+**Tipografía:** nombre y apellidos con `fontWeight="700"` — misma tipografía y peso.
 
 ---
 
 ## [032] getVacantSlots detecta padre/madre usando PARENT_TYPES
 
-**Decisión:** `getVacantSlots` en `GraphView.jsx` usa `PARENT_TYPES.has(e.type) && e.type.includes("father/mother")` en lugar de comparaciones literales `e.type === "father"`.
-
-**Razón:** con el modelo extendido de PARENT_TYPES (`adoptive_father`, `stepfather`, `foster_father`, etc.), comparar solo con `"father"` hacía que una persona con `adoptive_father` siguiera viendo el slot "Agregar padre". La detección correcta requiere cubrir todos los tipos del conjunto.
-
-**Implementación:** `GraphView.jsx` importa `PARENT_TYPES` de `relationshipTypes.js`.
+**Decisión:** usar `PARENT_TYPES.has(e.type) && e.type.includes("father/mother")` en lugar de strings literales.
 
 ---
 
 ## [033] Edición de relaciones y disolución de pareja — diferidas al sidebar
 
-**Decisión:** la edición de relaciones (Bug 2) y la disolución de pareja (Bug 3) se implementarán como parte del sidebar de persona al estilo MyHeritage — no como una acción sobre el union node ni como un modal independiente.
+**Decisión:** se implementarán como parte del sidebar de persona al estilo MyHeritage.
 
-**Razón:** investigación en `myheritage.md` confirmó que MyHeritage no tiene un union node clickeable. La gestión de relaciones ocurre desde el sidebar de la persona (pestaña "Relaciones"). Este patrón es superior a abrir un modal desde el union node porque:
-- Es consistente con cómo el usuario ya piensa en relaciones (desde la persona)
-- Permite ver todas las relaciones de una persona en un solo panel
-- Escala a múltiples parejas sin multiplicar modales
+**Descartado:** click en union node → modal de relación.
 
-**Descartado:** click en union node → modal de relación (propuesto inicialmente en Prompt 009, descartado tras revisar myheritage.md).
+---
 
-**Código muerto hasta implementar:** `DissolveCell` en `GraphView.jsx`, `setModalRelacion` en `App.jsx`.
+## [034] Nombre en dos campos separados
+
+**Decisión:** separar el nombre de pila en dos campos:
+- `name` → primer nombre de pila
+- `name_2` → segundo nombre de pila (opcional)
+
+**Razón:** consistencia con el modelo de apellidos estructurados. Permite abreviación progresiva independiente de cada campo.
+
+**Migración Supabase:**
+```sql
+ALTER TABLE people ADD COLUMN IF NOT EXISTS name_2 text;
+```
+
+---
+
+## [035] Abreviación progresiva del nombre en el nodo
+
+**Decisión:** cuando el nombre completo desborda el ancho del nodo, se abrevia progresivamente en este orden:
+
+```
+Nivel 0: María Concepción Sánchez González   (completo)
+Nivel 1: María Concepción Sánchez G.         (abreviar surname_2)
+Nivel 2: María Concepción S. G.              (abreviar surname_1)
+Nivel 3: María C. S. G.                      (abreviar name_2)
+Nivel 4: M. C. S. G.                         (abreviar name)
+Nivel 5: M. C. S…                            (truncar — último recurso)
+```
+
+**Razón:** más elegante que truncar con ellipsis — preserva información hasta el último momento.
+
+**Implementación:** función `computeAbbreviatedName` en `personUtils.js`. Calculado en `buildFamilyGraph.js` como `node.data.displayName`.
+
+---
+
+## [036] Barra del módulo genealógico — estructura de dos filas
+
+**Decisión:** el módulo genealógico tiene una sola barra con dos filas, presente en todas las secciones del módulo:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ [Logo GM]  [Nombre del árbol ▾] [controles]    [👤 Usuario] [utilidades] │
+├─────────────────────────────────────────────────────────────────┤
+│    Genealogía | Mi Árbol | Fotos | Administrar | Estadísticas   │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Fila 1:**
+- Logo GM (isologotipo único para todo el portal y sus módulos)
+- Selector de árbol activo con nombre definido por el usuario + dropdown para cambiar entre árboles
+- Controles del árbol (sincronizar, privacidad, etc.)
+- Nombre del usuario logueado (solo informativo — login y cuenta se gestionan desde el portal)
+- Utilidades (mensajes, ayuda, idioma)
+
+**Fila 2 — Menú de navegación del módulo:**
+- Genealogía → página de inicio del módulo
+- Mi Árbol → vista de linaje (árbol tradicional)
+- Fotos → galería de fotos y documentos
+- Administrar → mis árboles, miembros, importar/exportar, configuración
+- Estadísticas → estadísticas del árbol
+
+**Razón:**
+- Un solo menú evita confusión entre contextos
+- El logo lleva siempre al portal
+- "Genealogía" lleva al inicio del módulo — nombre propio sin ambigüedad con "Inicio" del portal
+- El usuario es solo informativo — toda la gestión de cuenta es del portal
+
+**Items NO-MVP** (reservan lugar en el menú, aparecen deshabilitados con badge "Próximamente"):
+- Vista de abanico
+- Vista de lista
+- Descubrimientos (SmartMatch, RecordMatch)
+- Análisis con IA en fotos
+- Investigación (registros históricos)
+
+---
+
+## [037] Página de inicio del módulo genealógico
+
+**Decisión:** la página de inicio del módulo (accedida desde "Genealogía" en el menú) sigue el modelo de MyHeritage:
+
+**Contenido:**
+- Nombre del árbol (definido por el usuario, campo de texto libre con límite de caracteres)
+- Dueño del árbol + estadísticas: total de personas, total de fotos
+- Espacio para banner (publicitario propio o de terceros — colapsa si no hay contenido)
+- Eventos familiares próximos (cumpleaños, aniversarios en los próximos 30 días)
+- Últimas actividades del árbol
+- Coincidencias encontradas (SmartMatches pendientes — segunda etapa)
+
+**El nombre del árbol** es definido por el usuario y puede ser cualquier texto (ej: "Sanchez Web Site", "Familia García", "Mi árbol"). El límite de caracteres lo define el plan del usuario.
+
+**Razón:** el dashboard de inicio contextualiza al usuario dentro de su árbol y le muestra las acciones más relevantes.
+
+---
+
+## [038] Menú del módulo genealógico — estructura completa
+
+**Decisión:** estructura completa del menú con indicación de MVP vs futuro:
+
+```
+Módulo Genealógico
+│
+├── Genealogía (inicio del módulo — dashboard)       ← MVP
+│
+├── Mi Árbol
+│   ├── Vista de linaje (árbol tradicional)          ← MVP
+│   ├── Vista de abanico                             ← NO MVP
+│   └── Vista de lista                               ← NO MVP
+│
+├── Fotos y Documentos
+│   ├── Mis fotos                                    ← MVP
+│   ├── Mis documentos                               ← MVP
+│   └── Análisis con IA                              ← NO MVP
+│
+├── Descubrimientos                                  ← NO MVP
+│   ├── Coincidencias por persona (SmartMatch)
+│   └── Coincidencias por fuente (RecordMatch)
+│
+├── Investigación                                    ← NO MVP
+│   ├── Explorar registros históricos
+│   ├── Catálogo de la colección
+│   ├── Nacimiento, matrimonio y defunción
+│   ├── Censos y padrones
+│   ├── Árboles genealógicos
+│   ├── Periódicos
+│   └── Registros de inmigración
+│
+├── Administrar
+│   ├── Mis árboles                                  ← MVP
+│   ├── Miembros del sitio                           ← MVP
+│   ├── Importar / Exportar                          ← MVP
+│   └── Configuración del árbol                     ← MVP
+│
+└── Estadísticas                                     ← MVP
+```
+
+Los ítems NO-MVP aparecen en el menú pero deshabilitados con badge "Próximamente".
 
 ---
 
