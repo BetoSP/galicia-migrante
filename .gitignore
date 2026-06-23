@@ -1,9 +1,41 @@
-# Carpetas excluidas
-auditorias/
-prompts/
-ReferenciaNoHacerCommit
+# ══════════════════════════════════════════════════════════════════════
+# .gitignore — Portal Galicia Migrante (monorepo)
+# ══════════════════════════════════════════════════════════════════════
 
-# Archivos excluidos
+# ── Node / npm ────────────────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
 
-# Variables de entorno
-arbol/.env
+# ── Variables de entorno ──────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── Módulo: Arbol Genealogico ─────────────────────────────────────────
+Arbol Genealogico/arbol/.env
+Arbol Genealogico/auditorias/
+Arbol Genealogico/prompts/
+Arbol Genealogico/ReferenciaNoHacerCommit/
+
+# ── Módulo: Blog (Next.js) ────────────────────────────────────────────
+Blog/.next/
+Blog/out/
+Blog/build/
+Blog/.vercel/
+Blog/coverage/
+Blog/*.tsbuildinfo
+Blog/next-env.d.ts
+
+# ── Sistema operativo ─────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.pem
+
+# ── IDEs ──────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.suo
+*.user

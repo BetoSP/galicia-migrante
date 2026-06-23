@@ -1,0 +1,8 @@
+{
+  "name": "galicia-migrante",
+  "private": true,
+  "workspaces": [
+    "shared",
+    "Blog"
+  ]
+}

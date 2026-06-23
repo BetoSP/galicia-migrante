@@ -1,0 +1,9 @@
+{
+  "name": "@galicia-migrante/shared",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Recursos compartidos del ecosistema Galicia Migrante (CSS, tokens, utilidades)",
+  "exports": {
+    "./css/*": "./css/*"
+  }
+}
