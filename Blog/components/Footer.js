@@ -1,5 +1,6 @@
-import Link from 'next/link';
 import styles from './Footer.module.css';
+
+const PORTAL_URL = process.env.NEXT_PUBLIC_PORTAL_URL || '';
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -9,7 +10,7 @@ export default function Footer() {
 
         {/* Brand */}
         <div className={styles.brand}>
-          <Link href="/" className={styles.logo} aria-label="Galicia Migrante">
+          <a href={`${PORTAL_URL}/`} className={styles.logo} aria-label="Galicia Migrante">
             <svg width="32" height="32" viewBox="0 0 36 36" fill="none" aria-hidden="true">
               <rect width="36" height="36" rx="8" fill="#4A90B8"/>
               <path d="M4 22 Q9 18 14 22 Q19 26 24 22 Q29 18 32 22" stroke="#C8A96E" strokeWidth="2" fill="none" strokeLinecap="round"/>
@@ -17,7 +18,7 @@ export default function Footer() {
               <path d="M18 8 V16 M14 12 H22" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
             </svg>
             <span>Galicia Migrante</span>
-          </Link>
+          </a>
           <p className={styles.tagline}>
             Preservar, reconstruir y transmitir<br />
             la memoria de la diáspora gallega.
@@ -29,10 +30,10 @@ export default function Footer() {
           <div className={styles.linkGroup}>
             <h3 className={styles.groupTitle}>Portal</h3>
             <ul>
-              <li><Link href="/">Inicio</Link></li>
-              <li><Link href="/quienes-somos">Quiénes somos</Link></li>
-              <li><Link href="/asociaciones">Asociaciones</Link></li>
-              <li><Link href="/agenda">Agenda</Link></li>
+              <li><a href={`${PORTAL_URL}/`}>Inicio</a></li>
+              <li><a href={`${PORTAL_URL}/quienes-somos`}>Quiénes somos</a></li>
+              <li><a href={`${PORTAL_URL}/asociaciones`}>Asociaciones</a></li>
+              <li><a href={`${PORTAL_URL}/agenda`}>Agenda</a></li>
             </ul>
           </div>
           <div className={styles.linkGroup}>
@@ -46,8 +47,8 @@ export default function Footer() {
           <div className={styles.linkGroup}>
             <h3 className={styles.groupTitle}>Institucional</h3>
             <ul>
-              <li><Link href="/xunta">Xunta de Galicia</Link></li>
-              <li><Link href="/gobierno-espana">Gobierno de España</Link></li>
+              <li><a href={`${PORTAL_URL}/xunta`}>Xunta de Galicia</a></li>
+              <li><a href={`${PORTAL_URL}/gobierno-espana`}>Gobierno de España</a></li>
             </ul>
           </div>
         </nav>

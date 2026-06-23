@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import styles from './Navbar.module.css';
 
 const ARBOL_URL = 'https://galicia-migrante.vercel.app';
+const PORTAL_URL = process.env.NEXT_PUBLIC_PORTAL_URL || '';
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -24,7 +24,7 @@ export default function Navbar() {
       <div className={styles.inner}>
 
         {/* Logo */}
-        <Link href="/" className={styles.logo} onClick={closeAll} aria-label="Galicia Migrante — Inicio">
+        <a href={`${PORTAL_URL}/`} className={styles.logo} onClick={closeAll} aria-label="Galicia Migrante — Inicio">
           <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true">
             <rect width="36" height="36" rx="8" fill="#4A90B8"/>
             {/* Olas */}
@@ -37,14 +37,14 @@ export default function Navbar() {
             <span className={styles.logoMain}>Galicia</span>
             <span className={styles.logoSub}>Migrante</span>
           </span>
-        </Link>
+        </a>
 
         {/* Desktop nav */}
         <ul className={styles.links} role="list">
-          <li><Link href="/" className={styles.link} onClick={closeAll}>Inicio</Link></li>
-          <li><Link href="/quienes-somos" className={styles.link} onClick={closeAll}>Quiénes somos</Link></li>
-          <li><Link href="/asociaciones" className={styles.link} onClick={closeAll}>Asociaciones</Link></li>
-          <li><Link href="/agenda" className={styles.link} onClick={closeAll}>Agenda</Link></li>
+          <li><a href={`${PORTAL_URL}/`} className={styles.link}>Inicio</a></li>
+          <li><a href={`${PORTAL_URL}/quienes-somos`} className={styles.link}>Quiénes somos</a></li>
+          <li><a href={`${PORTAL_URL}/asociaciones`} className={styles.link}>Asociaciones</a></li>
+          <li><a href={`${PORTAL_URL}/agenda`} className={styles.link}>Agenda</a></li>
 
           {/* Dropdown Tus orígenes */}
           <li
@@ -79,9 +79,9 @@ export default function Navbar() {
           </li>
 
           <li>
-            <Link href="/xunta" className={styles.link} onClick={closeAll}>
+            <a href={`${PORTAL_URL}/xunta`} className={styles.link}>
               Xunta & España
-            </Link>
+            </a>
           </li>
         </ul>
 
@@ -107,16 +107,16 @@ export default function Navbar() {
       {menuOpen && (
         <div className={styles.mobileMenu} role="dialog" aria-label="Menú de navegación">
           <ul>
-            <li><Link href="/" onClick={closeAll} className={styles.mobileLink}>Inicio</Link></li>
-            <li><Link href="/quienes-somos" onClick={closeAll} className={styles.mobileLink}>Quiénes somos</Link></li>
-            <li><Link href="/asociaciones" onClick={closeAll} className={styles.mobileLink}>Asociaciones</Link></li>
-            <li><Link href="/agenda" onClick={closeAll} className={styles.mobileLink}>Agenda</Link></li>
+            <li><a href={`${PORTAL_URL}/`} onClick={closeAll} className={styles.mobileLink}>Inicio</a></li>
+            <li><a href={`${PORTAL_URL}/quienes-somos`} onClick={closeAll} className={styles.mobileLink}>Quiénes somos</a></li>
+            <li><a href={`${PORTAL_URL}/asociaciones`} onClick={closeAll} className={styles.mobileLink}>Asociaciones</a></li>
+            <li><a href={`${PORTAL_URL}/agenda`} onClick={closeAll} className={styles.mobileLink}>Agenda</a></li>
             <li>
               <span className={styles.mobileSectionLabel}>Tus orígenes</span>
               <a href={ARBOL_URL} onClick={closeAll} className={`${styles.mobileLink} ${styles.mobileSubLink}`}>🌳 Tu árbol genealógico</a>
               <span className={`${styles.mobileLink} ${styles.mobileSubLink} ${styles.mobileDisabled}`}>📍 Tu lugar en Galicia <span className="badge-soon">Pronto</span></span>
             </li>
-            <li><Link href="/xunta" onClick={closeAll} className={styles.mobileLink}>Xunta & España</Link></li>
+            <li><a href={`${PORTAL_URL}/xunta`} onClick={closeAll} className={styles.mobileLink}>Xunta & España</a></li>
           </ul>
           <div className={styles.mobileAuth}>
             <a href={`${ARBOL_URL}/auth`} className={styles.btnLogin} onClick={closeAll} id="mobile-login-btn">Ingresar</a>
