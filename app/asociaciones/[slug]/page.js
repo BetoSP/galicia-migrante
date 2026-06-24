@@ -97,6 +97,25 @@ export default async function AssociationMicrositePage({ params }) {
     notFound();
   }
 
+  const esReclamado = asociacion.reclamada !== false;
+  
+  const descripcion = asociacion.descripcion_es || (esReclamado 
+    ? '' 
+    : 'Nos complace darle la bienvenida al portal de nuestra institución. Esta página sirve como espacio de encuentro y comunicación de la colectividad en la diáspora.');
+
+  const historia = asociacion.historia_es || (esReclamado
+    ? ''
+    : `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit animi id est laborum.
+
+[Modelo] Esta sección de historia sirve de guía visual. Una vez que el micrositio sea reclamado y activado por los administradores autorizados de la institución, este espacio reflejará los hitos, fundación y el recorrido histórico particular de la asociación.`);
+
+  const finalidades = asociacion.finalidades_es || (esReclamado
+    ? ''
+    : `Nuestros objetivos principales consisten en (Modelo):
+1) Preservar, alentar y difundir la cultura, costumbres e identidad gallega en la región.
+2) Fomentar la unión, el intercambio intergeneracional y el apoyo mutuo entre los descendientes y la colectividad.
+3) Ofrecer y organizar talleres recreativos, conferencias académicas, actividades artísticas y eventos de la diáspora.`);
+
   const logoUrl = asociacion.logo_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=120&auto=format&fit=crop&q=80';
   const bannerUrl = asociacion.banner_url || 'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=1200&auto=format&fit=crop&q=80';
 
@@ -110,7 +129,7 @@ export default async function AssociationMicrositePage({ params }) {
             <img src={logoUrl} alt={asociacion.nombre} className={styles.logo} />
           </div>
           <h1 className={styles.title}>{asociacion.nombre}</h1>
-          <p className={styles.meta}>📍 {asociacion.ciudad}, {asociacion.pais} · Fundada en {asociacion.fundacion}</p>
+          <p className={styles.meta}>📍 {asociacion.ciudad}, {asociacion.pais} {asociacion.fundacion ? `· Fundada en ${asociacion.fundacion}` : ''}</p>
         </div>
       </div>
 
@@ -119,27 +138,43 @@ export default async function AssociationMicrositePage({ params }) {
           {/* Columna Principal */}
           <div className={styles.mainCol}>
             
+            {/* Banner de Reclamación para micrositios pendientes */}
+            {!esReclamado && (
+              <div className={styles.claimBanner}>
+                <span className={styles.claimIcon}>📌</span>
+                <div className={styles.claimContent}>
+                  <h3>Micrositio pendiente de activación</h3>
+                  <p>Esta página contiene la información de contacto registrada oficialmente para la institución. Si sos miembro de la comisión directiva de esta asociación, podés registrarte y reclamar el control de este micrositio de forma gratuita para personalizar la historia, cargar directivos y publicar noticias.</p>
+                  <Link href="/auth?mode=register&redirect=/admin" className={styles.claimBtn}>
+                    Reclamar micrositio
+                  </Link>
+                </div>
+              </div>
+            )}
+            
             {/* Sección Bienvenido */}
-            <section className={styles.card}>
-              <span className={styles.sectionBadge}>Bienvenido</span>
-              <p className={styles.welcomeText}>{asociacion.descripcion_es}</p>
-            </section>
-
-            {/* Historia */}
-            {asociacion.historia_es && (
+            {descripcion && (
               <section className={styles.card}>
-                <span className={styles.sectionBadge}>Nuestra Historia</span>
-                <h2 className={styles.sectionTitle}>Desde {asociacion.fundacion} hasta hoy</h2>
-                <p className={styles.bodyText}>{asociacion.historia_es}</p>
+                <span className={styles.sectionBadge}>Bienvenido</span>
+                <p className={styles.welcomeText}>{descripcion}</p>
               </section>
             )}
-
+ 
+            {/* Historia */}
+            {historia && (
+              <section className={styles.card}>
+                <span className={styles.sectionBadge}>Nuestra Historia</span>
+                <h2 className={styles.sectionTitle}>Desde {asociacion.fundacion || 'nuestros orígenes'} hasta hoy</h2>
+                <p className={styles.bodyText}>{historia}</p>
+              </section>
+            )}
+ 
             {/* Fines y Finalidades */}
-            {asociacion.finalidades_es && (
+            {finalidades && (
               <section className={styles.card}>
                 <span className={styles.sectionBadge}>Finalidades y Objetivos</span>
                 <h2 className={styles.sectionTitle}>¿Qué hacemos?</h2>
-                <p className={styles.bodyText}>{asociacion.finalidades_es}</p>
+                <p className={styles.bodyText}>{finalidades}</p>
               </section>
             )}
 

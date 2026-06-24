@@ -129,6 +129,7 @@
   font-weight: 400;
   line-height: 1.7;
   color: rgba(255, 255, 255, 0.95);
+  white-space: pre-wrap;
 }
 
 .sectionTitle {
@@ -142,6 +143,7 @@
   font-size: 15px;
   line-height: 1.75;
   color: rgba(255, 255, 255, 0.75);
+  white-space: pre-wrap;
 }
 
 /* Junta Directiva Grid */
@@ -281,4 +283,60 @@
 .mutedText {
   font-size: 13px;
   color: var(--color-text-muted);
+}
+
+.claimBanner {
+  display: flex;
+  gap: 20px;
+  background: rgba(212, 163, 89, 0.08);
+  border: 1px dashed var(--gm-gold);
+  border-radius: var(--r-lg);
+  padding: 24px;
+  align-items: flex-start;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  margin-bottom: 8px;
+}
+
+.claimIcon {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.claimContent {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.claimContent h3 {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--gm-gold);
+  margin: 0;
+}
+
+.claimContent p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0;
+}
+
+.claimBtn {
+  align-self: flex-start;
+  background: linear-gradient(135deg, var(--gm-gold) 0%, #b2823b 100%);
+  color: #0b1520;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 20px;
+  border-radius: var(--r-md);
+  transition: all var(--t-fast);
+}
+
+.claimBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(212, 163, 89, 0.3);
+  filter: brightness(1.1);
 }
