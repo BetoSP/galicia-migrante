@@ -3,6 +3,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { LanguageProvider } from '@/components/LanguageContext';
 import { ThemeProvider } from '@/components/ThemeContext';
+import { AuthProvider } from '@/components/AuthProvider';
 
 export const metadata = {
   title: {
@@ -26,9 +27,11 @@ export default function RootLayout({ children }) {
       <body>
         <ThemeProvider>
           <LanguageProvider>
-            <Navbar />
-            <main style={{ paddingTop: '72px' }}>{children}</main>
-            <Footer />
+            <AuthProvider>
+              <Navbar />
+              <main style={{ paddingTop: '72px' }}>{children}</main>
+              <Footer />
+            </AuthProvider>
           </LanguageProvider>
         </ThemeProvider>
       </body>

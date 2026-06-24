@@ -5,17 +5,20 @@ import Link from 'next/link';
 import styles from './Navbar.module.css';
 import { useTranslation } from '@/components/LanguageContext';
 import { useTheme } from '@/components/ThemeContext';
+import { useAuth } from '@/components/AuthProvider';
 
 const ARBOL_URL = 'https://galicia-migrante.vercel.app';
 
 export default function Navbar() {
   const { locale, setLocale, t } = useTranslation();
   const { theme, setTheme } = useTheme();
+  const { user, logout, roles } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [origenesOpen, setOrigenesOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const [themeOpen, setThemeOpen] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -28,7 +31,15 @@ export default function Navbar() {
     setOrigenesOpen(false);
     setLangOpen(false);
     setThemeOpen(false);
+    setProfileDropdownOpen(false);
   };
+
+  const handleLogout = async () => {
+    await logout();
+    closeAll();
+  };
+
+  const isAdmin = roles.some(r => r.es_admin || r.nombre.startsWith('admin_'));
 
   return (
     <nav className={`${styles.nav} ${scrolled ? styles.scrolled : ''}`} role="navigation" aria-label="Navegación principal">
@@ -157,8 +168,38 @@ export default function Navbar() {
             )}
           </div>
 
-          <a href={`${ARBOL_URL}/auth`} className={styles.btnLogin} id="nav-login-btn">{t('nav.ingresar')}</a>
-          <a href={`${ARBOL_URL}/auth?mode=register`} className={styles.btnRegister} id="nav-register-btn">{t('nav.registrarse')}</a>
+          {user ? (
+            <div className={styles.profileDropdown}>
+              <button 
+                className={styles.profileBtn} 
+                onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                aria-haspopup="true" 
+                aria-expanded={profileDropdownOpen}
+              >
+                👤 {user.user_metadata?.nombre || user.email.split('@')[0]}
+              </button>
+              {profileDropdownOpen && (
+                <div className={styles.profileMenu} role="menu">
+                  <Link href="/dashboard" className={styles.profileMenuItem} onClick={closeAll} role="menuitem">
+                    📊 Mi Perfil
+                  </Link>
+                  {isAdmin && (
+                    <Link href="/admin" className={styles.profileMenuItem} onClick={closeAll} role="menuitem">
+                      🛡️ Panel Admin
+                    </Link>
+                  )}
+                  <button onClick={handleLogout} className={styles.profileMenuItem} role="menuitem">
+                    🚪 Cerrar Sesión
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <>
+              <Link href="/auth" className={styles.btnLogin} id="nav-login-btn">{t('nav.ingresar')}</Link>
+              <Link href="/auth?mode=register" className={styles.btnRegister} id="nav-register-btn">{t('nav.registrarse')}</Link>
+            </>
+          )}
         </div>
 
         {/* Mobile hamburger */}
@@ -234,8 +275,20 @@ export default function Navbar() {
             <li><Link href="/xunta" onClick={closeAll} className={styles.mobileLink}>{t('nav.xunta')}</Link></li>
           </ul>
           <div className={styles.mobileAuth}>
-            <a href={`${ARBOL_URL}/auth`} className={styles.btnLogin} onClick={closeAll} id="mobile-login-btn">{t('nav.ingresar')}</a>
-            <a href={`${ARBOL_URL}/auth?mode=register`} className={styles.btnRegister} onClick={closeAll} id="mobile-register-btn">{t('nav.registrarse')}</a>
+            {user ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
+                <Link href="/dashboard" className={styles.mobileLink} onClick={closeAll}>📊 Mi Perfil</Link>
+                {isAdmin && <Link href="/admin" className={styles.mobileLink} onClick={closeAll}>🛡️ Panel Admin</Link>}
+                <button onClick={handleLogout} className={styles.mobileLink} style={{ textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer', padding: '12px 16px', color: 'var(--color-text-muted)' }}>
+                  🚪 Cerrar Sesión
+                </button>
+              </div>
+            ) : (
+              <>
+                <Link href="/auth" className={styles.btnLogin} onClick={closeAll} id="mobile-login-btn">{t('nav.ingresar')}</Link>
+                <Link href="/auth?mode=register" className={styles.btnRegister} onClick={closeAll} id="mobile-register-btn">{t('nav.registrarse')}</Link>
+              </>
+            )}
           </div>
         </div>
       )}

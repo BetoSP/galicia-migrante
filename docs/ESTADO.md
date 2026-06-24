@@ -219,11 +219,11 @@ El módulo se integra cuando tenga todos estos items:
 - [x] **Tabla traducciones_interfaz:** Crear esquema en base de datos para anulaciones (overrides) dinámicas de traducción.
 - [x] **Seguridad y Moderación del Blog (RLS):** Crear la tabla `blog_posts` en Supabase con semillas de ejemplo y definir las políticas RLS por autoría, membresía y moderación administrativa.
 - [x] **Finalizar Módulo Blog:** Taxonomía, lector/listado premium, posts iniciales interactivos y conexión dinámica a Supabase.
-- [ ] **Personalización de i18n y Delegación (Mini-App):** Permitir al administrador editar traducciones y delegar permisos a traductores externos.
-- [ ] **Cero Hardcoding (Portal Dinámico):** Conectar `/agenda` y `/asociaciones` a las tablas correspondientes en Supabase (diferido temporalmente por decisión del usuario).
-- [ ] **Panel de Administración Centralizado (`/admin`):** Diseñar y construir el panel con tabs de gestión para cada módulo (general, blog, agenda, asociaciones, usuarios).
-- [ ] **Desarrollo de Micrositios de Asociaciones:** Ruta dinámica `/asociaciones/[slug]`.
-- [ ] **i18n en base de datos:** Conectar la tabla `traducciones` de Supabase con los listados dinámicos.
+- [x] **Personalización de i18n y Delegación (Mini-App):** Permitir al administrador editar traducciones y delegar permisos a traductores externos.
+- [x] **Cero Hardcoding (Portal Dinámico):** Conectar `/agenda` y `/asociaciones` a las tablas correspondientes en Supabase.
+- [x] **Panel de Administración Centralizado (`/admin`):** Diseñar y construir el panel con tabs de gestión para cada módulo (general, blog, agenda, asociaciones, usuarios).
+- [x] **Desarrollo de Micrositios de Asociaciones:** Ruta dinámica `/asociaciones/[slug]`.
+- [x] **i18n en base de datos:** Conectar la tabla `traducciones` de Supabase con los listados dinámicos.
 
 ---
 
