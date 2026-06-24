@@ -1,0 +1,244 @@
+.page {
+  max-width: var(--max-width-content, 1200px);
+  margin: 0 auto;
+  padding: var(--spacing-12, 48px) var(--spacing-6, 24px);
+  min-height: 100vh;
+}
+
+.header {
+  margin-bottom: var(--spacing-12, 48px);
+  padding-bottom: var(--spacing-8, 32px);
+  border-bottom: 1px solid var(--color-border-light);
+  text-align: center;
+}
+
+.title {
+  font-family: var(--font-display, sans-serif);
+  font-size: var(--font-size-4xl, 32px);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-tight, 1.15);
+  margin-bottom: var(--spacing-4, 16px);
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-size: var(--font-size-lg, 15px);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-base, 1.5);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8, 32px);
+}
+
+.empty {
+  color: var(--color-text-muted, #718096);
+  font-size: var(--font-size-lg, 15px);
+  text-align: center;
+  padding: 48px 0;
+}
+
+.postList {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: var(--spacing-6, 24px);
+}
+
+.postCard {
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-lg, 12px);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all var(--transition-base, 220ms ease);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.postCard:hover {
+  background: var(--color-bg-hover);
+  border-color: rgba(200, 169, 110, 0.3); /* Gold border hover */
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(200, 169, 110, 0.15); /* Warm gold drop shadow */
+}
+
+.postLink {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: var(--spacing-6, 24px);
+  color: inherit;
+  text-decoration: none;
+}
+
+.postMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3, 12px);
+  margin-bottom: var(--spacing-4, 16px);
+  flex-wrap: wrap;
+}
+
+.date {
+  font-size: var(--font-size-sm, 11px);
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-medium, 500);
+}
+
+.tags {
+  display: flex;
+  gap: var(--spacing-2, 8px);
+  flex-wrap: wrap;
+}
+
+.tag {
+  font-size: var(--font-size-2xs, 8.5px);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-secondary, #c8a96e);
+  background: rgba(200, 169, 110, 0.08);
+  border: 1px solid rgba(200, 169, 110, 0.15);
+  padding: 1px var(--spacing-2, 8px);
+  border-radius: var(--radius-full, 9999px);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.postTitle {
+  font-family: var(--font-display, sans-serif);
+  font-size: var(--font-size-xl, 16px);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-snug, 1.35);
+  margin-bottom: var(--spacing-3, 12px);
+  transition: color var(--transition-fast, 150ms ease);
+}
+
+.postCard:hover .postTitle {
+  color: var(--color-secondary, #c8a96e);
+}
+
+.excerpt {
+  font-size: var(--font-size-md, 13px);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-relaxed, 1.75);
+  margin-bottom: var(--spacing-5, 20px);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex-grow: 1;
+}
+
+.readMore {
+  font-size: var(--font-size-sm, 11px);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-secondary, #c8a96e);
+  transition: all var(--transition-fast, 150ms ease);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.postCard:hover .readMore {
+  color: var(--color-city-gold-dark, #b59254);
+  transform: translateX(4px);
+}
+
+/* Categorías y Tabs */
+.tabsContainer {
+  margin-bottom: var(--spacing-4, 16px);
+  border-bottom: 1px solid var(--color-border-light);
+  padding-bottom: var(--spacing-2, 8px);
+}
+
+.tabs {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  gap: var(--spacing-2, 8px);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.tabBtn {
+  background: none;
+  border: none;
+  padding: 8px 16px;
+  font-family: var(--font-display, sans-serif);
+  font-size: var(--font-size-md, 13px);
+  font-weight: var(--font-weight-medium, 500);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  border-radius: var(--radius-sm, 4px);
+  transition: all var(--transition-fast, 150ms ease);
+}
+
+.tabBtn:hover {
+  color: var(--color-text-primary);
+  background: var(--color-bg-hover);
+}
+
+.tabBtnActive {
+  color: var(--color-secondary, #c8a96e) !important;
+  background: rgba(200, 169, 110, 0.08) !important;
+  font-weight: var(--font-weight-semibold, 600);
+}
+
+.categoryInfo {
+  background: var(--color-bg-soft);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md, 7px);
+  padding: var(--spacing-4, 16px);
+  margin-bottom: var(--spacing-8, 32px);
+  text-align: center;
+}
+
+.categoryDesc {
+  font-size: var(--font-size-md, 13px);
+  color: var(--color-text-secondary);
+  font-style: italic;
+  margin: 0;
+}
+
+.provisionalBadge {
+  font-size: var(--font-size-2xs, 8.5px);
+  font-weight: var(--font-weight-bold, 700);
+  color: #e76f51; /* Terracota / Alerta */
+  background: rgba(231, 111, 81, 0.08);
+  border: 1px solid rgba(231, 111, 81, 0.15);
+  padding: 1px var(--spacing-2, 8px);
+  border-radius: var(--radius-full, 9999px);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.categoryBadge {
+  font-size: var(--font-size-2xs, 8.5px);
+  font-weight: var(--font-weight-bold, 700);
+  color: #457b9d; /* Ocean blue light */
+  background: rgba(69, 123, 157, 0.08);
+  border: 1px solid rgba(69, 123, 157, 0.15);
+  padding: 1px var(--spacing-2, 8px);
+  border-radius: var(--radius-full, 9999px);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-left: auto;
+}
+
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--color-border-light);
+  padding-top: var(--spacing-4, 16px);
+  margin-top: auto;
+}

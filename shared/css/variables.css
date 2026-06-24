@@ -11,18 +11,30 @@
   ═══════════════════════════════════════════════════════════════════
 */
 
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700;800&display=swap");
 
 :root {
-
-  /* ── Colores de marca — Galicia Migrante ─────────────────────────────── */
-  --color-primary:             #00bcd4;
-  --color-primary-light:       #e0f7fa;
-  --color-primary-dark:        #0097a7;
-  --color-secondary:           #e91e63;
-  --color-secondary-light:     #fce4ec;
-  --color-accent-green:        #43a047;
-  --color-accent-green-h:      #388e3c;
+  /* ... color definitions ... */
+  --color-primary:             #1d3557; /* Atlántico profundo */
+  --color-primary-light:       #f1faee; /* Espuma marina */
+  --color-primary-dark:        #1d2a44; /* Atlántico oscuro */
+  --color-secondary:           #c8a96e; /* Dorado del destino */
+  --color-secondary-light:     #f4eedb; /* Arena suave */
+  
+  /* ── Balance Cultural (Rural, Mar, Urbe) ─────────────────────────────── */
+  --color-rural-green:         #1d3d2a; /* Bosque gallego */
+  --color-rural-green-light:   #2d5a3c; /* Prados gallegos */
+  --color-rural-green-bg:      #f0f5f1; /* Fondo rural suave */
+  --color-ocean-blue:          #1d3557; /* Mar Atlántico */
+  --color-ocean-blue-light:    #457b9d; /* Bruma costera */
+  --color-ocean-blue-bg:       #f2f7fa; /* Fondo marino suave */
+  --color-city-gold:           #c8a96e; /* Luz urbana / Inmigración */
+  --color-city-gold-dark:      #b59254; /* Dorado oscuro */
+  --color-city-terracotta:     #e76f51; /* Tejas urbanas receptoras */
+  --color-city-bg:             #faf6ee; /* Fondo urbano cálido */
+  
+  --color-accent-green:        #2d5a3c;
+  --color-accent-green-h:      #1d3d2a;
 
   /* ── Neutrales oscuros (chrome / navbar) ─────────────────────────────── */
   --color-chrome-bg:           #1a1a2e;
@@ -70,6 +82,8 @@
 
   /* ── Tipografía ──────────────────────────────────────────────────────── */
   --font-body:                 "Inter", system-ui, -apple-system, sans-serif;
+  --font-display:              "Outfit", sans-serif;
+  --font-serif:                "Lora", serif;
   --font-mono:                 "SFMono-Regular", monospace;
 
   --font-size-2xs:             8.5px;
@@ -140,3 +154,55 @@
   --max-width-content:         1200px;
   --max-width-prose:           72ch;
 }
+
+/* ── Dark Mode overrides ───────────────────────────────────────────────── */
+html[data-theme="dark"] {
+  --color-nav-bg:              #122436;
+  --color-canvas-bg:           #0d1b2a;
+  --color-card-bg:             rgba(255, 255, 255, 0.02);
+  --color-card-border:         rgba(255, 255, 255, 0.08);
+  --color-bg-subtle:           #0d1b2a;
+  --color-bg-soft:             #122436;
+  --color-bg-hover:            rgba(255, 255, 255, 0.04);
+
+  --color-border-light:        rgba(255, 255, 255, 0.08);
+  --color-border-medium:       rgba(255, 255, 255, 0.15);
+  --color-border-table:        rgba(255, 255, 255, 0.06);
+  --color-border-card:         rgba(255, 255, 255, 0.06);
+  --color-border-row:          rgba(255, 255, 255, 0.04);
+
+  --color-text-primary:        #ffffff;
+  --color-text-secondary:      rgba(255, 255, 255, 0.7);
+  --color-text-muted:          rgba(255, 255, 255, 0.45);
+  --color-text-placeholder:    rgba(255, 255, 255, 0.3);
+  --color-text-inverse:        #1a202c;
+  
+  --shadow-card:               0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+@media (prefers-color-scheme: dark) {
+  html[data-theme="auto"] {
+    --color-nav-bg:              #122436;
+    --color-canvas-bg:           #0d1b2a;
+    --color-card-bg:             rgba(255, 255, 255, 0.02);
+    --color-card-border:         rgba(255, 255, 255, 0.08);
+    --color-bg-subtle:           #0d1b2a;
+    --color-bg-soft:             #122436;
+    --color-bg-hover:            rgba(255, 255, 255, 0.04);
+
+    --color-border-light:        rgba(255, 255, 255, 0.08);
+    --color-border-medium:       rgba(255, 255, 255, 0.15);
+    --color-border-table:        rgba(255, 255, 255, 0.06);
+    --color-border-card:         rgba(255, 255, 255, 0.06);
+    --color-border-row:          rgba(255, 255, 255, 0.04);
+
+    --color-text-primary:        #ffffff;
+    --color-text-secondary:      rgba(255, 255, 255, 0.7);
+    --color-text-muted:          rgba(255, 255, 255, 0.45);
+    --color-text-placeholder:    rgba(255, 255, 255, 0.3);
+    --color-text-inverse:        #1a202c;
+    
+    --shadow-card:               0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  }
+}
+

@@ -1,9 +1,0 @@
-# Carpetas excluidas
-auditorias/
-prompts/
-ReferenciaNoHacerCommit
-
-# Archivos excluidos
-
-# Variables de entorno
-arbol/.env

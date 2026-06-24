@@ -1,0 +1,122 @@
+.collapsed {
+  display: none !important;
+  height: 0 !important;
+  width: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.adContainer {
+  width: 100%;
+  max-width: var(--max-width-content, 1200px);
+  margin: var(--spacing-6, 24px) auto;
+  padding: var(--spacing-2, 8px) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1, 4px);
+  animation: fadeIn var(--transition-slow, 350ms ease);
+}
+
+.adLabel {
+  font-size: var(--font-size-xs, 10px);
+  font-weight: var(--font-weight-semibold, 600);
+  color: var(--color-text-muted, #718096);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding-left: var(--spacing-4, 16px);
+}
+
+.adContent {
+  background: var(--color-bg-subtle, #f8fafc);
+  border: 1px dashed var(--color-border-medium, #cbd5e0);
+  border-radius: var(--radius-lg, 12px);
+  overflow: hidden;
+  padding: var(--spacing-4, 16px);
+  transition: all var(--transition-base, 220ms ease);
+}
+
+.adContent:hover {
+  border-color: var(--color-city-gold, #c8a96e);
+  background: var(--color-city-bg, #faf6ee);
+  box-shadow: 0 4px 12px rgba(200, 169, 110, 0.08);
+}
+
+/* Mockup de banner interno */
+.adBannerMockup {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-6, 24px);
+  width: 100%;
+}
+
+.adLogo {
+  width: 44px;
+  height: 44px;
+  background: var(--color-primary, #1d3557);
+  color: var(--color-secondary, #c8a96e);
+  font-size: var(--font-size-lg, 15px);
+  font-weight: var(--font-weight-bold, 700);
+  border-radius: var(--radius-md, 7px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(29, 53, 87, 0.15);
+}
+
+.adText {
+  flex: 1;
+}
+
+.adText h4 {
+  font-size: var(--font-size-md, 13px);
+  font-weight: var(--font-weight-semibold, 600);
+  color: var(--color-text-primary, #1a202c);
+  margin-bottom: 2px;
+}
+
+.adText p {
+  font-size: var(--font-size-sm, 11px);
+  color: var(--color-text-secondary, #4a5568);
+  margin: 0;
+}
+
+.adBtn {
+  background: var(--color-secondary, #c8a96e);
+  color: #1a1a2e;
+  border: none;
+  font-size: var(--font-size-sm, 11px);
+  font-weight: var(--font-weight-bold, 700);
+  padding: 8px 16px;
+  border-radius: var(--radius-full, 9999px);
+  cursor: pointer;
+  transition: all var(--transition-fast, 150ms ease);
+}
+
+.adBtn:hover {
+  background: var(--color-city-gold-dark, #b59254);
+  transform: translateY(-1px);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 600px) {
+  .adBannerMockup {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--spacing-4, 16px);
+  }
+  .adLogo {
+    margin: 0 auto;
+  }
+  .adBtn {
+    width: 100%;
+  }
+}

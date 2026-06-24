@@ -1,0 +1,31 @@
+{
+  "nav": {
+    "inicio": "Home",
+    "quienes_somos": "About us",
+    "asociaciones": "Associations",
+    "agenda": "Agenda",
+    "blog": "Blog",
+    "origenes": "Your origins",
+    "arbol": "Your family tree",
+    "arbol_desc": "Build and explore your family history",
+    "lugar": "Your place in Galicia",
+    "lugar_desc": "Parishes, villages and councils of your ancestors",
+    "xunta": "Xunta & Spain",
+    "ingresar": "Log in",
+    "registrarse": "Sign up",
+    "proximamente": "Soon",
+    "pronto": "Soon",
+    "cerrar_menu": "Close menu",
+    "abrir_menu": "Open menu"
+  },
+  "footer": {
+    "tagline": "Preserve, rebuild and transmit the memory of the Galician diaspora.",
+    "seccion_portal": "Portal",
+    "seccion_modulos": "Modules",
+    "seccion_institucional": "Institutional",
+    "xunta_galicia": "Xunta de Galicia",
+    "gobierno_espana": "Government of Spain",
+    "derechos": "All rights reserved.",
+    "hecho_con": "Made with ❤️ for the Galician diaspora"
+  }
+}

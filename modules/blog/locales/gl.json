@@ -1,0 +1,31 @@
+{
+  "nav": {
+    "inicio": "Inicio",
+    "quienes_somos": "Quen somos",
+    "asociaciones": "Asociacións",
+    "agenda": "Axenda",
+    "blog": "Blog",
+    "origenes": "As túas orixes",
+    "arbol": "A túa árbore xenealóxica",
+    "arbol_desc": "Constrúe e explora a túa historia familiar",
+    "lugar": "O teu lugar en Galicia",
+    "lugar_desc": "Parroquias, aldeas e concellos dos teus ancestros",
+    "xunta": "Xunta e España",
+    "ingresar": "Acceder",
+    "registrarse": "Rexistrarse",
+    "proximamente": "Proximamente",
+    "pronto": "Pronto",
+    "cerrar_menu": "Pechar menú",
+    "abrir_menu": "Abrir menú"
+  },
+  "footer": {
+    "tagline": "Preservar, reconstruír e transmitir a memoria da diáspora galega.",
+    "seccion_portal": "Portal",
+    "seccion_modulos": "Módulos",
+    "seccion_institucional": "Institucional",
+    "xunta_galicia": "Xunta de Galicia",
+    "gobierno_espana": "Goberno de España",
+    "derechos": "Todos os dereitos reservados.",
+    "hecho_con": "Feito con ❤️ para a diáspora galega"
+  }
+}
