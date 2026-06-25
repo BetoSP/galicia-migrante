@@ -93,13 +93,13 @@ export default function Navbar() {
                     <div className={styles.dropdownDesc}>{t('nav.arbol_desc')}</div>
                   </div>
                 </Link>
-                <div className={`${styles.dropdownItem} ${styles.dropdownItemDisabled}`} role="menuitem" aria-disabled="true">
+                <Link href="/lugar-galicia" className={styles.dropdownItem} role="menuitem" onClick={closeAll}>
                   <span className={styles.dropdownIcon}>📍</span>
                   <div>
-                    <div className={styles.dropdownTitle}>{t('nav.lugar')} <span className="badge-soon">{t('nav.pronto')}</span></div>
+                    <div className={styles.dropdownTitle}>{t('nav.lugar')}</div>
                     <div className={styles.dropdownDesc}>{t('nav.lugar_desc')}</div>
                   </div>
-                </div>
+                </Link>
               </div>
             )}
           </li>
@@ -273,7 +273,7 @@ export default function Navbar() {
             <li>
               <span className={styles.mobileSectionLabel}>{t('nav.origenes')}</span>
               <Link href={ARBOL_URL} onClick={closeAll} className={`${styles.mobileLink} ${styles.mobileSubLink}`}>🌳 {t('nav.arbol')}</Link>
-              <span className={`${styles.mobileLink} ${styles.mobileSubLink} ${styles.mobileDisabled}`}>📍 {t('nav.lugar')} <span className="badge-soon">{t('nav.pronto')}</span></span>
+              <Link href="/lugar-galicia" onClick={closeAll} className={`${styles.mobileLink} ${styles.mobileSubLink}`}>📍 {t('nav.lugar')}</Link>
             </li>
             <li><Link href="/xunta" onClick={closeAll} className={styles.mobileLink}>{t('nav.xunta')}</Link></li>
           </ul>

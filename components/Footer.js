@@ -4,7 +4,7 @@ import Link from 'next/link';
 import styles from './Footer.module.css';
 import { useTranslation } from '@/components/LanguageContext';
 
-const ARBOL_URL = 'https://galicia-migrante.vercel.app';
+const ARBOL_URL = '/arbol';
 
 export default function Footer() {
   const { t } = useTranslation();
@@ -44,9 +44,9 @@ export default function Footer() {
           <div className={styles.linkGroup}>
             <h3 className={styles.groupTitle}>{t('footer.seccion_modulos')}</h3>
             <ul>
-              <li><a href={ARBOL_URL}>{t('nav.arbol')}</a></li>
+              <li><Link href={ARBOL_URL}>{t('nav.arbol')}</Link></li>
               <li><Link href="/blog">{t('nav.blog')}</Link></li>
-              <li><span className={styles.disabledLink}>{t('nav.lugar')} <span className="badge-soon">{t('nav.pronto')}</span></span></li>
+              <li><Link href="/lugar-galicia">{t('nav.lugar')}</Link></li>
             </ul>
           </div>
           <div className={styles.linkGroup}>
