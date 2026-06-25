@@ -1,6 +1,6 @@
 'use client';
 
-import App from '@/components/arbol/App';
+import App from '@/app/arbol/components/App';
 
 export default function ArbolPage() {
   return <App />;
