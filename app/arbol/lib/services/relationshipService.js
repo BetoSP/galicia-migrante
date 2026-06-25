@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import { COUPLE_TYPES } from "@/lib/arbol/graph/relationshipTypes.js";
+import { COUPLE_TYPES } from "@/app/arbol/lib/graph/relationshipTypes.js";
 
 export async function fetchRelationships() {
   const { data, error } = await supabase

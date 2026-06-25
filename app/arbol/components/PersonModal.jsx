@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { computeFullSurnames } from "@/lib/arbol/utils/personUtils.js";
-import { fetchDistinctPlaces } from "@/lib/arbol/services/peopleService.js";
+import { computeFullSurnames } from "@/app/arbol/lib/utils/personUtils.js";
+import { fetchDistinctPlaces } from "@/app/arbol/lib/services/peopleService.js";
 
 // ── Constantes ─────────────────────────────────────────────────────────────────
 const DATE_PRECISION = [

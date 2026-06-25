@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { computeFullSurnames } from "@/lib/arbol/utils/personUtils.js";
+import { computeFullSurnames } from "@/app/arbol/lib/utils/personUtils.js";
 
 const DATE_PRECISION = ["Exactamente", "Antes de", "Después de", "Alrededor de"];
 

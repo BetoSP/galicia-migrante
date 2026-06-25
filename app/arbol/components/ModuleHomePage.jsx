@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { computeDisplaySurnames } from "@/lib/arbol/utils/personUtils.js";
+import { computeDisplaySurnames } from "@/app/arbol/lib/utils/personUtils.js";
 
 const MONTH_NAMES_ES = [
   "enero", "febrero", "marzo", "abril", "mayo", "junio",

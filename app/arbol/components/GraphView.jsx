@@ -1,6 +1,6 @@
 import { useEffect, useRef, useMemo, useState, useCallback } from "react";
-import { layoutFamilyGraph } from "@/lib/arbol/graph/layoutFamilyGraph.js";
-import { COUPLE_TYPES, PARENT_TYPES } from "@/lib/arbol/graph/relationshipTypes.js";
+import { layoutFamilyGraph } from "@/app/arbol/lib/graph/layoutFamilyGraph.js";
+import { COUPLE_TYPES, PARENT_TYPES } from "@/app/arbol/lib/graph/relationshipTypes.js";
 import {
   PERSON_W, PERSON_H,
   AVATAR_CX, AVATAR_CY, AVATAR_R, TEXT_X,
@@ -28,7 +28,7 @@ import {
   GHOST_TEXT_X, GHOST_SHADOW_DX, GHOST_SHADOW_DY,
   GHOST_LINE_W, GHOST_LINE_OPACITY,
   elbowPath, ghostLinePath, getSlotOffset,
-} from "@/lib/arbol/graph/geometry.js";
+} from "@/app/arbol/lib/graph/geometry.js";
 
 const MIN_ZOOM = 0.2;
 const MAX_ZOOM = 2;

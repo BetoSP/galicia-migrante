@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import { COUPLE_TYPES, PARENT_TYPES } from "@/lib/arbol/graph/relationshipTypes.js";
-import { updatePerson } from "@/lib/arbol/services/peopleService.js";
+import { COUPLE_TYPES, PARENT_TYPES } from "@/app/arbol/lib/graph/relationshipTypes.js";
+import { updatePerson } from "@/app/arbol/lib/services/peopleService.js";
 
 // ── Constantes de etiquetas ──────────────────────────────────────────────────
 

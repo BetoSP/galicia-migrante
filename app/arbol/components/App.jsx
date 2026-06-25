@@ -9,11 +9,11 @@ import PersonModal from "./PersonModal";
 import RelationshipModal from "./RelationshipModal";
 import AddRelativeModal from "./AddRelativeModal";
 import ProfileDrawer from "./ProfileDrawer";
-import { fetchPeople, fetchPeopleByIds, addPerson, updatePerson, deletePerson } from "@/lib/arbol/services/peopleService";
-import { fetchRelationships, fetchRelationshipsByPersonIds, dissolveRelationship, addRelationship, updateRelationship, deleteRelationship } from "@/lib/arbol/services/relationshipService";
-import { buildFamilyGraph } from "@/lib/arbol/graph/buildFamilyGraph.js";
-import { COUPLE_TYPES } from "@/lib/arbol/graph/relationshipTypes.js";
-import { computeDisplaySurnames } from "@/lib/arbol/utils/personUtils.js";
+import { fetchPeople, fetchPeopleByIds, addPerson, updatePerson, deletePerson } from "@/app/arbol/lib/services/peopleService";
+import { fetchRelationships, fetchRelationshipsByPersonIds, dissolveRelationship, addRelationship, updateRelationship, deleteRelationship } from "@/app/arbol/lib/services/relationshipService";
+import { buildFamilyGraph } from "@/app/arbol/lib/graph/buildFamilyGraph.js";
+import { COUPLE_TYPES } from "@/app/arbol/lib/graph/relationshipTypes.js";
+import { computeDisplaySurnames } from "@/app/arbol/lib/utils/personUtils.js";
 import { supabase } from "@/lib/supabase.js";
 
 export default function App() {
