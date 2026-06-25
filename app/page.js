@@ -1,14 +1,13 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from './page.module.css';
+import { useTranslation } from '@/components/LanguageContext';
 
-export const metadata = {
-  title: 'Galicia Migrante — Portal de la diáspora gallega',
-  description:
-    'Ecosistema digital para preservar, reconstruir y transmitir la cultura gallega en la diáspora. Árbol genealógico, comunidad, cultura e identidad.',
-};
 
-const ARBOL_URL = 'https://galicia-migrante.vercel.app';
+
+const ARBOL_URL = '/arbol';
 
 const SERVICES = [
   {
@@ -92,6 +91,8 @@ const EVENTS = [
 ];
 
 export default function HomePage() {
+  const { t } = useTranslation();
+
   return (
     <>
       {/* ── HERO ───────────────────────────────────────────────── */}
@@ -110,32 +111,31 @@ export default function HomePage() {
         <div className={styles.heroContent}>
           <div className={styles.heroEyebrow}>
             <span className={styles.eyebrowLine} />
-            <span>Ecosistema digital gallego</span>
+            <span>{t('home.eyebrow')}</span>
             <span className={styles.eyebrowLine} />
           </div>
           <h1 className={styles.heroTitle}>
-            Tus raíces,<br />
-            <em>tu historia,</em><br />
-            tu identidad.
+            {t('home.roots')}<br />
+            <em>{t('home.history')}</em><br />
+            {t('home.identity')}
           </h1>
           <p className={styles.heroDesc}>
-            Galicia Migrante es el lugar donde la diáspora gallega preserva su memoria,
-            reconstruye su genealogía y se reconecta con la Galicia de sus ancestros.
+            {t('home.desc')}
           </p>
           <div className={styles.heroCtas}>
-            <a href={ARBOL_URL} className={styles.ctaPrimary} id="hero-cta-arbol">
-              🌳 Construye tu árbol
-            </a>
+            <Link href={ARBOL_URL} className={styles.ctaPrimary} id="hero-cta-arbol">
+              {t('home.cta_arbol')}
+            </Link>
             <Link href="/quienes-somos" className={styles.ctaSecondary} id="hero-cta-conocer">
-              Conocer más
+              {t('home.cta_conocer')}
             </Link>
           </div>
           <div className={styles.heroStats}>
-            <div className={styles.stat}><strong>3.800+</strong><span>parroquias gallegas</span></div>
+            <div className={styles.stat}><strong>3.800+</strong><span>{t('home.stat_parroquias')}</span></div>
             <div className={styles.statDiv} />
-            <div className={styles.stat}><strong>GEDCOM</strong><span>importación completa</span></div>
+            <div className={styles.stat}><strong>GEDCOM</strong><span>{t('home.stat_gedcom')}</span></div>
             <div className={styles.statDiv} />
-            <div className={styles.stat}><strong>3 idiomas</strong><span>ES · GL · EN</span></div>
+            <div className={styles.stat}><strong>3 idiomas</strong><span>{t('home.stat_languages')}</span></div>
           </div>
         </div>
         <div className={styles.heroScroll} aria-hidden="true">
@@ -228,9 +228,9 @@ export default function HomePage() {
             Sumate al ecosistema digital de la diáspora gallega.<br />
             Empieza con tu árbol genealógico, es gratuito.
           </p>
-          <a href={`${ARBOL_URL}/auth?mode=register`} className={styles.ctaPrimaryLg} id="final-cta-btn">
+          <Link href="/auth?mode=register" className={styles.ctaPrimaryLg} id="final-cta-btn">
             Registrarme gratis →
-          </a>
+          </Link>
         </div>
       </section>
     </>

@@ -1,8 +1,0 @@
-{
-  "name": "modulo-investigacion",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "echo \"Investigacion module not yet implemented\""
-  }
-}

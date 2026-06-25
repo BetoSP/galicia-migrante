@@ -1,31 +1,39 @@
 # ESTADO — Galicia Migrante
 ### Estado del desarrollo del ecosistema
-**Versión:** 1.0 — 23 de junio de 2026
+**Versión:** 1.1 — 24 de junio de 2026
 **Mantenimiento:** actualizar después de cada sesión de trabajo significativa.
 
 ---
 
-## Arquitectura del monorepo
+## Arquitectura Unificada (Next.js App Router)
+
+A partir del 24 de junio de 2026, la arquitectura basada en workspaces npm (`modules/` y `shared/`) fue eliminada. Toda la funcionalidad (Portal, Blog, Árbol Genealógico y placeholders de módulos) fue consolidada en una única aplicación Next.js.
 
 ```
-Portal Galicia Migrante/            ← raíz npm workspaces
-├── shared/                         ← tokens CSS compartidos
-├── components/                     ← Navbar.js + Footer.js (raíz)
-├── app/                            ← rutas Next.js raíz (Portal Principal)
+Portal Galicia Migrante/            ← Next.js App
+├── app/                            ← Rutas del Portal y Módulos
+│   ├── arbol/                      ← Módulo Árbol Genealógico
+│   ├── biblioteca/                 ← Placeholder del módulo Biblioteca
+│   ├── blog/                       ← Módulo Blog dinámico
+│   ├── investigacion/              ← Placeholder del módulo Investigación
+│   ├── lugar-galicia/              ← Placeholder de "Tu lugar en Galicia"
+│   ├── quienes-somos/              ← Quiénes somos
+│   ├── xunta/                      ← Trámites Xunta
+│   └── ...                         ← Layouts, estilos y páginas globales
+├── components/                     ← Componentes compartidos del portal (Navbar, Footer, etc.)
+│   └── arbol/                      ← Componentes del Árbol Genealógico
+├── content/
+│   └── posts/                      ← Artículos en MDX (Blog)
 ├── database/
-│   └── migrations/                 ← 12 migraciones ejecutadas (001–012)
-├── docs/                           ← DOCUMENTACIÓN CENTRALIZADA
-│   ├── PRD.md                      ← PRD v2.2
-│   ├── ESTADO.md                   ← ESTE ARCHIVO
-│   ├── database/                   ← Documentación de Base de Datos
-│   ├── arbol/                      ← Documentación del Módulo Árbol
-│   └── blog/                       ← Documentación del Módulo Blog
-└── modules/                        ← MÓDULOS DEL ECOVISTEMA
-    ├── arbol/                      ← React 19 + Vite 8 + Supabase — módulo genealógico
-    ├── blog/                       ← Next.js 16 + MDX — blog editorial
-    ├── biblioteca/                 ← [BOSQUEJO] módulo Biblioteca
-    ├── investigacion/              ← [BOSQUEJO] módulo Investigación
-    └── lugar-galicia/              ← [BOSQUEJO] módulo "Tu lugar en Galicia"
+│   └── migrations/                 ← Migraciones de base de datos
+├── docs/                           ← Documentación centralizada
+├── lib/
+│   ├── arbol/                      ← Lógica, utilidades y servicios del Árbol Genealógico
+│   ├── posts.js                    ← Lógica de lectura MDX
+│   └── supabase.js                 ← Cliente Supabase centralizado
+├── public/                         ← Activos estáticos públicos
+├── locales/                        ← Archivos de internacionalización (GL, ES, EN)
+└── package.json                    ← Dependencias consolidadas (Next.js 16 + React 19 + Supabase + MDX)
 ```
 
 ---

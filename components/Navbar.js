@@ -2,14 +2,17 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import styles from './Navbar.module.css';
 import { useTranslation } from '@/components/LanguageContext';
 import { useTheme } from '@/components/ThemeContext';
 import { useAuth } from '@/components/AuthProvider';
 
-const ARBOL_URL = 'https://galicia-migrante.vercel.app';
+const ARBOL_URL = '/arbol';
 
 export default function Navbar() {
+  const pathname = usePathname();
+  const isHome = pathname === '/';
   const { locale, setLocale, t } = useTranslation();
   const { theme, setTheme } = useTheme();
   const { user, logout, roles } = useAuth();
@@ -42,7 +45,7 @@ export default function Navbar() {
   const isAdmin = roles.some(r => r.es_admin || r.nombre.startsWith('admin_'));
 
   return (
-    <nav className={`${styles.nav} ${scrolled ? styles.scrolled : ''}`} role="navigation" aria-label="Navegación principal">
+    <nav className={`${styles.nav} ${(scrolled || !isHome) ? styles.scrolled : ''}`} role="navigation" aria-label="Navegación principal">
       <div className={styles.inner}>
 
         {/* Logo */}
@@ -83,13 +86,13 @@ export default function Navbar() {
             </button>
             {origenesOpen && (
               <div className={styles.dropdownMenu} role="menu">
-                <a href={ARBOL_URL} className={styles.dropdownItem} role="menuitem">
+                <Link href={ARBOL_URL} className={styles.dropdownItem} role="menuitem">
                   <span className={styles.dropdownIcon}>🌳</span>
                   <div>
                     <div className={styles.dropdownTitle}>{t('nav.arbol')}</div>
                     <div className={styles.dropdownDesc}>{t('nav.arbol_desc')}</div>
                   </div>
-                </a>
+                </Link>
                 <div className={`${styles.dropdownItem} ${styles.dropdownItemDisabled}`} role="menuitem" aria-disabled="true">
                   <span className={styles.dropdownIcon}>📍</span>
                   <div>
@@ -269,7 +272,7 @@ export default function Navbar() {
             <li><Link href="/blog" onClick={closeAll} className={styles.mobileLink}>{t('nav.blog')}</Link></li>
             <li>
               <span className={styles.mobileSectionLabel}>{t('nav.origenes')}</span>
-              <a href={ARBOL_URL} onClick={closeAll} className={`${styles.mobileLink} ${styles.mobileSubLink}`}>🌳 {t('nav.arbol')}</a>
+              <Link href={ARBOL_URL} onClick={closeAll} className={`${styles.mobileLink} ${styles.mobileSubLink}`}>🌳 {t('nav.arbol')}</Link>
               <span className={`${styles.mobileLink} ${styles.mobileSubLink} ${styles.mobileDisabled}`}>📍 {t('nav.lugar')} <span className="badge-soon">{t('nav.pronto')}</span></span>
             </li>
             <li><Link href="/xunta" onClick={closeAll} className={styles.mobileLink}>{t('nav.xunta')}</Link></li>

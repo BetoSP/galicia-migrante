@@ -1,8 +1,0 @@
-{
-  "name": "modulo-biblioteca",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "echo \"Biblioteca module not yet implemented\""
-  }
-}

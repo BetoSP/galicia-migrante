@@ -1,8 +1,0 @@
-{
-  "name": "modulo-lugar-galicia",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "echo \"Lugar en Galicia module not yet implemented\""
-  }
-}

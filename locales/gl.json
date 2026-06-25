@@ -27,5 +27,17 @@
     "gobierno_espana": "Goberno de España",
     "derechos": "Todos os dereitos reservados.",
     "hecho_con": "Feito con ❤️ para a diáspora galega"
+  },
+  "home": {
+    "eyebrow": "Ecosistema dixital galego",
+    "roots": "As túas raíces,",
+    "history": "a túa historia,",
+    "identity": "a túa identidade.",
+    "desc": "Galicia Migrante é o lugar onde a diáspora galega preserva a súa memoria, reconstrúe a súa xenealoxía e reconéctase coa Galicia dos seus ancestros.",
+    "cta_arbol": "🌳 Constrúe a túa árbore",
+    "cta_conocer": "Saber máis",
+    "stat_parroquias": "parroquias galegas",
+    "stat_gedcom": "importación completa",
+    "stat_languages": "3 idiomas"
   }
 }

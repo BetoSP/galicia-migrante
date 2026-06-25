@@ -27,5 +27,17 @@
     "gobierno_espana": "Government of Spain",
     "derechos": "All rights reserved.",
     "hecho_con": "Made with ❤️ for the Galician diaspora"
+  },
+  "home": {
+    "eyebrow": "Galician digital ecosystem",
+    "roots": "Your roots,",
+    "history": "your history,",
+    "identity": "your identity.",
+    "desc": "Galicia Migrante is the place where the Galician diaspora preserves its memory, reconstructs its genealogy, and reconnects with the Galicia of its ancestors.",
+    "cta_arbol": "🌳 Build your tree",
+    "cta_conocer": "Learn more",
+    "stat_parroquias": "Galician parishes",
+    "stat_gedcom": "full import",
+    "stat_languages": "3 languages"
   }
 }
