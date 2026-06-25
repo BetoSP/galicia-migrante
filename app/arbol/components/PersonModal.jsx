@@ -28,8 +28,8 @@ const MIGRATION_CONDITIONS = [
 // ── Sub-componentes ────────────────────────────────────────────────────────────
 function PersonAvatar({ gender, size = 80 }) {
   const bg =
-    gender === "female" ? "#f48fb1" :
-    gender === "male"   ? "#90caf9" : "#b0bec5";
+    gender === "female" ? "var(--node-gender-bar-female)" :
+    gender === "male"   ? "var(--node-gender-bar-male)" : "var(--node-gender-bar-unknown)";
   return (
     <div className="pm-avatar" style={{ width: size, height: size, background: bg }}>
       <svg viewBox="0 0 24 24" width={size * 0.55} height={size * 0.55} fill="white">
