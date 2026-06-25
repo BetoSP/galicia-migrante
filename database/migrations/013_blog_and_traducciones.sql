@@ -54,6 +54,9 @@ CREATE POLICY "traducciones_interfaz_admin_write"
 
 
 -- ── 2. BLOG POSTS CON SEGURIDAD RLS ─────────────────────────────────────
+-- Registrar feature flag para creación de posts
+INSERT INTO features (key, nombre_es, modulo) VALUES ('crear_posts', 'Crear artículos de blog', 'blog') ON CONFLICT (key) DO NOTHING;
+
 CREATE TABLE IF NOT EXISTS blog_posts (
   id                UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   slug              TEXT UNIQUE NOT NULL,
@@ -115,7 +118,7 @@ CREATE POLICY "blog_posts_insert_auth"
         -- Validar permisos de membresía / suscripción
         SELECT 1 FROM usuario_permisos up
         WHERE up.usuario_id = auth.uid()
-          AND up.permiso = 'crear_posts'
+          AND up.feature_key = 'crear_posts'
       )
       OR EXISTS (
         -- O que sea administrador general
