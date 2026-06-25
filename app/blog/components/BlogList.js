@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import styles from '@/app/blog/blog.module.css';
-import { initialCategories } from '@/lib/categories';
+import styles from '../blog.module.css';
+import { initialCategories } from '../lib/categories';
 
 export default function BlogList({ posts }) {
   const [selectedCat, setSelectedCat] = useState('todos');

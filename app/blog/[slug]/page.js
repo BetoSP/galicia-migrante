@@ -1,8 +1,8 @@
 import { notFound } from 'next/navigation';
 import { MDXRemote } from 'next-mdx-remote/rsc';
-import { getPostBySlug, getAllPostSlugs } from '@/lib/posts';
+import { getPostBySlug, getAllPostSlugs } from '../lib/posts';
 import styles from './post.module.css';
-import AdSlot from '@/components/AdSlot';
+import AdSlot from '../components/AdSlot';
 
 export async function generateStaticParams() {
   const slugs = await getAllPostSlugs();

@@ -1,7 +1,7 @@
-import { getAllPosts } from '@/lib/posts';
+import { getAllPosts } from './lib/posts';
 import styles from './blog.module.css';
-import AdSlot from '@/components/AdSlot';
-import BlogList from '@/components/BlogList';
+import AdSlot from './components/AdSlot';
+import BlogList from './components/BlogList';
 
 export const metadata = {
   title: 'Blog',
