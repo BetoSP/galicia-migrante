@@ -24,16 +24,6 @@ export function AuthProvider({ children }) {
   const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Sincronizar tokens en las cookies
-  const syncCookies = (sessionObj) => {
-    if (sessionObj) {
-      document.cookie = `sb-access-token=${sessionObj.access_token}; path=/; max-age=604800; SameSite=Lax; Secure`;
-      document.cookie = `sb-refresh-token=${sessionObj.refresh_token}; path=/; max-age=604800; SameSite=Lax; Secure`;
-    } else {
-      document.cookie = 'sb-access-token=; path=/; max-age=0; SameSite=Lax; Secure';
-      document.cookie = 'sb-refresh-token=; path=/; max-age=0; SameSite=Lax; Secure';
-    }
-  };
 
   const fetchProfileAndRoles = async (userId) => {
     try {
@@ -70,7 +60,6 @@ export function AuthProvider({ children }) {
     supabase.auth.getSession().then(({ data: { session: activeSession } }) => {
       setSession(activeSession);
       setUser(activeSession?.user ?? null);
-      syncCookies(activeSession);
       if (activeSession?.user) {
         fetchProfileAndRoles(activeSession.user.id);
       }
@@ -81,7 +70,6 @@ export function AuthProvider({ children }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, newSession) => {
       setSession(newSession);
       setUser(newSession?.user ?? null);
-      syncCookies(newSession);
 
       if (event === 'SIGNED_IN' && newSession?.user) {
         fetchProfileAndRoles(newSession.user.id);
@@ -177,7 +165,6 @@ export function AuthProvider({ children }) {
     setUser(null);
     setProfile(null);
     setRoles([]);
-    syncCookies(null);
     setLoading(false);
   };
 
@@ -189,57 +176,14 @@ export function AuthProvider({ children }) {
     return data;
   };
 
-  // Simulación / Esqueleto de Biometría / Passkeys (WebAuthn)
+  // Passkeys / WebAuthn — pendiente de implementación real (segunda etapa)
+  // Ver: https://supabase.com/docs/guides/auth/auth-mfa y WebAuthn API
   const registerPasskey = async () => {
-    if (!window.PublicKeyCredential) {
-      throw new Error('Las llaves de acceso (Passkeys) no están soportadas en este navegador.');
-    }
-    
-    // En Supabase real, esto inicia el flujo MFA WebAuthn o usa credenciales de navegador
-    // Para esta fase, simularemos el registro exitoso guardándolo en la metadata del usuario
-    alert('Registrando Passkey biométrica con Windows Hello / FaceID / TouchID...');
-    
-    const { data: { user: currentUser } } = await supabase.auth.getUser();
-    if (!currentUser) throw new Error('Debes iniciar sesión para registrar una Passkey.');
-
-    const { data, error } = await supabase.auth.updateUser({
-      data: {
-        has_passkey: true,
-        passkey_registered_at: new Date().toISOString(),
-      }
-    });
-
-    if (error) throw error;
-    
-    // Refrescar perfil local
-    if (profile) {
-      setProfile({ ...profile, has_passkey: true });
-    }
-    return data;
+    throw new Error('El registro de Passkeys estará disponible en la próxima etapa del portal.');
   };
 
-  const loginWithPasskey = async (email) => {
-    if (!window.PublicKeyCredential) {
-      throw new Error('Las llaves de acceso (Passkeys) no están soportadas en este navegador.');
-    }
-
-    // Flujo simulado de login rápido
-    alert(`Iniciando sesión biométrica para ${email}...`);
-    
-    // En producción se usaría:
-    // await supabase.auth.signInWithSSO(...) o signInWithOtp con passkey
-    
-    // Obtenemos un usuario simulado o hacemos un login directo con credencial otp / mockup
-    // Para demo/desarrollo local usaremos una cuenta demo existente
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password: 'PasskeySuperSecureMockupPassword123!',
-    });
-
-    if (error) {
-      throw new Error('No se encontró una Passkey registrada para este email o falló la verificación.');
-    }
-    return data;
+  const loginWithPasskey = async () => {
+    throw new Error('El login con Passkey estará disponible en la próxima etapa del portal.');
   };
 
   return (

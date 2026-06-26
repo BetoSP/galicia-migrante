@@ -1,4 +1,7 @@
 import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
+
+const MAX_TEXT_BYTES = 5000;
 
 // Motor de traducción real y gratuito (MyMemory API) con fallback
 const translateText = async (text, targetLang) => {
@@ -52,16 +55,39 @@ const translateText = async (text, targetLang) => {
 
 export async function POST(request) {
   try {
+    // Verificar autenticación — solo usuarios con sesión activa pueden traducir
+    const authHeader = request.headers.get('authorization');
+    const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
+
+    if (!token) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const supabaseServer = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      { global: { headers: { Authorization: `Bearer ${token}` } } }
+    );
+
+    const { data: { user }, error: authError } = await supabaseServer.auth.getUser();
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { text, targetLangs } = await request.json();
 
     if (!text) {
       return NextResponse.json({ error: 'Text is required' }, { status: 400 });
     }
 
+    // Limitar tamaño del payload para evitar abuso
+    if (Buffer.byteLength(text, 'utf8') > MAX_TEXT_BYTES) {
+      return NextResponse.json({ error: 'Text too long (max 5000 bytes)' }, { status: 413 });
+    }
+
     const langs = targetLangs || ['gl', 'en'];
     const translations = {};
 
-    // Resolver las traducciones de forma asíncrona
     await Promise.all(
       langs.map(async (lang) => {
         translations[lang] = await translateText(text, lang);
