@@ -1,6 +1,7 @@
 import { useEffect, useRef, useMemo, useState, useCallback } from "react";
 import { layoutFamilyGraph } from "@/app/arbol/lib/graph/layoutFamilyGraph.js";
 import { COUPLE_TYPES, PARENT_TYPES } from "@/app/arbol/lib/graph/relationshipTypes.js";
+import { useTranslation } from "@/components/LanguageContext";
 import {
   PERSON_W, PERSON_H,
   AVATAR_CX, AVATAR_CY, AVATAR_R, TEXT_X,
@@ -62,7 +63,7 @@ function PersonAvatar({ cx, cy, r }) {
   );
 }
 
-function getVacantSlots(nodeId, edges, nodes) {
+function getVacantSlots(nodeId, edges, nodes, t) {
   const hasFather = edges.some((e) => e.target === nodeId && PARENT_TYPES.has(e.type) && e.type.includes("father"));
   const hasMother = edges.some((e) => e.target === nodeId && PARENT_TYPES.has(e.type) && e.type.includes("mother"));
   const hasSpouse = edges.some((e) =>
@@ -76,14 +77,14 @@ function getVacantSlots(nodeId, edges, nodes) {
   );
 
   const slots = [];
-  if (!hasFather) slots.push({ type: "father", label: "Agregar padre", position: "top-left" });
-  if (!hasMother) slots.push({ type: "mother", label: "Agregar madre", position: "top-right" });
-  if (!hasSpouse) slots.push({ type: "spouse", label: "Agregar cónyuge", position: "right" });
-  if (hasSpouse) slots.push({ type: "spouse_another", label: "Agregar otra pareja", position: "right" });
-  slots.push({ type: "son", label: "Agregar hijo", position: "bottom-left" });
-  slots.push({ type: "daughter", label: "Agregar hija", position: "bottom-right" });
-  slots.push({ type: "brother", label: "Agregar hermano", position: "left-top" });
-  slots.push({ type: "sister", label: "Agregar hermana", position: "left-bot" });
+  if (!hasFather) slots.push({ type: "father", label: t("tree.graph.vacant.father"), position: "top-left" });
+  if (!hasMother) slots.push({ type: "mother", label: t("tree.graph.vacant.mother"), position: "top-right" });
+  if (!hasSpouse) slots.push({ type: "spouse", label: t("tree.graph.vacant.spouse"), position: "right" });
+  if (hasSpouse) slots.push({ type: "spouse_another", label: t("tree.graph.vacant.spouse_another"), position: "right" });
+  slots.push({ type: "son", label: t("tree.graph.vacant.son"), position: "bottom-left" });
+  slots.push({ type: "daughter", label: t("tree.graph.vacant.daughter"), position: "bottom-right" });
+  slots.push({ type: "brother", label: t("tree.graph.vacant.brother"), position: "left-top" });
+  slots.push({ type: "sister", label: t("tree.graph.vacant.sister"), position: "left-bot" });
   return slots;
 }
 
@@ -214,6 +215,7 @@ export default function GraphView({
   onOpenDrawer = null,
   searchQuery = "",
 }) {
+  const { t } = useTranslation();
   const layout = useMemo(() => layoutFamilyGraph(graph), [graph]);
   const nodeMap = useMemo(() => new Map(layout.nodes.map((n) => [n.id, n])), [layout.nodes]);
 
@@ -350,7 +352,7 @@ export default function GraphView({
   }
 
   const activeNode = activeGhostNodeId ? nodeMap.get(activeGhostNodeId) : null;
-  const ghostSlots = activeNode ? getVacantSlots(activeGhostNodeId, layout.edges, layout.nodes) : [];
+  const ghostSlots = activeNode ? getVacantSlots(activeGhostNodeId, layout.edges, layout.nodes, t) : [];
   const cursor = activeGhostNodeId ? "default" : isPanning ? "grabbing" : "grab";
 
   return (
@@ -371,7 +373,7 @@ export default function GraphView({
               <circle cx={24} cy={16} r={8} />
               <path d="M8 40c0-8.837 7.163-16 16-16s16 7.163 16 16" />
             </svg>
-            <p className="canvas-empty__text">Sin datos. Usá "Agregar persona" para comenzar.</p>
+            <p className="canvas-empty__text">{t("tree.graph.empty_title")}</p>
           </div>
         ) : (
           <>
@@ -484,7 +486,7 @@ export default function GraphView({
 
             {activeGhostNodeId && (
               <button className="ghost-close-btn" onClick={() => setActiveGhostNodeId(null)} style={{ zIndex: 20 }}>
-                Cerrar ✕
+                {t("tree.graph.close")}
               </button>
             )}
           </>

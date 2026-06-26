@@ -1,3 +1,5 @@
+import { useTranslation } from "@/components/LanguageContext";
+
 // ── Iconos de vistas ──────────────────────────────────────────────────────────
 function IconFamilia() {
   return (
@@ -33,19 +35,13 @@ function IconLista() {
 }
 
 const CONTEXT_VIEWS = [
-  { id: "familia",   label: "Vista familiar",  Icon: IconFamilia,   mvp: true  },
-  { id: "expandido", label: "Árbol expandido", Icon: IconExpandido, mvp: false },
-  { id: "foto",      label: "Fotos",           Icon: IconFotos,     mvp: false },
-  { id: "lista",     label: "Lista",           Icon: IconLista,     mvp: false },
+  { id: "familia",   labelKey: "tree.context.view_familiar",  Icon: IconFamilia,   mvp: true  },
+  { id: "expandido", labelKey: "tree.context.view_expanded", Icon: IconExpandido, mvp: false },
+  { id: "foto",      labelKey: "tree.context.view_photos",     Icon: IconFotos,     mvp: false },
+  { id: "lista",     labelKey: "tree.context.view_list",     Icon: IconLista,     mvp: false },
 ];
 
 // ── Props ──────────────────────────────────────────────────────────────────────
-// treeName        string          — nombre del árbol activo
-// focusPerson     string|null     — nombre de la persona foco del render
-// totalPersons    number|null     — total de personas en DB
-// renderedPersons number|null     — personas visibles en el canvas
-// viewMode        string          — vista activa ("familia" | "expandido" | ...)
-// onViewModeChange fn(id)         — callback al cambiar vista
 export default function TreeContextBar({
   treeName,
   focusPerson,
@@ -54,12 +50,14 @@ export default function TreeContextBar({
   viewMode,
   onViewModeChange,
 }) {
+  const { t } = useTranslation();
+
   return (
     <div className="context-bar">
 
       {/* ── Breadcrumb: nombre árbol | persona foco ──────────────────────── */}
       <div className="context-bar__breadcrumb">
-        <span className="context-bar__tree-label">{treeName ?? "Mi árbol"}</span>
+        <span className="context-bar__tree-label">{treeName ?? t("tree.context.my_tree")}</span>
         {focusPerson && (
           <>
             <span className="context-bar__sep"> | </span>
@@ -71,16 +69,16 @@ export default function TreeContextBar({
       {/* ── Contador de personas ─────────────────────────────────────────── */}
       {totalPersons != null && (
         <span className="context-bar__count">
-          <strong>{renderedPersons ?? "–"}</strong> de <strong>{totalPersons}</strong> personas
+          <strong>{renderedPersons ?? "–"}</strong> {t("tree.context.de")} <strong>{totalPersons}</strong> {t("tree.context.persons")}
         </span>
       )}
 
       {/* ── Vistas del árbol — extremo derecho ───────────────────────────── */}
       <div className="context-bar__views">
-        {CONTEXT_VIEWS.map(({ id, label, Icon, mvp }) => (
+        {CONTEXT_VIEWS.map(({ id, labelKey, Icon, mvp }) => (
           <button
             key={id}
-            title={mvp ? label : `${label} — Próximamente`}
+            title={mvp ? t(labelKey) : `${t(labelKey)} — ${t("tree.context.proximamente")}`}
             disabled={!mvp}
             onClick={() => mvp && onViewModeChange?.(id)}
             className={[
@@ -90,8 +88,8 @@ export default function TreeContextBar({
             ].filter(Boolean).join(" ")}
           >
             <Icon />
-            <span className="context-bar__view-label">{label}</span>
-            {!mvp && <span className="module-nav__badge-soon">Próxim.</span>}
+            <span className="context-bar__view-label">{t(labelKey)}</span>
+            {!mvp && <span className="module-nav__badge-soon">{t("tree.context.proxim")}</span>}
           </button>
         ))}
       </div>

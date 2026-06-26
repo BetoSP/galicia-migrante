@@ -49,29 +49,59 @@ function IconInfo() {
   );
 }
 
+import { useTranslation } from "@/components/LanguageContext";
+import { useAuth } from "@/components/AuthProvider";
+
 // ── TopNavBar ──────────────────────────────────────────────────────────────
 export default function TopNavBar({ siteName = "Galicia Migrante" }) {
-  const navItems = ["Inicio", "Árbol", "Descubrimientos", "Fotos", "Investigación"];
+  const { t, locale } = useTranslation();
+  const { user, profile } = useAuth();
+
+  const displayName = profile 
+    ? `${profile.nombre} ${profile.apellido || ""}`.trim()
+    : user?.user_metadata?.nombre 
+      ? `${user.user_metadata.nombre} ${user.user_metadata.apellido || ""}`.trim()
+      : user?.email 
+        ? user.email.split('@')[0]
+        : t('tree.nav.guest');
+
+  const initials = displayName
+    .split(" ")
+    .filter(Boolean)
+    .map(n => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase() || "??";
+
+  const navItems = [
+    { key: "nav.inicio", href: "/" },
+    { key: "nav.arbol", href: "/arbol", active: true },
+    { key: "tree.nav.discoveries", href: "#" },
+    { key: "tree.nav.photos", href: "#" },
+    { key: "tree.nav.research", href: "#" }
+  ];
+
+  const currentLangLabel = locale === 'es-AR' ? 'Español' : locale === 'gl' ? 'Galego' : 'English';
 
   return (
     <header>
       {/* ─ Chrome strip ─ */}
       <div className="chrome-bar">
         <div className="chrome-bar__left">
-          <span className="chrome-bar__site-name">{siteName} Web Site</span>
-          <button className="chrome-bar__icon-btn" title="Notificaciones"><IconBell /></button>
-          <button className="chrome-bar__icon-btn" title="Mensajes"><IconMail /></button>
+          <span className="chrome-bar__site-name">{siteName} {t('tree.nav.website_suffix')}</span>
+          <button className="chrome-bar__icon-btn" title={t('tree.nav.notifications')}><IconBell /></button>
+          <button className="chrome-bar__icon-btn" title={t('tree.nav.messages')}><IconMail /></button>
         </div>
 
         <div className="chrome-bar__right">
-          <button className="btn-premium">⭐ Actualiza a Premium</button>
-          <button className="chrome-bar__icon-btn" title="Carrito"><IconCart /></button>
+          <button className="btn-premium">{t('tree.nav.premium')}</button>
+          <button className="chrome-bar__icon-btn" title={t('tree.nav.cart')}><IconCart /></button>
           <div className="chrome-bar__user">
-            <div className="chrome-bar__avatar">AP</div>
-            <span>Alberto Sanchez Peña</span>
+            <div className="chrome-bar__avatar">{initials}</div>
+            <span>{displayName}</span>
           </div>
-          <button className="chrome-bar__icon-btn" title="Ayuda"><IconHelp /></button>
-          <button className="chrome-bar__lang">🌐 Español</button>
+          <button className="chrome-bar__icon-btn" title={t('tree.nav.help')}><IconHelp /></button>
+          <button className="chrome-bar__lang">🌐 {currentLangLabel}</button>
         </div>
       </div>
 
@@ -83,24 +113,24 @@ export default function TopNavBar({ siteName = "Galicia Migrante" }) {
           </div>
           <div className="main-nav__logo-text">
             <span className="main-nav__logo-line1">Galicia Migrante</span>
-            <span className="main-nav__logo-line2">Portal Genealógico</span>
+            <span className="main-nav__logo-line2">{t('tree.nav.subtitle')}</span>
           </div>
         </div>
 
         <div className="main-nav__links">
           {navItems.map((item) => (
             <a
-              key={item}
-              href="#"
-              className={`main-nav__link${item === "Árbol" ? " main-nav__link--active" : ""}`}
+              key={item.key}
+              href={item.href}
+              className={`main-nav__link${item.active ? " main-nav__link--active" : ""}`}
             >
-              {item}
+              {t(item.key)}
             </a>
           ))}
         </div>
 
         <div className="main-nav__right">
-          <button className="main-nav__icon-btn" title="Información">
+          <button className="main-nav__icon-btn" title={t('tree.nav.info')}>
             <IconInfo />
           </button>
         </div>

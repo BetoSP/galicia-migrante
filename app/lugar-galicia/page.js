@@ -1,11 +1,11 @@
-import Link from 'next/link';
+'use client';
 
-export const metadata = {
-  title: 'Lugar de Origen',
-  description: 'Sección en desarrollo — Próximamente disponible.',
-};
+import Link from 'next/link';
+import { useTranslation } from '@/components/LanguageContext';
 
 export default function LugarGaliciaPage() {
+  const { t } = useTranslation();
+
   return (
     <div style={{
       maxWidth: '800px',
@@ -33,7 +33,7 @@ export default function LugarGaliciaPage() {
           color: 'var(--color-text-primary, #1e293b)',
           marginBottom: '16px'
         }}>
-          Lugar de Origen en Galicia
+          {t('home.servicios.territorio.title') || 'Lugar de Origen en Galicia'}
         </h1>
         <p style={{
           fontSize: '16px',
@@ -42,7 +42,7 @@ export default function LugarGaliciaPage() {
           margin: '0 auto 32px auto',
           lineHeight: '1.6'
         }}>
-          Explora mapas interactivos de ayuntamientos, parroquias y comarcas históricas gallegas desde donde partieron tus antepasados. Esta sección estará disponible próximamente.
+          {t('home.geografia.desc') || 'Explora mapas interactivos de ayuntamientos, parroquias y comarcas históricas gallegas desde donde partieron tus antepasados. Esta sección estará disponible próximamente.'}
         </p>
         <Link href="/" style={{
           background: 'var(--color-secondary, #c8a96e)',
@@ -55,7 +55,7 @@ export default function LugarGaliciaPage() {
           boxShadow: '0 4px 10px rgba(200, 169, 110, 0.2)',
           transition: 'transform 0.2s'
         }}>
-          Volver al Inicio
+          {t('tree.under_dev.back') || 'Volver al Inicio'}
         </Link>
       </div>
     </div>

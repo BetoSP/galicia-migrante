@@ -15,8 +15,13 @@ import { buildFamilyGraph } from "@/app/arbol/lib/graph/buildFamilyGraph.js";
 import { COUPLE_TYPES } from "@/app/arbol/lib/graph/relationshipTypes.js";
 import { computeDisplaySurnames } from "@/app/arbol/lib/utils/personUtils.js";
 import { supabase } from "@/lib/supabase.js";
+import { useTranslation } from "@/components/LanguageContext";
+import { useAuth } from "@/components/AuthProvider";
 
 export default function App() {
+  const { t } = useTranslation();
+  const { user: authUser, profile } = useAuth();
+
 
   const [people, setPeople] = useState([]);
   const [relationships, setRelationships] = useState([]);
@@ -30,7 +35,25 @@ export default function App() {
   const [modalAddRelative, setModalAddRelative] = useState(null);
   const [drawerPersonId, setDrawerPersonId] = useState(null);
   const [activeSection, setActiveSection] = useState("tree");
-  const [activeTree, setActiveTree] = useState({ name: "Mi árbol familiar", ownerName: "Alberto Sanchez Peña" });
+  const [activeTree, setActiveTree] = useState(() => ({
+    name: "",
+    ownerName: ""
+  }));
+
+  useEffect(() => {
+    const owner = profile
+      ? `${profile.nombre} ${profile.apellido || ""}`.trim()
+      : authUser?.user_metadata?.nombre
+        ? `${authUser.user_metadata.nombre} ${authUser.user_metadata.apellido || ""}`.trim()
+        : authUser?.email
+          ? authUser.email.split('@')[0]
+          : t("tree.nav.guest");
+
+    setActiveTree({
+      name: t("tree.home.default_tree_name"),
+      ownerName: owner
+    });
+  }, [profile, authUser, t]);
 
   const focusInitialized = useRef(false);
   const focusWasCleared = useRef(false);
@@ -209,7 +232,7 @@ export default function App() {
             )
           );
           if (existingSpouse) {
-            alert("Esta persona ya tiene una pareja activa. Usá 'Agregar otra pareja'.");
+            alert(t("tree.alerts.spouse_active"));
             setModalAddRelative(null);
             return;
           }
@@ -221,7 +244,7 @@ export default function App() {
           (r) => r.type === "father" && String(r.person_b_id) === String(fromPersonId)
         );
         if (existing) {
-          alert("Esta persona ya tiene un padre registrado.");
+          alert(t("tree.alerts.father_exists"));
           setModalAddRelative(null);
           return;
         }
@@ -232,7 +255,7 @@ export default function App() {
           (r) => r.type === "mother" && String(r.person_b_id) === String(fromPersonId)
         );
         if (existing) {
-          alert("Esta persona ya tiene una madre registrada.");
+          alert(t("tree.alerts.mother_exists"));
           setModalAddRelative(null);
           return;
         }
@@ -263,7 +286,7 @@ export default function App() {
       }
 
       const newPerson = await addPerson(person);
-      if (!newPerson) throw new Error("No se pudo crear la persona");
+      if (!newPerson) throw new Error(t("tree.alerts.create_failed"));
 
       if (slotType === "father" || slotType === "mother") {
         await addRelationship({
@@ -443,7 +466,7 @@ export default function App() {
 
       <ModuleNavBar
         ref={navBarRef}
-        user={{ name: "Alberto Sanchez Peña" }}
+        user={{ name: activeTree.ownerName }}
         trees={[activeTree]}
         activeTree={activeTree}
         onTreeChange={setActiveTree}
@@ -497,10 +520,10 @@ export default function App() {
       {activeSection !== "home" && activeSection !== "tree" && (
         <div className="home-page">
           <div className="home-section">
-            <h2 className="home-section__title">En desarrollo</h2>
-            <p className="home-empty-msg">Esta sección estará disponible próximamente.</p>
+            <h2 className="home-section__title">{t("tree.under_dev.title")}</h2>
+            <p className="home-empty-msg">{t("tree.under_dev.desc")}</p>
             <button className="btn-secondary" style={{ marginTop: "var(--spacing-3)" }} onClick={() => setActiveSection("tree")}>
-              Volver al árbol
+              {t("tree.under_dev.back")}
             </button>
           </div>
         </div>

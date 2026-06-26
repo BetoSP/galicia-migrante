@@ -1,51 +1,141 @@
+'use client';
+
+import React, { useEffect, useState, use } from 'react';
 import { notFound } from 'next/navigation';
 import { MDXRemote } from 'next-mdx-remote/rsc';
-import { getPostBySlug, getAllPostSlugs } from '../lib/posts';
 import styles from './post.module.css';
 import AdSlot from '../components/AdSlot';
+import { supabase } from '@/lib/supabase';
+import { useTranslation } from '@/components/LanguageContext';
 
-export async function generateStaticParams() {
-  const slugs = await getAllPostSlugs();
-  return slugs.map((slug) => ({ slug }));
-}
+export default function PostPage({ params: paramsPromise }) {
+  const params = use(paramsPromise);
+  const { slug } = params;
+  const { locale, t } = useTranslation();
 
-export async function generateMetadata({ params }) {
-  const { slug } = await params;
-  const post = await getPostBySlug(slug);
-  if (!post) return {};
-  return {
-    title: post.title,
-    description: post.excerpt,
-  };
-}
+  const [post, setPost] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [translatedContent, setTranslatedContent] = useState(null);
 
-export default async function PostPage({ params }) {
-  const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        const { data } = await supabase
+          .from('blog_posts')
+          .select('slug, autor_nombre, titulo, extracto, contenido, categoria, tags, estado, fecha_publicacion')
+          .eq('slug', slug)
+          .maybeSingle();
 
-  if (!post) notFound();
+        if (data) {
+          setPost({
+            slug: data.slug,
+            title: data.titulo,
+            date: data.fecha_publicacion || '',
+            excerpt: data.extracto || '',
+            author: data.autor_nombre || 'Galicia Migrante',
+            tags: data.tags || [],
+            category: data.categoria || 'general',
+            status: data.estado || 'publicado',
+            content: data.contenido || '',
+          });
+        }
+      } catch (err) {
+        console.warn('Error fetching post detail:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPost();
+  }, [slug]);
+
+  // Autotraducción en caliente del contenido del post
+  useEffect(() => {
+    if (!post) return;
+    if (locale === 'es-AR') {
+      setTranslatedContent({
+        title: post.title,
+        excerpt: post.excerpt,
+        content: post.content
+      });
+      return;
+    }
+
+    const translatePostData = async () => {
+      const langCode = locale.split('-')[0];
+      try {
+        const resTitle = await fetch('/api/translate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: post.title, targetLangs: [langCode] })
+        });
+        const dTitle = await resTitle.json();
+        const transTitle = dTitle?.translations?.[langCode] || post.title;
+
+        const resExcerpt = await fetch('/api/translate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: post.excerpt, targetLangs: [langCode] })
+        });
+        const dExcerpt = await resExcerpt.json();
+        const transExcerpt = dExcerpt?.translations?.[langCode] || post.excerpt;
+
+        const resContent = await fetch('/api/translate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: post.content, targetLangs: [langCode] })
+        });
+        const dContent = await resContent.json();
+        const transContent = dContent?.translations?.[langCode] || post.content;
+
+        setTranslatedContent({
+          title: transTitle,
+          excerpt: transExcerpt,
+          content: transContent
+        });
+      } catch (err) {
+        console.warn('Error hot-translating post detail:', err);
+        setTranslatedContent({
+          title: post.title,
+          excerpt: post.excerpt,
+          content: post.content
+        });
+      }
+    };
+
+    translatePostData();
+  }, [locale, post]);
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', minHeight: '80vh', justifyContent: 'center', alignItems: 'center', color: 'var(--text-secondary)' }}>
+        {t('common.loading') || 'Cargando...'}
+      </div>
+    );
+  }
+
+  if (!post || !translatedContent) notFound();
 
   return (
     <div className={styles.page}>
       <article className={styles.article}>
         {post.status === 'provisorio' && (
           <div className={styles.provisionalWarning}>
-            ⚠️ <strong>Publicación Provisional:</strong> Este artículo ha sido publicado de forma provisoria y se encuentra en revisión de cumplimiento de pautas editoriales y éticas.
+            ⚠️ <strong>{t('blog.provisional_title') || 'Publicación Provisional:'}</strong> {t('blog.provisional_desc') || 'Este artículo ha sido publicado de forma provisoria y se encuentra en revisión de cumplimiento de pautas editoriales y éticas.'}
           </div>
         )}
 
         <header className={styles.header}>
           <div className={styles.meta}>
-            <time className={styles.date}>{formatDate(post.date)}</time>
+            <time className={styles.date}>{formatDate(post.date, locale)}</time>
             {post.author && (
-              <span className={styles.author}>por {post.author}</span>
+              <span className={styles.author}>{t('blog.by') || 'por'} {post.author}</span>
             )}
           </div>
 
-          <h1 className={styles.title}>{post.title}</h1>
+          <h1 className={styles.title}>{translatedContent.title}</h1>
 
-          {post.excerpt && (
-            <p className={styles.excerpt}>{post.excerpt}</p>
+          {translatedContent.excerpt && (
+            <p className={styles.excerpt}>{translatedContent.excerpt}</p>
           )}
 
           {post.tags.length > 0 && (
@@ -58,7 +148,7 @@ export default async function PostPage({ params }) {
         </header>
 
         <div className={styles.content}>
-          <MDXRemote source={post.content} />
+          <MDXRemote source={translatedContent.content} />
         </div>
 
         <AdSlot id="blog-post-bottom" />
@@ -67,10 +157,10 @@ export default async function PostPage({ params }) {
   );
 }
 
-function formatDate(dateStr) {
+function formatDate(dateStr, locale = 'es-AR') {
   if (!dateStr) return '';
   const [year, month, day] = dateStr.split('-').map(Number);
-  return new Date(year, month - 1, day).toLocaleDateString('es-AR', {
+  return new Date(year, month - 1, day).toLocaleDateString(locale, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',

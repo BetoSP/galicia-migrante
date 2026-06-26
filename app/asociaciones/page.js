@@ -1,13 +1,10 @@
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import styles from './page.module.css';
-
-export const metadata = {
-  title: 'Asociaciones gallegas',
-  description: 'Directorio de centros gallegos en Argentina y el mundo. Encontrá tu asociación y registrá la tuya.',
-};
-
-export const revalidate = 30; // Revalidar cada 30 segundos
+import { useTranslation } from '@/components/LanguageContext';
 
 const FALLBACK_ASOCIACIONES = [
   { id: 'lalin-buenos-aires', nombre: 'Centro Lalín, Golada y Silleda de Buenos Aires', slug: 'centro-lalin-buenos-aires', ciudad: 'Buenos Aires', pais: 'Argentina', fundacion: 1982 },
@@ -18,33 +15,62 @@ const FALLBACK_ASOCIACIONES = [
   { id: 'asociacion-galicia-mendoza', nombre: 'Asociación Galicia', slug: 'asociacion-galicia-mendoza', ciudad: 'Mendoza', pais: 'Argentina', fundacion: 1945 },
 ];
 
-export default async function AsociacionesPage() {
-  let list = [];
-  try {
-    const { data, error } = await supabase
-      .from('asociaciones')
-      .select('*')
-      .eq('activa', true)
-      .order('nombre', { ascending: true });
+export default function AsociacionesPage() {
+  const { locale, t } = useTranslation();
+  const [list, setList] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    if (data && data.length > 0) {
-      list = data;
-    } else {
-      list = FALLBACK_ASOCIACIONES;
+  useEffect(() => {
+    const fetchAsociaciones = async () => {
+      try {
+        const { data } = await supabase
+          .from('asociaciones')
+          .select('*')
+          .eq('activa', true)
+          .order('nombre', { ascending: true });
+
+        if (data && data.length > 0) {
+          setList(data);
+        } else {
+          setList(FALLBACK_ASOCIACIONES);
+        }
+      } catch (err) {
+        console.warn('Error fetching asociaciones from Supabase, using local fallback:', err);
+        setList(FALLBACK_ASOCIACIONES);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAsociaciones();
+  }, []);
+
+  const getFieldByLocale = (obj, fieldBase) => {
+    if (!obj) return '';
+    if (locale === 'gl') {
+      return obj[`${fieldBase}_gl`] || obj[`${fieldBase}_es`] || obj[fieldBase] || '';
+    } else if (locale === 'en') {
+      return obj[`${fieldBase}_en`] || obj[`${fieldBase}_es`] || obj[fieldBase] || '';
     }
-  } catch (err) {
-    console.warn('Error fetching asociaciones from Supabase, using local fallback:', err);
-    list = FALLBACK_ASOCIACIONES;
+    return obj[`${fieldBase}_es`] || obj[fieldBase] || '';
+  };
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', minHeight: '80vh', justifyContent: 'center', alignItems: 'center', color: 'var(--text-secondary)' }}>
+        {t('common.loading') || 'Cargando...'}
+      </div>
+    );
   }
 
   return (
     <div className={styles.page}>
       <section className={styles.hero}>
         <div className={styles.heroContent}>
-          <p className={styles.eyebrow}>Comunidad</p>
-          <h1 className={styles.title}>Asociaciones gallegas</h1>
+          <p className={styles.eyebrow}>{t('associations.eyebrow') || 'Comunidad'}</p>
+          <h1 className={styles.title}>{t('associations.title') || 'Asociaciones gallegas'}</h1>
           <p className={styles.subtitle}>
-            Los centros gallegos son el corazón de nuestra comunidad. Encontrá tu asociación y conectá con tu colectividad.
+            {t('associations.subtitle_desc') || 'Los centros gallegos son el corazón de nuestra comunidad. Encontrá tu asociación y conectá con tu colectividad.'}
           </p>
         </div>
       </section>
@@ -52,9 +78,9 @@ export default async function AsociacionesPage() {
       <section className={styles.section}>
         <div className={styles.container}>
           <div className={styles.topBar}>
-            <p className={styles.count}>{list.length} asociaciones registradas</p>
+            <p className={styles.count}>{list.length} {t('associations.registered_count') || 'asociaciones registradas'}</p>
             <Link href="/auth?mode=register&redirect=/admin" className={styles.btnRegister}>
-              + Registrar mi asociación
+              {t('associations.btn_register') || '+ Registrar mi asociación'}
             </Link>
           </div>
           <div className={styles.grid}>
@@ -63,22 +89,22 @@ export default async function AsociacionesPage() {
                 <div className={styles.card}>
                   <div className={styles.cardAvatar}>
                     {a.logo_url ? (
-                      <img src={a.logo_url} alt={a.nombre} className={styles.logoImg} />
+                      <img src={a.logo_url} alt={getFieldByLocale(a, 'nombre')} className={styles.logoImg} />
                     ) : (
-                      a.nombre.charAt(0)
+                      getFieldByLocale(a, 'nombre').charAt(0)
                     )}
                   </div>
                   <div className={styles.cardInfo}>
-                    <h2 className={styles.cardTitle}>{a.nombre}</h2>
+                    <h2 className={styles.cardTitle}>{getFieldByLocale(a, 'nombre')}</h2>
                     <p className={styles.cardMeta}>📍 {a.ciudad}, {a.pais}</p>
-                    <p className={styles.cardMeta}>📅 Fundada en {a.fundacion}</p>
+                    <p className={styles.cardMeta}>📅 {t('associations.founded_in') || 'Fundada en'} {a.fundacion}</p>
                   </div>
                 </div>
               </Link>
             ))}
           </div>
           <div className={styles.notice}>
-            <p>¿Tu asociación no aparece? <a href="mailto:hola@galiciamigrante.com">Contactanos para registrarla gratuitamente →</a></p>
+            <p>{t('associations.notice_text') || '¿Tu asociación no aparece?'} <a href="mailto:hola@galiciamigrante.com">{t('associations.notice_link') || 'Contactanos para registrarla gratuitamente →'}</a></p>
           </div>
         </div>
       </section>

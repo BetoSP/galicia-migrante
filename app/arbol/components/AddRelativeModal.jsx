@@ -1,41 +1,50 @@
 import { useState, useMemo } from "react";
 import { computeFullSurnames } from "@/app/arbol/lib/utils/personUtils.js";
+import { useTranslation } from "@/components/LanguageContext";
 
-const DATE_PRECISION = ["Exactamente", "Antes de", "Después de", "Alrededor de"];
+const DATE_PRECISION = ["exactly", "before", "after", "about"];
 
 const SPOUSE_TYPES = [
-    { value: "married", label: "Casado/a" },
-    { value: "partner", label: "Pareja" },
-    { value: "co_parent", label: "Co-padres (sin vínculo formal)" },
-    { value: "separated", label: "Separado/a" },
-    { value: "divorced", label: "Divorciado/a" },
-    { value: "widowed", label: "Viudo/a" },
-    { value: "unknown", label: "Desconocido" },
+    { value: "married", labelKey: "tree.modal.spouse_types.married" },
+    { value: "partner", labelKey: "tree.modal.spouse_types.partner" },
+    { value: "co_parent", labelKey: "tree.modal.spouse_types.co_parent" },
+    { value: "separated", labelKey: "tree.modal.spouse_types.separated" },
+    { value: "divorced", labelKey: "tree.modal.spouse_types.divorced" },
+    { value: "widowed", labelKey: "tree.modal.spouse_types.widowed" },
+    { value: "unknown", labelKey: "tree.modal.spouse_types.unknown" },
 ];
 
 function DateFields({ label, precision, onPrecision, day, onDay, month, onMonth, year, onYear }) {
+    const { t } = useTranslation();
+    const monthNames = t("tree.modal.date_fields.months");
+    const safeMonthNames = Array.isArray(monthNames) ? monthNames : ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+
     return (
         <div className="modal-field-row" style={{ flexDirection: "column", gap: 6 }}>
             <label className="modal-label">{label}</label>
             <div className="modal-field-row">
                 <div className="modal-field modal-field--sm">
                     <select className="form-select" value={precision} onChange={(e) => onPrecision(e.target.value)}>
-                        {DATE_PRECISION.map((p) => <option key={p} value={p}>{p}</option>)}
+                        {DATE_PRECISION.map((p) => (
+                            <option key={p} value={p}>
+                                {t(`tree.modal.date_precision.${p}`)}
+                            </option>
+                        ))}
                     </select>
                 </div>
                 <div className="modal-field modal-field--sm">
-                    <input className="form-input" type="number" min="1" max="31" placeholder="Día" value={day} onChange={(e) => onDay(e.target.value)} />
+                    <input className="form-input" type="number" min="1" max="31" placeholder={t("tree.modal.date_fields.day")} value={day} onChange={(e) => onDay(e.target.value)} />
                 </div>
                 <div className="modal-field modal-field--sm">
                     <select className="form-select" value={month} onChange={(e) => onMonth(e.target.value)}>
-                        <option value="">Mes</option>
-                        {["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"].map((m, i) => (
+                        <option value="">{t("tree.modal.date_fields.month")}</option>
+                        {safeMonthNames.map((m, i) => (
                             <option key={i} value={i + 1}>{m}</option>
                         ))}
                     </select>
                 </div>
                 <div className="modal-field modal-field--sm">
-                    <input className="form-input" type="number" min="1000" max="2100" placeholder="Año" value={year} onChange={(e) => onYear(e.target.value)} />
+                    <input className="form-input" type="number" min="1000" max="2100" placeholder={t("tree.modal.date_fields.year")} value={year} onChange={(e) => onYear(e.target.value)} />
                 </div>
             </div>
         </div>
@@ -43,6 +52,7 @@ function DateFields({ label, precision, onPrecision, day, onDay, month, onMonth,
 }
 
 function NewParentForm({ gender, onGenderChange, onData }) {
+    const { t } = useTranslation();
     const [nombre, setNombre] = useState("");
     const [surname1, setSurname1] = useState("");
     const [surname2, setSurname2] = useState("");
@@ -64,30 +74,30 @@ function NewParentForm({ gender, onGenderChange, onData }) {
         <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 8, padding: "12px", background: "var(--color-bg-soft)", borderRadius: 8 }}>
             <div className="modal-field-row">
                 {[
-                    { value: "male", label: "Hombre" },
-                    { value: "female", label: "Mujer" },
-                    { value: "unknown", label: "Desconocido" },
+                    { value: "male", labelKey: "tree.modal.gender.male" },
+                    { value: "female", labelKey: "tree.modal.gender.female" },
+                    { value: "unknown", labelKey: "tree.modal.gender.unknown" },
                 ].map((opt) => (
                     <label key={opt.value} className="modal-radio-label">
                         <input type="radio" name="newParentGender" value={opt.value} checked={gender === opt.value} onChange={() => onGenderChange(opt.value)} />
-                        {opt.label}
+                        {t(opt.labelKey)}
                     </label>
                 ))}
             </div>
             <div className="modal-field-row">
                 <div className="modal-field">
-                    <label className="modal-label">Nombre/s</label>
-                    <input className="form-input" type="text" value={nombre} placeholder="Nombre/s" onChange={(e) => handleChange("nombre", e.target.value)} />
+                    <label className="modal-label">{t("tree.modal.fields.first_name")}</label>
+                    <input className="form-input" type="text" value={nombre} placeholder={t("tree.modal.fields.first_name")} onChange={(e) => handleChange("nombre", e.target.value)} />
                 </div>
             </div>
             <div className="modal-field-row">
                 <div className="modal-field">
-                    <label className="modal-label">Primer apellido</label>
-                    <input className="form-input" type="text" value={surname1} placeholder="Primer apellido" onChange={(e) => handleChange("surname1", e.target.value)} />
+                    <label className="modal-label">{t("tree.modal.fields.first_surname")}</label>
+                    <input className="form-input" type="text" value={surname1} placeholder={t("tree.modal.fields.first_surname")} onChange={(e) => handleChange("surname1", e.target.value)} />
                 </div>
                 <div className="modal-field">
-                    <label className="modal-label">Segundo apellido</label>
-                    <input className="form-input" type="text" value={surname2} placeholder="Segundo apellido" onChange={(e) => handleChange("surname2", e.target.value)} />
+                    <label className="modal-label">{t("tree.modal.fields.second_surname")}</label>
+                    <input className="form-input" type="text" value={surname2} placeholder={t("tree.modal.fields.second_surname")} onChange={(e) => handleChange("surname2", e.target.value)} />
                 </div>
             </div>
         </div>
@@ -95,6 +105,7 @@ function NewParentForm({ gender, onGenderChange, onData }) {
 }
 
 function PersonSearcher({ candidates, defaultPerson, label, onSelect }) {
+    const { t } = useTranslation();
     const defaultText = defaultPerson
         ? `${defaultPerson.name} ${defaultPerson.surnames ?? ""}`.trim()
         : "";
@@ -139,7 +150,7 @@ function PersonSearcher({ candidates, defaultPerson, label, onSelect }) {
                     type="text"
                     value={query}
                     onChange={(e) => handleQueryChange(e.target.value)}
-                    placeholder="Escribí el nombre para buscar..."
+                    placeholder={t("tree.modal.searcher.placeholder")}
                 />
                 <button
                     type="button"
@@ -152,7 +163,7 @@ function PersonSearcher({ candidates, defaultPerson, label, onSelect }) {
                         cursor: "pointer", fontSize: 16,
                         display: "flex", alignItems: "center", justifyContent: "center",
                     }}
-                    title="Búsqueda avanzada"
+                    title={t("tree.modal.searcher.advanced_tooltip")}
                 >
                     🔍
                 </button>
@@ -161,12 +172,12 @@ function PersonSearcher({ candidates, defaultPerson, label, onSelect }) {
             {showAdvanced && (
                 <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
                     <div className="modal-field modal-field--sm">
-                        <label className="modal-label">Año nac.</label>
-                        <input className="form-input" type="number" min="1000" max="2100" placeholder="Año" value={filterYear} onChange={(e) => setFilterYear(e.target.value)} />
+                        <label className="modal-label">{t("tree.modal.searcher.birth_year")}</label>
+                        <input className="form-input" type="number" min="1000" max="2100" placeholder={t("tree.modal.date_fields.year")} value={filterYear} onChange={(e) => setFilterYear(e.target.value)} />
                     </div>
                     <div className="modal-field">
-                        <label className="modal-label">Lugar nac.</label>
-                        <input className="form-input" type="text" placeholder="Ciudad, País..." value={filterPlace} onChange={(e) => setFilterPlace(e.target.value)} />
+                        <label className="modal-label">{t("tree.modal.searcher.birth_place")}</label>
+                        <input className="form-input" type="text" placeholder={t("tree.modal.fields.city_country_placeholder")} value={filterPlace} onChange={(e) => setFilterPlace(e.target.value)} />
                     </div>
                 </div>
             )}
@@ -182,7 +193,7 @@ function PersonSearcher({ candidates, defaultPerson, label, onSelect }) {
                             onMouseLeave={(e) => e.currentTarget.style.background = "white"}
                         >
                             <strong>{p.name} {p.surnames ?? ""}</strong>
-                            {p.birth_year && <span style={{ color: "var(--color-text-muted)", marginLeft: 8 }}>n. {p.birth_year}</span>}
+                            {p.birth_year && <span style={{ color: "var(--color-text-muted)", marginLeft: 8 }}>{t("tree.modal.searcher.born_abbr")} {p.birth_year}</span>}
                             {p.birth_place && <span style={{ color: "var(--color-text-muted)", marginLeft: 8 }}>{p.birth_place}</span>}
                         </div>
                     ))}
@@ -211,6 +222,7 @@ export default function AddRelativeModal({
     onSave,
     onClose,
 }) {
+    const { t } = useTranslation();
     const isSpouse = slotType === "spouse" || slotType === "spouse_another";
     const isChild = slotType === "son" || slotType === "daughter";
     const isParent = slotType === "father" || slotType === "mother";
@@ -234,14 +246,14 @@ export default function AddRelativeModal({
     const [surname2, setSurname2] = useState(suggestedSurname2 ?? "");
     const [surnameMarried, setSurnameMarried] = useState("");
 
-    const [birthPrec, setBirthPrec] = useState("Exactamente");
+    const [birthPrec, setBirthPrec] = useState("exactly");
     const [birthDay, setBirthDay] = useState("");
     const [birthMonth, setBirthMonth] = useState("");
     const [birthYear, setBirthYear] = useState("");
     const [birthPlace, setBirthPlace] = useState("");
 
     const [isAlive, setIsAlive] = useState(true);
-    const [deathPrec, setDeathPrec] = useState("Exactamente");
+    const [deathPrec, setDeathPrec] = useState("exactly");
     const [deathDay, setDeathDay] = useState("");
     const [deathMonth, setDeathMonth] = useState("");
     const [deathYear, setDeathYear] = useState("");
@@ -250,7 +262,7 @@ export default function AddRelativeModal({
     const [burialPlace, setBurialPlace] = useState("");
 
     const [spouseType, setSpouseType] = useState("married");
-    const [marriagePrec, setMarriagePrec] = useState("Exactamente");
+    const [marriagePrec, setMarriagePrec] = useState("exactly");
     const [marriageDay, setMarriageDay] = useState("");
     const [marriageMonth, setMarriageMonth] = useState("");
     const [marriageYear, setMarriageYear] = useState("");
@@ -274,22 +286,21 @@ export default function AddRelativeModal({
         const surn = fromPerson?.surnames ?? "";
         const full = [name, surn].filter(Boolean).join(" ");
         switch (slotType) {
-            case "father": return `Agregar padre de ${full}`;
-            case "mother": return `Agregar madre de ${full}`;
-            case "spouse": return `Agregar ${gender === "female" ? "esposa" : "esposo"} de ${full}`;
-            case "spouse_another": return `Agregar otra pareja de ${full}`;
-            case "son": return `Agregar hijo de ${full}`;
-            case "daughter": return `Agregar hija de ${full}`;
-            case "brother": return `Agregar hermano de ${full}`;
-            case "sister": return `Agregar hermana de ${full}`;
-            default: return "Agregar familiar";
+            case "father": return t("tree.modal.titles.add_father").replace("{name}", full);
+            case "mother": return t("tree.modal.titles.add_mother").replace("{name}", full);
+            case "spouse": return t("tree.modal.titles.add_spouse_" + gender).replace("{name}", full);
+            case "spouse_another": return t("tree.modal.titles.add_spouse_another").replace("{name}", full);
+            case "son": return t("tree.modal.titles.add_son").replace("{name}", full);
+            case "daughter": return t("tree.modal.titles.add_daughter").replace("{name}", full);
+            case "brother": return t("tree.modal.titles.add_brother").replace("{name}", full);
+            case "sister": return t("tree.modal.titles.add_sister").replace("{name}", full);
+            default: return t("tree.modal.titles.add_relative");
         }
     }
 
     function handleSave() {
         if (saving) return;
 
-        // Padre/madre con persona existente
         if (isParent && selectedExistingParent && !showNewForm) {
             setSaving(true);
             onSave({ existingPersonId: selectedExistingParent.id });
@@ -297,7 +308,6 @@ export default function AddRelativeModal({
         }
         if (isParent && showNewForm && !nombre.trim()) return;
 
-        // Cónyuge con persona existente
         if (isSpouse && selectedExistingSpouse && !showNewSpouseForm) {
             setSaving(true);
             onSave({
@@ -385,13 +395,11 @@ export default function AddRelativeModal({
         onSave({ person, relationship });
     }
 
-    const otherParentLabel = fromPerson?.gender === "male" ? "Madre" : "Padre";
-    const parentLabel = slotType === "father" ? "Padre" : "Madre";
-    const spouseLabel = gender === "female" ? "esposa" : "esposo";
+    const otherParentLabel = fromPerson?.gender === "male" ? t("tree.modal.relation_options.mother") : t("tree.modal.relation_options.father");
+    const parentLabel = slotType === "father" ? t("tree.modal.relation_options.father") : t("tree.modal.relation_options.mother");
 
-    // El label de fecha cambia según el tipo de relación
-    const dateLabel = spouseType === "co_parent" ? "Fecha de inicio de convivencia" : "Fecha de matrimonio";
-    const placeLabel = spouseType === "co_parent" ? "Lugar de convivencia" : "Lugar de matrimonio";
+    const dateLabel = spouseType === "co_parent" ? t("tree.modal.fields.coexistence_date") : t("tree.modal.fields.marriage_date");
+    const placeLabel = spouseType === "co_parent" ? t("tree.modal.fields.coexistence_place") : t("tree.modal.fields.marriage_place");
 
     const okDisabled = saving
         || (isParent && !selectedExistingParent && !showNewForm)
@@ -412,12 +420,12 @@ export default function AddRelativeModal({
                         <PersonSearcher
                             candidates={parentCandidates}
                             defaultPerson={defaultParent}
-                            label={`Buscar ${parentLabel.toLowerCase()} existente`}
+                            label={t("tree.modal.actions.search_label").replace("{label}", parentLabel.toLowerCase())}
                             onSelect={setSelectedExistingParent}
                         />
                         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                             <div style={{ flex: 1, height: 1, background: "var(--color-border-light)" }} />
-                            <span style={{ fontSize: "var(--font-size-sm)", color: "var(--color-text-muted)" }}>o</span>
+                            <span style={{ fontSize: "var(--font-size-sm)", color: "var(--color-text-muted)" }}>{t("tree.modal.actions.or")}</span>
                             <div style={{ flex: 1, height: 1, background: "var(--color-border-light)" }} />
                         </div>
                         <button
@@ -425,7 +433,7 @@ export default function AddRelativeModal({
                             onClick={() => { setShowNewForm((v) => !v); setSelectedExistingParent(null); }}
                             style={{ alignSelf: "flex-start" }}
                         >
-                            {showNewForm ? "Cancelar nueva persona" : `➕ Crear nuevo/a ${parentLabel.toLowerCase()}`}
+                            {showNewForm ? t("tree.modal.actions.cancel_new") : t("tree.modal.actions.create_new").replace("{label}", parentLabel.toLowerCase())}
                         </button>
                     </div>
                 )}
@@ -436,12 +444,12 @@ export default function AddRelativeModal({
                         <PersonSearcher
                             candidates={spouseCandidates}
                             defaultPerson={null}
-                            label={`Buscar pareja existente`}
+                            label={t("tree.modal.actions.search_label").replace("{label}", t("tree.modal.relation_options.spouse_label").toLowerCase())}
                             onSelect={setSelectedExistingSpouse}
                         />
                         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                             <div style={{ flex: 1, height: 1, background: "var(--color-border-light)" }} />
-                            <span style={{ fontSize: "var(--font-size-sm)", color: "var(--color-text-muted)" }}>o</span>
+                            <span style={{ fontSize: "var(--font-size-sm)", color: "var(--color-text-muted)" }}>{t("tree.modal.actions.or")}</span>
                             <div style={{ flex: 1, height: 1, background: "var(--color-border-light)" }} />
                         </div>
                         <button
@@ -449,7 +457,7 @@ export default function AddRelativeModal({
                             onClick={() => { setShowNewSpouseForm((v) => !v); setSelectedExistingSpouse(null); }}
                             style={{ alignSelf: "flex-start" }}
                         >
-                            {showNewSpouseForm ? "Cancelar nueva persona" : `➕ Crear nueva pareja`}
+                            {showNewSpouseForm ? t("tree.modal.actions.cancel_new") : t("tree.modal.actions.create_new").replace("{label}", t("tree.modal.relation_options.spouse_label").toLowerCase())}
                         </button>
                     </div>
                 )}
@@ -459,9 +467,9 @@ export default function AddRelativeModal({
                     <>
                         <div className="modal-field-row">
                             {[
-                                { value: "male", label: "Hombre" },
-                                { value: "female", label: "Mujer" },
-                                { value: "unknown", label: "Desconocido" },
+                                { value: "male", labelKey: "tree.modal.gender.male" },
+                                { value: "female", labelKey: "tree.modal.gender.female" },
+                                { value: "unknown", labelKey: "tree.modal.gender.unknown" },
                             ].map((opt) => (
                                 <label key={opt.value} className="modal-radio-label">
                                     <input
@@ -472,55 +480,55 @@ export default function AddRelativeModal({
                                         onChange={() => setGender(opt.value)}
                                         disabled={slotType.includes("father") || slotType.includes("mother") || slotType === "son" || slotType === "daughter" || slotType === "brother" || slotType === "sister"}
                                     />
-                                    {opt.label}
+                                    {t(opt.labelKey)}
                                 </label>
                             ))}
                         </div>
 
                         <div className="modal-field-row">
                             <div className="modal-field modal-field--sm">
-                                <label className="modal-label">Prefijo</label>
-                                <input className="form-input" type="text" value={prefix} onChange={(e) => setPrefix(e.target.value)} placeholder="Dr., Sr..." />
+                                <label className="modal-label">{t("tree.modal.fields.prefix")}</label>
+                                <input className="form-input" type="text" value={prefix} onChange={(e) => setPrefix(e.target.value)} placeholder={t("tree.modal.fields.prefix_placeholder")} />
                             </div>
                             <div className="modal-field">
-                                <label className="modal-label">Primer nombre</label>
-                                <input className="form-input" type="text" value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder="Primer nombre" autoFocus />
+                                <label className="modal-label">{t("tree.modal.fields.first_name_label")}</label>
+                                <input className="form-input" type="text" value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder={t("tree.modal.fields.first_name_label")} autoFocus />
                             </div>
                             <div className="modal-field">
-                                <label className="modal-label">Segundo nombre</label>
-                                <input className="form-input" type="text" value={nombre2} onChange={(e) => setNombre2(e.target.value)} placeholder="Segundo nombre (opc.)" />
+                                <label className="modal-label">{t("tree.modal.fields.second_name_label")}</label>
+                                <input className="form-input" type="text" value={nombre2} onChange={(e) => setNombre2(e.target.value)} placeholder={t("tree.modal.fields.second_name_placeholder")} />
                             </div>
                             <div className="modal-field modal-field--sm">
-                                <label className="modal-label">Sufijo</label>
-                                <input className="form-input" type="text" value={suffix} onChange={(e) => setSuffix(e.target.value)} placeholder="Jr., III..." />
+                                <label className="modal-label">{t("tree.modal.fields.suffix")}</label>
+                                <input className="form-input" type="text" value={suffix} onChange={(e) => setSuffix(e.target.value)} placeholder={t("tree.modal.fields.suffix_placeholder")} />
                             </div>
                         </div>
 
                         <div className="modal-field-row">
                             <div className="modal-field">
                                 <label className="modal-label">
-                                    {isSpouse && gender === "female" ? "Primer apellido (de soltera)" : "Primer apellido"}
+                                    {isSpouse && gender === "female" ? t("tree.modal.fields.first_surname_maiden") : t("tree.modal.fields.first_surname")}
                                 </label>
-                                <input className="form-input" type="text" value={surname1} onChange={(e) => setSurname1(e.target.value)} placeholder="Primer apellido" />
+                                <input className="form-input" type="text" value={surname1} onChange={(e) => setSurname1(e.target.value)} placeholder={t("tree.modal.fields.first_surname")} />
                             </div>
                             <div className="modal-field">
                                 <label className="modal-label">
-                                    {isSpouse && gender === "female" ? "Segundo apellido (de soltera)" : "Segundo apellido"}
+                                    {isSpouse && gender === "female" ? t("tree.modal.fields.second_surname_maiden") : t("tree.modal.fields.second_surname")}
                                 </label>
-                                <input className="form-input" type="text" value={surname2} onChange={(e) => setSurname2(e.target.value)} placeholder="Segundo apellido" />
+                                <input className="form-input" type="text" value={surname2} onChange={(e) => setSurname2(e.target.value)} placeholder={t("tree.modal.fields.second_surname")} />
                             </div>
                         </div>
                         {isSpouse && gender === "female" && (
                             <div className="modal-field-row">
                                 <div className="modal-field modal-field--full">
-                                    <label className="modal-label">Apellido de casada</label>
-                                    <input className="form-input" type="text" value={surnameMarried} onChange={(e) => setSurnameMarried(e.target.value)} placeholder="Apellido de casada (opcional)" />
+                                    <label className="modal-label">{t("tree.modal.fields.married_surname")}</label>
+                                    <input className="form-input" type="text" value={surnameMarried} onChange={(e) => setSurnameMarried(e.target.value)} placeholder={t("tree.modal.fields.married_surname_placeholder")} />
                                 </div>
                             </div>
                         )}
 
                         <DateFields
-                            label="Fecha de nacimiento"
+                            label={t("tree.modal.fields.birth_date")}
                             precision={birthPrec} onPrecision={setBirthPrec}
                             day={birthDay} onDay={setBirthDay}
                             month={birthMonth} onMonth={setBirthMonth}
@@ -529,26 +537,26 @@ export default function AddRelativeModal({
 
                         <div className="modal-field-row">
                             <div className="modal-field modal-field--full">
-                                <label className="modal-label">Lugar de nacimiento</label>
-                                <input className="form-input" type="text" value={birthPlace} onChange={(e) => setBirthPlace(e.target.value)} placeholder="Ciudad, País..." />
+                                <label className="modal-label">{t("tree.modal.fields.birth_place")}</label>
+                                <input className="form-input" type="text" value={birthPlace} onChange={(e) => setBirthPlace(e.target.value)} placeholder={t("tree.modal.fields.city_country_placeholder")} />
                             </div>
                         </div>
 
                         <div className="modal-field-row">
                             <label className="modal-radio-label">
                                 <input type="radio" name="isAlive" checked={isAlive} onChange={() => setIsAlive(true)} />
-                                Vivo
+                                {t("tree.modal.fields.living")}
                             </label>
                             <label className="modal-radio-label">
                                 <input type="radio" name="isAlive" checked={!isAlive} onChange={() => setIsAlive(false)} />
-                                Fallecido
+                                {t("tree.modal.fields.deceased")}
                             </label>
                         </div>
 
                         {!isAlive && (
                             <>
                                 <DateFields
-                                    label="Fecha de fallecimiento"
+                                    label={t("tree.modal.fields.death_date")}
                                     precision={deathPrec} onPrecision={setDeathPrec}
                                     day={deathDay} onDay={setDeathDay}
                                     month={deathMonth} onMonth={setDeathMonth}
@@ -556,18 +564,18 @@ export default function AddRelativeModal({
                                 />
                                 <div className="modal-field-row">
                                     <div className="modal-field modal-field--full">
-                                        <label className="modal-label">Lugar de fallecimiento</label>
-                                        <input className="form-input" type="text" value={deathPlace} onChange={(e) => setDeathPlace(e.target.value)} placeholder="Ciudad, País..." />
+                                        <label className="modal-label">{t("tree.modal.fields.death_place")}</label>
+                                        <input className="form-input" type="text" value={deathPlace} onChange={(e) => setDeathPlace(e.target.value)} placeholder={t("tree.modal.fields.city_country_placeholder")} />
                                     </div>
                                 </div>
                                 <div className="modal-field-row">
                                     <div className="modal-field">
-                                        <label className="modal-label">Causa de fallecimiento</label>
-                                        <input className="form-input" type="text" value={deathCause} onChange={(e) => setDeathCause(e.target.value)} placeholder="Causa..." />
+                                        <label className="modal-label">{t("tree.modal.fields.death_cause")}</label>
+                                        <input className="form-input" type="text" value={deathCause} onChange={(e) => setDeathCause(e.target.value)} placeholder={t("tree.modal.fields.death_cause_placeholder")} />
                                     </div>
                                     <div className="modal-field">
-                                        <label className="modal-label">Lugar de sepultura</label>
-                                        <input className="form-input" type="text" value={burialPlace} onChange={(e) => setBurialPlace(e.target.value)} placeholder="Cementerio..." />
+                                        <label className="modal-label">{t("tree.modal.fields.burial_place")}</label>
+                                        <input className="form-input" type="text" value={burialPlace} onChange={(e) => setBurialPlace(e.target.value)} placeholder={t("tree.modal.fields.cemetery_placeholder")} />
                                     </div>
                                 </div>
                             </>
@@ -585,11 +593,11 @@ export default function AddRelativeModal({
                                         {otherParentOptions.map((p) => (
                                             <option key={p.id} value={String(p.id)}>
                                                 {p.name} {p.surnames ?? ""}
-                                                {p.isActive ? " (pareja actual)" : " (pareja anterior)"}
+                                                {p.isActive ? t("tree.modal.actions.partner_current") : t("tree.modal.actions.partner_former")}
                                             </option>
                                         ))}
-                                        <option value="new">➕ Crear nuevo/a {otherParentLabel.toLowerCase()}</option>
-                                        <option value="none">Sin {otherParentLabel.toLowerCase()} conocido/a</option>
+                                        <option value="new">➕ {t("tree.modal.actions.create_new").replace("{label}", otherParentLabel.toLowerCase())}</option>
+                                        <option value="none">{t("tree.modal.actions.no_partner_known").replace("{label}", otherParentLabel.toLowerCase())}</option>
                                     </select>
                                     {otherParentChoice === "new" && (
                                         <NewParentForm
@@ -612,10 +620,10 @@ export default function AddRelativeModal({
                     <>
                         <div className="modal-field-row">
                             <div className="modal-field modal-field--full">
-                                <label className="modal-label">Tipo de relación</label>
+                                <label className="modal-label">{t("tree.modal.fields.relationship_type")}</label>
                                 <select className="form-select" value={spouseType} onChange={(e) => setSpouseType(e.target.value)}>
-                                    {SPOUSE_TYPES.map((t) => (
-                                        <option key={t.value} value={t.value}>{t.label}</option>
+                                    {SPOUSE_TYPES.map((tItem) => (
+                                        <option key={tItem.value} value={tItem.value}>{t(tItem.labelKey)}</option>
                                     ))}
                                 </select>
                             </div>
@@ -632,7 +640,7 @@ export default function AddRelativeModal({
                                 <div className="modal-field-row">
                                     <div className="modal-field modal-field--full">
                                         <label className="modal-label">{placeLabel}</label>
-                                        <input className="form-input" type="text" value={marriagePlace} onChange={(e) => setMarriagePlace(e.target.value)} placeholder="Ciudad, País..." />
+                                        <input className="form-input" type="text" value={marriagePlace} onChange={(e) => setMarriagePlace(e.target.value)} placeholder={t("tree.modal.fields.city_country_placeholder")} />
                                     </div>
                                 </div>
                             </>
@@ -642,9 +650,9 @@ export default function AddRelativeModal({
 
                 <div className="modal-actions">
                     <div className="modal-actions-right">
-                        <button className="btn-secondary" onClick={onClose} disabled={saving}>Cancelar</button>
+                        <button className="btn-secondary" onClick={onClose} disabled={saving}>{t("tree.modal.actions.cancel")}</button>
                         <button className="btn-primary" onClick={handleSave} disabled={okDisabled}>
-                            {saving ? "Guardando..." : "OK"}
+                            {saving ? t("tree.modal.actions.saving") : t("tree.modal.actions.save")}
                         </button>
                     </div>
                 </div>

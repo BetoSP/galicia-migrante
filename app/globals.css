@@ -7,7 +7,14 @@
 /* ── Reset ───────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; font-size: 16px; }
-body { font-family: var(--font-body); color: var(--text-primary); background: var(--bg-page); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+body {
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  background: var(--bg-gradient);
+  background-attachment: fixed;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
 img, video { max-width: 100%; display: block; }
 a { color: inherit; text-decoration: none; }
 button { cursor: pointer; font-family: inherit; border: none; background: none; }
@@ -39,13 +46,14 @@ ul, ol { list-style: none; }
   --text-gold:      #C8A96E;
 
   /* Fondos */
-  --bg-page:        #f8fafc;
-  --bg-section-alt: #f0f4f8;
+  --bg-page:        #f0f4f8;
+  --bg-gradient:    linear-gradient(135deg, #f0f4f8 0%, #cbd5e0 100%);
+  --bg-section-alt: #e2e8f0;
   --bg-dark:        #0d1b2a;
-  --bg-card:        #ffffff;
+  --bg-card:        rgba(255, 255, 255, 0.7);
 
   /* Bordes */
-  --border-light:   #e2e8f0;
+  --border-light:   rgba(13, 27, 42, 0.08);
   --border-medium:  #cbd5e0;
 
   /* Tipografía */
@@ -308,14 +316,15 @@ ul, ol { list-style: none; }
 /* ── Dark Mode overrides ───────────────────────────────────────────────── */
 html[data-theme="dark"] {
   --text-primary:   #ffffff;
-  --text-secondary: rgba(255, 255, 255, 0.7);
-  --text-muted:     rgba(255, 255, 255, 0.45);
+  --text-secondary: rgba(255, 255, 255, 0.75);
+  --text-muted:     rgba(255, 255, 255, 0.5);
   --text-inverse:   #1a202c;
   
-  --bg-page:        #0d1b2a;
-  --bg-section-alt: #122436;
+  --bg-page:        #0a1420;
+  --bg-gradient:    radial-gradient(circle at 50% 20%, rgba(13, 27, 42, 1) 0%, rgba(10, 20, 32, 1) 100%);
+  --bg-section-alt: rgba(255, 255, 255, 0.02);
   --bg-dark:        #070f18;
-  --bg-card:        rgba(255, 255, 255, 0.02);
+  --bg-card:        rgba(17, 30, 47, 0.45);
   
   --border-light:   rgba(255, 255, 255, 0.08);
   --border-medium:  rgba(255, 255, 255, 0.15);
@@ -354,14 +363,15 @@ html[data-theme="dark"] {
 @media (prefers-color-scheme: dark) {
   html[data-theme="auto"] {
     --text-primary:   #ffffff;
-    --text-secondary: rgba(255, 255, 255, 0.7);
-    --text-muted:     rgba(255, 255, 255, 0.45);
+    --text-secondary: rgba(255, 255, 255, 0.75);
+    --text-muted:     rgba(255, 255, 255, 0.5);
     --text-inverse:   #1a202c;
     
-    --bg-page:        #0d1b2a;
-    --bg-section-alt: #122436;
+    --bg-page:        #0a1420;
+    --bg-gradient:    radial-gradient(circle at 50% 20%, rgba(13, 27, 42, 1) 0%, rgba(10, 20, 32, 1) 100%);
+    --bg-section-alt: rgba(255, 255, 255, 0.02);
     --bg-dark:        #070f18;
-    --bg-card:        rgba(255, 255, 255, 0.02);
+    --bg-card:        rgba(17, 30, 47, 0.45);
     
     --border-light:   rgba(255, 255, 255, 0.08);
     --border-medium:  rgba(255, 255, 255, 0.15);
@@ -396,5 +406,11 @@ html[data-theme="dark"] {
     --ghost-avatar-bg:           #1a2f45;
     --ghost-avatar-fill:         #4A90B8;
   }
+}
+
+/* Glassmorphism global rule for cards */
+[class*="card"], [class*="Card"] {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 

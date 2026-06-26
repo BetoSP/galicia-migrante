@@ -38,12 +38,25 @@ export default function AdminPage() {
   // Tab 5: Mi Asociación (CMS)
   const [myAssociations, setMyAssociations] = useState([]);
   const [selectedAssocId, setSelectedAssocId] = useState('');
+  const [originalAssocData, setOriginalAssocData] = useState(null);
   const [assocDetails, setAssocDetails] = useState({
     nombre: '',
     fundacion: 1980,
     descripcion_es: '',
+    descripcion_gl: '',
+    descripcion_en: '',
+    descripcion_manual_gl: false,
+    descripcion_manual_en: false,
     historia_es: '',
+    historia_gl: '',
+    historia_en: '',
+    historia_manual_gl: false,
+    historia_manual_en: false,
     finalidades_es: '',
+    finalidades_gl: '',
+    finalidades_en: '',
+    finalidades_manual_gl: false,
+    finalidades_manual_en: false,
     email: '',
     telefono: '',
     direccion: '',
@@ -120,12 +133,25 @@ export default function AdminPage() {
       }
 
       if (base) {
+        setOriginalAssocData(base);
         setAssocDetails({
           nombre: base.nombre || '',
           fundacion: base.fundacion || 1980,
           descripcion_es: base.descripcion_es || '',
+          descripcion_gl: base.descripcion_gl || '',
+          descripcion_en: base.descripcion_en || '',
+          descripcion_manual_gl: base.descripcion_manual_gl || false,
+          descripcion_manual_en: base.descripcion_manual_en || false,
           historia_es: base.historia_es || '',
+          historia_gl: base.historia_gl || '',
+          historia_en: base.historia_en || '',
+          historia_manual_gl: base.historia_manual_gl || false,
+          historia_manual_en: base.historia_manual_en || false,
           finalidades_es: base.finalidades_es || '',
+          finalidades_gl: base.finalidades_gl || '',
+          finalidades_en: base.finalidades_en || '',
+          finalidades_manual_gl: base.finalidades_manual_gl || false,
+          finalidades_manual_en: base.finalidades_manual_en || false,
           email: base.email || '',
           telefono: base.telefono || '',
           direccion: base.direccion || '',
@@ -257,18 +283,84 @@ export default function AdminPage() {
     }
   };
 
+  // Auxiliar para llamar a la API de traducción
+  const getAutoTranslation = async (text, lang) => {
+    try {
+      const res = await fetch('/api/translate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, targetLangs: [lang] })
+      });
+      const data = await res.json();
+      return data?.translations?.[lang] || '';
+    } catch {
+      return '';
+    }
+  };
+
   // --- ACCIONES CMS ASOCIACIÓN ---
   const handleSaveAssocDetails = async (e) => {
     e.preventDefault();
-    if (!selectedAssocId) return;
+    if (!selectedAssocId || !originalAssocData) return;
+
     try {
+      // 1. Clonar estado local para preparar actualización
+      const updatedData = { ...assocDetails };
+
+      // 2. Determinar si los campos en gallego/inglés han sido sobreescritos manualmente
+      // Si el valor ingresado es diferente de la versión original y diferente de lo vacío,
+      // y además es diferente de la autotraducción que generaría el sistema, se marca como manual.
+      
+      const checkManualFlag = async (fieldBase, lang) => {
+        const currentVal = updatedData[`${fieldBase}_${lang}`] || '';
+        const prevVal = originalAssocData[`${fieldBase}_${lang}`] || '';
+        
+        // Si el usuario modificó manualmente el campo y no está vacío
+        if (currentVal && currentVal !== prevVal) {
+          updatedData[`${fieldBase}_manual_${lang}`] = true;
+        }
+      };
+
+      await checkManualFlag('descripcion', 'gl');
+      await checkManualFlag('descripcion', 'en');
+      await checkManualFlag('historia', 'gl');
+      await checkManualFlag('historia', 'en');
+      await checkManualFlag('finalidades', 'gl');
+      await checkManualFlag('finalidades', 'en');
+
+      // 3. Traducir automáticamente los campos no modificados manualmente si el original cambió
+      const autoTranslateFieldIfClean = async (fieldBase, lang) => {
+        const isManual = updatedData[`${fieldBase}_manual_${lang}`];
+        const originalText = updatedData[`${fieldBase}_es`] || '';
+        const prevOriginalText = originalAssocData[`${fieldBase}_es`] || '';
+
+        // Si el texto en español cambió y NO está marcado como manual, forzamos traducción del sistema
+        if (originalText && (!isManual || originalText !== prevOriginalText)) {
+          const autoTranslated = await getAutoTranslation(originalText, lang);
+          if (autoTranslated) {
+            updatedData[`${fieldBase}_${lang}`] = autoTranslated;
+            // Si el original cambió, el trigger de BD se encarga de resetear manual a false,
+            // pero lo aseguramos también en el envío.
+            updatedData[`${fieldBase}_manual_${lang}`] = false;
+          }
+        }
+      };
+
+      await autoTranslateFieldIfClean('descripcion', 'gl');
+      await autoTranslateFieldIfClean('descripcion', 'en');
+      await autoTranslateFieldIfClean('historia', 'gl');
+      await autoTranslateFieldIfClean('historia', 'en');
+      await autoTranslateFieldIfClean('finalidades', 'gl');
+      await autoTranslateFieldIfClean('finalidades', 'en');
+
       const { error } = await supabase
         .from('asociaciones')
-        .update(assocDetails)
+        .update(updatedData)
         .eq('id', selectedAssocId);
 
       if (error) throw error;
       alert('¡Perfil de Asociación guardado con éxito!');
+      loadAssocSubDetails(selectedAssocId);
     } catch (err) {
       alert('Error al guardar perfil: ' + err.message);
     }
@@ -573,18 +665,37 @@ export default function AdminPage() {
                         <label className={styles.label}>Año de Fundación</label>
                         <input type="number" className={styles.input} value={assocDetails.fundacion} onChange={(e) => setAssocDetails({ ...assocDetails, fundacion: parseInt(e.target.value) || 1980 })} required />
                       </div>
-                      <div className={styles.formGroup}>
-                        <label className={styles.label}>Descripción de Bienvenida (Inicio)</label>
-                        <textarea className={styles.input} style={{ minHeight: '100px' }} value={assocDetails.descripcion_es} onChange={(e) => setAssocDetails({ ...assocDetails, descripcion_es: e.target.value })} required />
+
+                      {/* Descripción de Bienvenida */}
+                      <div className={styles.formGroup} style={{ borderLeft: '3px solid var(--gm-gold)', paddingLeft: '12px', margin: '12px 0' }}>
+                        <label className={styles.label}>Descripción de Bienvenida [Español]</label>
+                        <textarea className={styles.input} style={{ minHeight: '80px' }} value={assocDetails.descripcion_es} onChange={(e) => setAssocDetails({ ...assocDetails, descripcion_es: e.target.value })} required />
+                        <label className={styles.label} style={{ marginTop: '8px' }}>Descripción de Bienvenida [Galego]</label>
+                        <textarea className={styles.input} style={{ minHeight: '80px' }} value={assocDetails.descripcion_gl} onChange={(e) => setAssocDetails({ ...assocDetails, descripcion_gl: e.target.value })} placeholder="Traducción ao galego..." />
+                        <label className={styles.label} style={{ marginTop: '8px' }}>Descripción de Bienvenida [English]</label>
+                        <textarea className={styles.input} style={{ minHeight: '80px' }} value={assocDetails.descripcion_en} onChange={(e) => setAssocDetails({ ...assocDetails, descripcion_en: e.target.value })} placeholder="English translation..." />
                       </div>
-                      <div className={styles.formGroup}>
-                        <label className={styles.label}>Nuestra Historia</label>
-                        <textarea className={styles.input} style={{ minHeight: '120px' }} value={assocDetails.historia_es} onChange={(e) => setAssocDetails({ ...assocDetails, historia_es: e.target.value })} />
+
+                      {/* Nuestra Historia */}
+                      <div className={styles.formGroup} style={{ borderLeft: '3px solid #2ec4b6', paddingLeft: '12px', margin: '12px 0' }}>
+                        <label className={styles.label}>Nuestra Historia [Español]</label>
+                        <textarea className={styles.input} style={{ minHeight: '100px' }} value={assocDetails.historia_es} onChange={(e) => setAssocDetails({ ...assocDetails, historia_es: e.target.value })} />
+                        <label className={styles.label} style={{ marginTop: '8px' }}>Nuestra Historia [Galego]</label>
+                        <textarea className={styles.input} style={{ minHeight: '100px' }} value={assocDetails.historia_gl} onChange={(e) => setAssocDetails({ ...assocDetails, historia_gl: e.target.value })} placeholder="Traducción ao galego..." />
+                        <label className={styles.label} style={{ marginTop: '8px' }}>Nuestra Historia [English]</label>
+                        <textarea className={styles.input} style={{ minHeight: '100px' }} value={assocDetails.historia_en} onChange={(e) => setAssocDetails({ ...assocDetails, historia_en: e.target.value })} placeholder="English translation..." />
                       </div>
-                      <div className={styles.formGroup}>
-                        <label className={styles.label}>Finalidades y Objetivos</label>
-                        <textarea className={styles.input} style={{ minHeight: '100px' }} value={assocDetails.finalidades_es} onChange={(e) => setAssocDetails({ ...assocDetails, finalidades_es: e.target.value })} />
+
+                      {/* Finalidades y Objetivos */}
+                      <div className={styles.formGroup} style={{ borderLeft: '3px solid #4a90b8', paddingLeft: '12px', margin: '12px 0' }}>
+                        <label className={styles.label}>Finalidades y Objetivos [Español]</label>
+                        <textarea className={styles.input} style={{ minHeight: '80px' }} value={assocDetails.finalidades_es} onChange={(e) => setAssocDetails({ ...assocDetails, finalidades_es: e.target.value })} />
+                        <label className={styles.label} style={{ marginTop: '8px' }}>Finalidades y Objetivos [Galego]</label>
+                        <textarea className={styles.input} style={{ minHeight: '80px' }} value={assocDetails.finalidades_gl} onChange={(e) => setAssocDetails({ ...assocDetails, finalidades_gl: e.target.value })} placeholder="Traducción ao galego..." />
+                        <label className={styles.label} style={{ marginTop: '8px' }}>Finalidades y Objetivos [English]</label>
+                        <textarea className={styles.input} style={{ minHeight: '80px' }} value={assocDetails.finalidades_en} onChange={(e) => setAssocDetails({ ...assocDetails, finalidades_en: e.target.value })} placeholder="English translation..." />
                       </div>
+
                       <div className={styles.formGroup}>
                         <label className={styles.label}>Email de Contacto</label>
                         <input type="email" className={styles.input} value={assocDetails.email} onChange={(e) => setAssocDetails({ ...assocDetails, email: e.target.value })} />

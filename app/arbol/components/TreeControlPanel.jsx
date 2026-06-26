@@ -23,23 +23,23 @@ function IconContextHelp() {
   );
 }
 
+import { useTranslation } from "@/components/LanguageContext";
+
 // ── Props ──────────────────────────────────────────────────────────────────────
-// generationsCount  number          — generaciones a mostrar
-// onGenerationsChange fn(n)         — callback al mover el slider
-// searchQuery       string          — texto de búsqueda
-// onSearchChange    fn(str)         — callback al cambiar búsqueda
 export default function TreeControlPanel({
   generationsCount,
   onGenerationsChange,
   searchQuery,
   onSearchChange,
 }) {
+  const { t } = useTranslation();
+
   return (
     <div className="control-strip">
 
       {/* ─ Izquierda: Generaciones ─ */}
       <div className="control-strip__section">
-        <span className="control-strip__label">Generaciones:</span>
+        <span className="control-strip__label">{t("tree.controls.generations")}</span>
         <div className="gen-control">
           <span className="gen-value">{generationsCount}+</span>
           <input
@@ -61,7 +61,7 @@ export default function TreeControlPanel({
           <IconSearch />
           <input
             type="text"
-            placeholder="Buscar una persona..."
+            placeholder={t("tree.controls.search_placeholder")}
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             className="search-input"
@@ -78,10 +78,10 @@ export default function TreeControlPanel({
 
       {/* ─ Derecha: Configuración + Ayuda contextual ─ */}
       <div className="control-strip__section control-strip__section--right">
-        <button className="strip-icon-btn" title="Configuración del árbol">
+        <button className="strip-icon-btn" title={t("tree.controls.settings_tooltip")}>
           <IconSettings />
         </button>
-        <button className="strip-icon-btn" title="Ayuda contextual">
+        <button className="strip-icon-btn" title={t("tree.controls.help_tooltip")}>
           <IconContextHelp />
         </button>
       </div>

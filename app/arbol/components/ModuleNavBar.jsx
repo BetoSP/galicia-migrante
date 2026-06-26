@@ -1,4 +1,6 @@
 import { useState, useRef, useEffect, forwardRef } from "react";
+import { useTranslation } from "@/components/LanguageContext";
+import { useAuth } from "@/components/AuthProvider";
 
 // ── Iconos ────────────────────────────────────────────────────────────────────
 function IconTree() {
@@ -60,70 +62,67 @@ function Caret() {
 
 // ── Datos del menú ────────────────────────────────────────────────────────────
 const TOP_MENU = [
-  { id: "home",        label: "Inicio",          mvp: true,  hasSub: true  },
-  { id: "tree",        label: "Árbol",            mvp: true,  hasSub: true  },
-  { id: "discoveries", label: "Descubrimientos",  mvp: false, hasSub: true  },
-  { id: "photos",      label: "Fotos",            mvp: true,  hasSub: true  },
-  { id: "research",    label: "Investigación",    mvp: false, hasSub: true  },
+  { id: "home",        labelKey: "nav.inicio",          mvp: true,  hasSub: true  },
+  { id: "tree",        labelKey: "nav.arbol",           mvp: true,  hasSub: true  },
+  { id: "discoveries", labelKey: "tree.nav.discoveries",  mvp: false, hasSub: true  },
+  { id: "photos",      labelKey: "tree.nav.photos",            mvp: true,  hasSub: true  },
+  { id: "research",    labelKey: "tree.nav.research",    mvp: false, hasSub: true  },
 ];
 
 const SUBMENUS = {
   home: [
-    { label: "Eventos familiares",      sectionId: "home", mvp: true  },
-    { label: "Estadísticas familiares", sectionId: "home", mvp: true  },
-    { label: "Miembros del sitio",      sectionId: "home", mvp: true  },
+    { labelKey: "tree.nav.sub.family_events",      sectionId: "home", mvp: true  },
+    { labelKey: "tree.nav.sub.family_stats",       sectionId: "home", mvp: true  },
+    { labelKey: "tree.nav.sub.site_members",       sectionId: "home", mvp: true  },
   ],
   tree: [
-    { label: "Mi árbol",                sectionId: "tree",   mvp: true  },
-    { label: "Mis fotos",               sectionId: "photos", mvp: true  },
-    { label: "Administre árboles",      sectionId: "admin",  mvp: true  },
-    { label: "Imprima gráficos y libros", sectionId: null,   mvp: false },
-    { label: "Línea del tiempo",        sectionId: null,     mvp: false },
-    { label: "FamilyMap",               sectionId: null,     mvp: false },
-    { label: "Informe de relaciones",   sectionId: null,     mvp: false },
-    { label: "Fuentes",                 sectionId: null,     mvp: false },
+    { labelKey: "tree.context.my_tree",                sectionId: "tree",   mvp: true  },
+    { labelKey: "tree.nav.sub.my_photos",               sectionId: "photos", mvp: true  },
+    { labelKey: "tree.nav.sub.manage_trees",            sectionId: "admin",  mvp: true  },
+    { labelKey: "tree.nav.sub.print_charts",       sectionId: null,   mvp: false },
+    { labelKey: "tree.nav.sub.timeline",           sectionId: null,     mvp: false },
+    { labelKey: "tree.nav.sub.familymap",          sectionId: null,     mvp: false },
+    { labelKey: "tree.nav.sub.relations_report",   sectionId: null,     mvp: false },
+    { labelKey: "tree.nav.sub.sources",            sectionId: null,     mvp: false },
   ],
   discoveries: [
-    { label: "Coincidencias por persona", sectionId: null,   mvp: false },
-    { label: "Coincidencias por fuente",  sectionId: null,   mvp: false },
+    { labelKey: "tree.nav.sub.matches_by_person",  sectionId: null,   mvp: false },
+    { labelKey: "tree.nav.sub.matches_by_source",  sectionId: null,   mvp: false },
   ],
   photos: [
-    { label: "Mis fotos",               sectionId: "photos", mvp: true  },
-    { label: "Dé color a sus fotos",    sectionId: null,     mvp: false },
-    { label: "Repare fotos",            sectionId: null,     mvp: false },
-    { label: "Deep Nostalgia™",         sectionId: null,     mvp: false },
-    { label: "LiveMemory™",             sectionId: null,     mvp: false },
-    { label: "Scribe AI",               sectionId: null,     mvp: false },
-    { label: "Video de Homenaje",       sectionId: null,     mvp: false },
+    { labelKey: "tree.nav.sub.my_photos",               sectionId: "photos", mvp: true  },
+    { labelKey: "tree.nav.sub.colorize_photos",    sectionId: null,     mvp: false },
+    { labelKey: "tree.nav.sub.repair_photos",      sectionId: null,     mvp: false },
+    { labelKey: "tree.nav.sub.deep_nostalgia",     sectionId: null,     mvp: false },
+    { labelKey: "tree.nav.sub.livememory",         sectionId: null,     mvp: false },
+    { labelKey: "tree.nav.sub.scribe_ai",          sectionId: null,     mvp: false },
+    { labelKey: "tree.nav.sub.tribute_video",      sectionId: null,     mvp: false },
   ],
   research: [
-    { label: "Busque todos los registros",         sectionId: null, mvp: false },
-    { label: "Catálogo de la Colección",           sectionId: null, mvp: false },
-    { label: "Nacimiento, Matrimonio y Defunción", sectionId: null, mvp: false },
-    { label: "Registros del Censo",                sectionId: null, mvp: false },
-    { label: "Árboles familiares",                 sectionId: null, mvp: false },
-    { label: "Periódicos",                         sectionId: null, mvp: false },
-    { label: "Registros de inmigración",           sectionId: null, mvp: false },
-    { label: "Contrate un investigador",           sectionId: null, mvp: false },
+    { labelKey: "tree.nav.sub.search_all_records",         sectionId: null, mvp: false },
+    { labelKey: "tree.nav.sub.collection_catalog",         sectionId: null, mvp: false },
+    { labelKey: "tree.nav.sub.bmd_records",                sectionId: null, mvp: false },
+    { labelKey: "tree.nav.sub.census_records",             sectionId: null, mvp: false },
+    { labelKey: "tree.nav.sub.family_trees_records",       sectionId: null, mvp: false },
+    { labelKey: "tree.nav.sub.newspapers",                 sectionId: null, mvp: false },
+    { labelKey: "tree.nav.sub.immigration_records",        sectionId: null, mvp: false },
+    { labelKey: "tree.nav.sub.hire_researcher",            sectionId: null, mvp: false },
   ],
 };
 
 const A11Y_OPTIONS = [
-  "Discapacidad visual",
-  "Daltonismo",
-  "Ocultar animaciones y flashes",
-  "Vista típica",
-  "Normalizar fuente",
+  "tree.a11y.options.visual_impairment",
+  "tree.a11y.options.color_blindness",
+  "tree.a11y.options.hide_animations",
+  "tree.a11y.options.typical_view",
+  "tree.a11y.options.normalize_font",
 ];
 
 // ── Props ──────────────────────────────────────────────────────────────────────
-// user         { name: string }         — solo para mostrar el nombre
-// trees        Array<{ id, name }>      — lista de árboles del usuario
-// activeTree   { name, ownerName }      — árbol activo
-// onTreeChange fn(tree)                 — callback al cambiar árbol
-// activeSection string                  — sección activa ("home"|"tree"|...)
-// onNavigate   fn(sectionId)            — callback de navegación
 const ModuleNavBar = forwardRef(function ModuleNavBar({ user, trees = [], activeTree, onTreeChange, activeSection, onNavigate }, ref) {
+  const { t, locale, setLocale } = useTranslation();
+  const { user: authUser, profile } = useAuth();
+  
   const [treeMenuOpen, setTreeMenuOpen] = useState(false);
   const [openMenu, setOpenMenu] = useState(null);
   const [a11yOpen, setA11yOpen] = useState(false);
@@ -141,9 +140,22 @@ const ModuleNavBar = forwardRef(function ModuleNavBar({ user, trees = [], active
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [a11yOpen]);
 
-  const treeName = activeTree?.name ?? "Mi árbol";
-  const userName = user?.name ?? "Usuario";
-  const initials = userName.split(" ").filter(Boolean).map(w => w[0]).slice(0, 2).join("").toUpperCase();
+  const treeName = activeTree?.name ?? t("tree.context.my_tree");
+  const userName = profile 
+    ? `${profile.nombre} ${profile.apellido || ""}`.trim()
+    : authUser?.user_metadata?.nombre 
+      ? `${authUser.user_metadata.nombre} ${authUser.user_metadata.apellido || ""}`.trim()
+      : user?.name || t("tree.nav.guest");
+
+  const initials = userName
+    .split(" ")
+    .filter(Boolean)
+    .map(w => w[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase() || "??";
+
+  const langCodeUpper = locale.split("-")[0].toUpperCase();
 
   return (
     <header ref={ref} className="module-nav">
@@ -153,7 +165,7 @@ const ModuleNavBar = forwardRef(function ModuleNavBar({ user, trees = [], active
         <div className="main-nav__logo-icon">
           <IconTree />
         </div>
-        <span className="module-nav__logo-label">GENEALOGÍA</span>
+        <span className="module-nav__logo-label">{t("tree.nav.genealogy")}</span>
       </div>
 
       {/* ── Columna derecha — Fila 1 + Fila 2 apiladas ──────────────────── */}
@@ -168,7 +180,7 @@ const ModuleNavBar = forwardRef(function ModuleNavBar({ user, trees = [], active
               <button
                 className="module-nav__tree-btn"
                 onClick={() => setTreeMenuOpen(v => !v)}
-                title="Árbol activo"
+                title={t("tree.context.my_tree")}
               >
                 <span className="module-nav__tree-name">{treeName}</span>
                 <svg viewBox="0 0 10 6" width={10} height={10} fill="none" stroke="currentColor" strokeWidth={1.5} style={{ flexShrink: 0, transform: treeMenuOpen ? "rotate(180deg)" : "none", transition: "transform 0.15s" }}>
@@ -191,13 +203,13 @@ const ModuleNavBar = forwardRef(function ModuleNavBar({ user, trees = [], active
             </div>
 
             {/* Iconos NO-MVP — placeholders de features futuras */}
-            <button className="chrome-bar__icon-btn module-nav__nomvp-btn" disabled title="Smart Match — Próximamente">
+            <button className="chrome-bar__icon-btn module-nav__nomvp-btn" disabled title="Smart Match">
               <IconSmartMatch />
             </button>
-            <button className="chrome-bar__icon-btn module-nav__nomvp-btn" disabled title="Record Match — Próximamente">
+            <button className="chrome-bar__icon-btn module-nav__nomvp-btn" disabled title="Record Match">
               <IconRecordMatch />
             </button>
-            <button className="chrome-bar__icon-btn module-nav__nomvp-btn" disabled title="Coincidencias de ADN — Próximamente">
+            <button className="chrome-bar__icon-btn module-nav__nomvp-btn" disabled title="DNA">
               <IconDNA />
             </button>
 
@@ -208,11 +220,11 @@ const ModuleNavBar = forwardRef(function ModuleNavBar({ user, trees = [], active
               <div className="chrome-bar__avatar">{initials}</div>
               <span>{userName}</span>
             </div>
-            <button className="chrome-bar__icon-btn" title="Mensajes"><IconMail /></button>
-            <button className="chrome-bar__text-btn" title="Ayuda">
-              <IconHelp /><span>Ayuda</span><Caret />
+            <button className="chrome-bar__icon-btn" title={t("tree.nav.messages")}><IconMail /></button>
+            <button className="chrome-bar__text-btn" title={t("tree.nav.help")}>
+              <IconHelp /><span>{t("tree.nav.help")}</span><Caret />
             </button>
-            <button className="chrome-bar__lang">🌐 ES <Caret /></button>
+            <button className="chrome-bar__lang">🌐 {langCodeUpper} <Caret /></button>
           </div>
         </div>
 
@@ -237,11 +249,11 @@ const ModuleNavBar = forwardRef(function ModuleNavBar({ user, trees = [], active
                   onClick={(e) => { e.preventDefault(); if (item.mvp) onNavigate?.(item.id); }}
                   aria-disabled={!item.mvp}
                   tabIndex={!item.mvp ? -1 : undefined}
-                  title={!item.mvp ? "Próximamente" : undefined}
+                  title={!item.mvp ? t("tree.context.proximamente") : undefined}
                 >
-                  {item.label}
+                  {t(item.labelKey)}
                   {item.hasSub && <Caret />}
-                  {!item.mvp && <span className="module-nav__badge-soon">Próxim.</span>}
+                  {!item.mvp && <span className="module-nav__badge-soon">{t("tree.context.proxim")}</span>}
                 </a>
 
                 {/* Submenú desplegable */}
@@ -249,7 +261,7 @@ const ModuleNavBar = forwardRef(function ModuleNavBar({ user, trees = [], active
                   <div className="nav-dropdown">
                     {SUBMENUS[item.id].map(sub => (
                       <a
-                        key={sub.label}
+                        key={sub.labelKey}
                         href="#"
                         className={[
                           "nav-dropdown__item",
@@ -264,8 +276,8 @@ const ModuleNavBar = forwardRef(function ModuleNavBar({ user, trees = [], active
                         }}
                         tabIndex={!sub.mvp ? -1 : undefined}
                       >
-                        <span>{sub.label}</span>
-                        {!sub.mvp && <span className="module-nav__badge-soon">Próxim.</span>}
+                        <span>{t(sub.labelKey)}</span>
+                        {!sub.mvp && <span className="module-nav__badge-soon">{t("tree.context.proxim")}</span>}
                       </a>
                     ))}
                   </div>
@@ -278,7 +290,7 @@ const ModuleNavBar = forwardRef(function ModuleNavBar({ user, trees = [], active
           <div className="module-nav__a11y-wrap" ref={a11yRef}>
             <button
               className="module-nav__a11y-btn"
-              title="Opciones de accesibilidad"
+              title={t("tree.a11y.accessibility")}
               onClick={() => setA11yOpen(v => !v)}
               aria-expanded={a11yOpen}
             >
@@ -288,39 +300,43 @@ const ModuleNavBar = forwardRef(function ModuleNavBar({ user, trees = [], active
             {a11yOpen && (
               <div className="a11y-panel">
                 <div className="a11y-panel__header">
-                  <span className="a11y-panel__title">Accesibilidad</span>
+                  <span className="a11y-panel__title">{t("tree.a11y.accessibility")}</span>
                   <button className="a11y-panel__close" onClick={() => setA11yOpen(false)}>✕</button>
                 </div>
 
                 <div className="a11y-panel__body">
 
                   <div className="a11y-panel__section">
-                    <span className="a11y-panel__label">Tamaño de fuente</span>
+                    <span className="a11y-panel__label">{t("tree.a11y.font_size")}</span>
                     <div className="a11y-panel__font-ctrl">
                       <button className="a11y-panel__font-btn" onClick={() => setFontSize(f => Math.max(80, f - 10))}>−</button>
                       <span className="a11y-panel__font-value">{fontSize}%</span>
                       <button className="a11y-panel__font-btn" onClick={() => setFontSize(f => Math.min(150, f + 10))}>+</button>
-                      <button className="a11y-panel__font-reset" onClick={() => setFontSize(100)}>Restablecer</button>
+                      <button className="a11y-panel__font-reset" onClick={() => setFontSize(100)}>{t("tree.a11y.reset")}</button>
                     </div>
                   </div>
 
                   <div className="a11y-panel__section">
-                    {A11Y_OPTIONS.map(label => (
-                      <label key={label} className="a11y-panel__option">
+                    {A11Y_OPTIONS.map(optKey => (
+                      <label key={optKey} className="a11y-panel__option">
                         <input type="checkbox" />
-                        {label}
+                        {t(optKey)}
                       </label>
                     ))}
                   </div>
 
                   <div className="a11y-panel__section">
-                    <a href="#" className="a11y-panel__link">Declaración de acceso</a>
+                    <a href="#" className="a11y-panel__link">{t("tree.a11y.declaration")}</a>
                     <div>
-                      <span className="a11y-panel__label">Idioma</span>
-                      <select className="a11y-panel__lang-select">
-                        <option>Español</option>
-                        <option>Galego</option>
-                        <option>English</option>
+                      <span className="a11y-panel__label">{t("tree.a11y.language")}</span>
+                      <select 
+                        className="a11y-panel__lang-select" 
+                        value={locale} 
+                        onChange={(e) => setLocale(e.target.value)}
+                      >
+                        <option value="es-AR">Español</option>
+                        <option value="gl">Galego</option>
+                        <option value="en">English</option>
                       </select>
                     </div>
                   </div>

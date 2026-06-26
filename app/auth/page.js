@@ -4,12 +4,14 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/components/AuthProvider';
+import { useTranslation } from '@/components/LanguageContext';
 import styles from './auth.module.css';
 
 function AuthContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, login, register, loginWithPasskey } = useAuth();
+  const { t } = useTranslation();
 
   const initialMode = searchParams.get('mode') === 'register' ? 'register' : 'login';
   const redirectPath = searchParams.get('redirect') || '/dashboard';
@@ -21,6 +23,7 @@ function AuthContent() {
   const [apellido, setApellido] = useState('');
   const [aceptoTerminos, setAceptoTerminos] = useState(false);
   const [aceptoPrivacidad, setAceptoPrivacidad] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -43,14 +46,20 @@ function AuthContent() {
     try {
       if (mode === 'login') {
         await login(email, password);
-        setSuccessMsg('¡Ingreso exitoso! Redirigiendo...');
+        setSuccessMsg(t('auth.success_msg') || '¡Ingreso exitoso! Redirigiendo...');
         setTimeout(() => router.push(redirectPath), 1000);
       } else {
         if (!nombre || !apellido) {
-          throw new Error('Por favor completa tu nombre y apellido.');
+          throw new Error(t('auth.error_name_required') || 'Por favor completa tu nombre y apellido.');
         }
         if (!aceptoTerminos || !aceptoPrivacidad) {
-          throw new Error('Debes aceptar los términos y condiciones y las políticas de privacidad.');
+          throw new Error(t('auth.error_accept_terms') || 'Debes aceptar los términos y condiciones y las políticas de privacidad.');
+        }
+
+        // Validación de complejidad de contraseña (mínimo 10 caracteres, una mayúscula, una minúscula, un número y un caracter especial)
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{10,}$/;
+        if (!passwordRegex.test(password)) {
+          throw new Error(t('auth.error_password_complexity') || 'La contraseña debe tener al menos 10 caracteres, incluir mayúsculas, minúsculas, números y caracteres especiales.');
         }
         
         await register(email, password, {
@@ -61,25 +70,25 @@ function AuthContent() {
           turnstileToken,
         });
 
-        setSuccessMsg('¡Registro completado! Por favor revisa tu correo electrónico para confirmar tu cuenta.');
+        setSuccessMsg(t('auth.register_success') || '¡Registro completado! Por favor revisa tu correo electrónico para confirmar tu cuenta.');
         setSubmitting(false);
       }
     } catch (err) {
-      setErrorMsg(err.message || 'Ocurrió un error en el proceso.');
+      setErrorMsg(err.message || t('auth.error_generic') || 'Ocurrió un error en el proceso.');
       setSubmitting(false);
     }
   };
 
   const handleBiometricLogin = async () => {
     if (!email) {
-      setErrorMsg('Por favor ingresa tu email para iniciar sesión con biometría.');
+      setErrorMsg(t('auth.error_email_biometric') || 'Por favor ingresa tu email para iniciar sesión con biometría.');
       return;
     }
     setErrorMsg('');
     setSuccessMsg('');
     try {
       await loginWithPasskey(email);
-      setSuccessMsg('¡Identidad biométrica confirmada! Redirigiendo...');
+      setSuccessMsg(t('auth.biometric_success') || '¡Identidad biométrica confirmada! Redirigiendo...');
       setTimeout(() => router.push(redirectPath), 1500);
     } catch (err) {
       setErrorMsg(err.message);
@@ -99,7 +108,9 @@ function AuthContent() {
           </div>
           <h1 className={styles.title}>Galicia Migrante</h1>
           <p className={styles.subtitle}>
-            {mode === 'login' ? 'Bienvenido de nuevo a tu portal' : 'Crea tu cuenta de diáspora hoy'}
+            {mode === 'login' 
+              ? (t('auth.welcome_back') || 'Bienvenido de nuevo a tu portal') 
+              : (t('auth.create_account') || 'Crea tu cuenta de diáspora hoy')}
           </p>
         </div>
 
@@ -108,13 +119,13 @@ function AuthContent() {
             className={`${styles.tabBtn} ${mode === 'login' ? styles.tabBtnActive : ''}`}
             onClick={() => { setMode('login'); setErrorMsg(''); setSuccessMsg(''); }}
           >
-            Iniciar Sesión
+            {t('nav.ingresar') || 'Iniciar Sesión'}
           </button>
           <button 
             className={`${styles.tabBtn} ${mode === 'register' ? styles.tabBtnActive : ''}`}
             onClick={() => { setMode('register'); setErrorMsg(''); setSuccessMsg(''); }}
           >
-            Registrarse
+            {t('nav.registrarse') || 'Registrarse'}
           </button>
         </div>
 
@@ -125,24 +136,24 @@ function AuthContent() {
           {mode === 'register' && (
             <>
               <div className={styles.formGroup}>
-                <label className={styles.label}>Nombre</label>
+                <label className={styles.label}>{t('auth.first_name') || 'Nombre'}</label>
                 <input 
                   type="text" 
                   className={styles.input} 
                   value={nombre} 
                   onChange={(e) => setNombre(e.target.value)} 
-                  placeholder="Tu nombre"
+                  placeholder={t('auth.first_name_placeholder') || 'Tu nombre'}
                   required 
                 />
               </div>
               <div className={styles.formGroup}>
-                <label className={styles.label}>Apellido</label>
+                <label className={styles.label}>{t('auth.last_name') || 'Apellido'}</label>
                 <input 
                   type="text" 
                   className={styles.input} 
                   value={apellido} 
                   onChange={(e) => setApellido(e.target.value)} 
-                  placeholder="Tu apellido"
+                  placeholder={t('auth.last_name_placeholder') || 'Tu apellido'}
                   required 
                 />
               </div>
@@ -152,7 +163,7 @@ function AuthContent() {
           <div className={styles.formGroup}>
             <label className={styles.label}>Email</label>
             <input 
-              type="email" 
+              type="text" 
               className={styles.input} 
               value={email} 
               onChange={(e) => setEmail(e.target.value)} 
@@ -162,7 +173,7 @@ function AuthContent() {
           </div>
 
           <div className={styles.formGroup}>
-            <label className={styles.label}>Contraseña</label>
+            <label className={styles.label}>{t('auth.password') || 'Contraseña'}</label>
             <input 
               type="password" 
               className={styles.input} 
@@ -176,9 +187,14 @@ function AuthContent() {
           {mode === 'login' ? (
             <div className={styles.row}>
               <label className={styles.checkboxLabel}>
-                <input type="checkbox" className={styles.checkbox} /> Recordarme
+                <input 
+                  type="checkbox" 
+                  className={styles.checkbox} 
+                  checked={rememberMe} 
+                  onChange={(e) => setRememberMe(e.target.checked)} 
+                /> {t('auth.remember_me') || 'Recordarme'}
               </label>
-              <Link href="/auth/recuperar" className={styles.link}>¿Olvidaste tu contraseña?</Link>
+              <Link href="/auth/recuperar" className={styles.link}>{t('auth.forgot_password') || '¿Olvidaste tu contraseña?'}</Link>
             </div>
           ) : (
             <div className={styles.formGroup}>
@@ -190,7 +206,7 @@ function AuthContent() {
                   onChange={(e) => setAceptoTerminos(e.target.checked)} 
                   required
                 />
-                <span>Acepto los <Link href="/terminos" className={styles.link} target="_blank">Términos de Servicio</Link></span>
+                <span>{t('auth.accept') || 'Acepto los'} <Link href="/terminos" className={styles.link} target="_blank">{t('auth.terms_service') || 'Términos de Servicio'}</Link></span>
               </label>
               <label className={styles.checkboxLabel}>
                 <input 
@@ -200,7 +216,7 @@ function AuthContent() {
                   onChange={(e) => setAceptoPrivacidad(e.target.checked)} 
                   required
                 />
-                <span>Acepto las <Link href="/privacidad" className={styles.link} target="_blank">Políticas de Privacidad</Link></span>
+                <span>{t('auth.accept') || 'Acepto las'} <Link href="/privacidad" className={styles.link} target="_blank">{t('auth.privacy_policy') || 'Políticas de Privacidad'}</Link></span>
               </label>
               
               {/* Turnstile Captcha Widget mock/visual representation */}
@@ -217,32 +233,32 @@ function AuthContent() {
                   color: 'rgba(255,255,255,0.6)'
                 }}>
                   <input type="checkbox" checked readOnly style={{ accentColor: '#2ec4b6' }} />
-                  <span>Verificado por Cloudflare Turnstile (Protección bots)</span>
+                  <span>{t('auth.turnstile_verified') || 'Verificado por Cloudflare Turnstile (Protección bots)'}</span>
                 </div>
               </div>
             </div>
           )}
 
           <button type="submit" disabled={submitting} className={styles.btnSubmit}>
-            {submitting ? 'Procesando...' : mode === 'login' ? 'Ingresar' : 'Crear Cuenta'}
+            {submitting ? (t('auth.processing') || 'Procesando...') : mode === 'login' ? (t('nav.ingresar') || 'Ingresar') : (t('auth.create_btn') || 'Crear Cuenta')}
           </button>
         </form>
 
-        <div className={styles.divider}>o accede de forma rápida</div>
+        <div className={styles.divider}>{t('auth.fast_access') || 'o accede de forma rápida'}</div>
 
         <button onClick={handleBiometricLogin} className={styles.btnSocial} style={{ borderColor: 'var(--gm-gold)', color: 'var(--gm-gold)' }}>
-          🔑 Iniciar Sesión con Huella o Rostro (Passkey)
+          🔑 {t('auth.biometric_btn') || 'Iniciar Sesión con Huella o Rostro (Passkey)'}
         </button>
 
         <button 
-          onClick={() => alert('Autenticación de Google requiere configurar credenciales OAuth en consola Supabase.')} 
+          onClick={() => alert(t('auth.google_notice') || 'Autenticación de Google requiere configurar credenciales OAuth en consola Supabase.')} 
           className={styles.btnSocial}
           style={{ marginTop: '10px' }}
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12.24 10.285V14.4h6.887c-.648 2.41-2.519 4.114-5.136 4.114-3.51 0-6.386-2.876-6.386-6.386 0-3.51 2.876-6.386 6.386-6.386 1.54 0 2.98.55 4.12 1.48L21.1 4.4C18.78 2.24 15.68 1 12 1 5.925 1 1 5.925 1 12s4.925 11 11 11c5.523 0 10-4.477 10-10 0-.66-.08-1.3-.23-1.92H12.24z" fill="white"/>
           </svg>
-          Ingresar con Google
+          {t('auth.google_btn') || 'Ingresar con Google'}
         </button>
       </div>
     </div>

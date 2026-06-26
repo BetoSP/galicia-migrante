@@ -11,8 +11,8 @@ const SERVICES = [
   {
     id: 'arbol',
     emoji: '🌳',
-    title: 'Tu árbol genealógico',
-    desc: 'Construye y visualiza tu historia familiar con un motor propio e independiente de alto rendimiento. Importación rápida desde GEDCOM, CSV o Excel.',
+    titleKey: 'home.servicios.arbol.title',
+    descKey: 'home.servicios.arbol.desc',
     href: ARBOL_URL,
     active: true,
     color: 'blue',
@@ -20,8 +20,8 @@ const SERVICES = [
   {
     id: 'territorio',
     emoji: '📍',
-    title: 'Tu lugar en Galicia',
-    desc: 'Ubica con precisión la aldea, parroquia y concello original de tus ancestros utilizando bases de datos oficiales de geolocalización gallega.',
+    titleKey: 'home.servicios.territorio.title',
+    descKey: 'home.servicios.territorio.desc',
     href: '/lugar-galicia',
     active: true,
     color: 'green',
@@ -29,8 +29,8 @@ const SERVICES = [
   {
     id: 'asociaciones',
     emoji: '🏛️',
-    title: 'Asociaciones gallegas',
-    desc: 'Directorio unificado de centros gallegos en Argentina y todo el mundo. Espacios exclusivos para conectar y revivir las costumbres locales.',
+    titleKey: 'home.servicios.asociaciones.title',
+    descKey: 'home.servicios.asociaciones.desc',
     href: '/asociaciones',
     active: true,
     color: 'gold',
@@ -38,8 +38,8 @@ const SERVICES = [
   {
     id: 'blog',
     emoji: '📰',
-    title: 'Crónicas de la Diáspora',
-    desc: 'Historias de vida, cultura, arte y testimonios de la colectividad. El espacio de expresión e identidad gallega en el mundo.',
+    titleKey: 'home.servicios.blog.title',
+    descKey: 'home.servicios.blog.desc',
     href: '/blog',
     active: true,
     color: 'blue',
@@ -47,8 +47,8 @@ const SERVICES = [
   {
     id: 'biblioteca',
     emoji: '📚',
-    title: 'Biblioteca digital',
-    desc: 'Acceso exclusivo a libros históricos, diarios de migración y documentos de valor histórico para miembros del portal.',
+    titleKey: 'home.servicios.biblioteca.title',
+    descKey: 'home.servicios.biblioteca.desc',
     href: null,
     active: false,
     color: 'gold',
@@ -56,8 +56,8 @@ const SERVICES = [
   {
     id: 'tramites',
     emoji: '📋',
-    title: 'Trámites & Xunta',
-    desc: 'Guía informativa actualizada sobre nacionalidad española (Ley de Memoria Democrática), programas de retorno y becas de la Xunta de Galicia.',
+    titleKey: 'home.servicios.tramites.title',
+    descKey: 'home.servicios.tramites.desc',
     href: '/xunta',
     active: true,
     color: 'green',
@@ -122,8 +122,7 @@ export default function HomePage() {
             </div>
             <div className={styles.statDiv} />
             <div className={styles.stat}>
-              <strong>3 Idiomas</strong>
-              <span>{t('home.stat_languages')}</span>
+              <strong>3 {t('home.stat_languages')}</strong>
             </div>
           </div>
         </div>
@@ -133,10 +132,10 @@ export default function HomePage() {
       <section className={styles.section} aria-labelledby="services-title">
         <div className={styles.container}>
           <div className={styles.sectionHeader}>
-            <p className={styles.sectionEyebrow}>Todo en un solo lugar</p>
-            <h2 id="services-title" className={styles.sectionTitle}>El Ecosistema Digital</h2>
+            <p className={styles.sectionEyebrow}>{t('home.todo_un_solo_lugar')}</p>
+            <h2 id="services-title" className={styles.sectionTitle}>{t('home.ecosistema_digital')}</h2>
             <p className={styles.sectionDesc}>
-              Herramientas especialmente diseñadas para ayudarte a reconstruir tu historia familiar, reencontrar tus orígenes y mantener viva la cultura gallega.
+              {t('home.herramientas_disenadas')}
             </p>
           </div>
 
@@ -146,10 +145,10 @@ export default function HomePage() {
                 <div className={`${styles.serviceCard} ${s.color === 'blue' ? styles.cardBlue : s.color === 'green' ? styles.cardGreen : styles.cardGold} ${!s.active ? styles.cardSoon : ''}`}>
                   <div className={styles.serviceEmoji}>{s.emoji}</div>
                   <h3 className={styles.serviceTitle}>
-                    {s.title}
-                    {!s.active && <span className={styles.badgeSoon}>Próximamente</span>}
+                    {t(s.titleKey)}
+                    {!s.active && <span className={styles.badgeSoon}>{t('nav.proximamente')}</span>}
                   </h3>
-                  <p className={styles.serviceDesc}>{s.desc}</p>
+                  <p className={styles.serviceDesc}>{t(s.descKey)}</p>
                   {s.active && <span className={styles.serviceArrow}>→</span>}
                 </div>
               );
@@ -172,31 +171,31 @@ export default function HomePage() {
         <div className={styles.container}>
           <div className={styles.splitLayout}>
             <div className={styles.featureInfo}>
-              <p className={styles.sectionEyebrow} style={{ color: 'var(--gm-green)' }}>Tecnología de Vanguardia</p>
-              <h2 id="feature-tree-title" className={styles.featureTitle}>Un motor de genealogía robusto y a medida</h2>
+              <p className={styles.sectionEyebrow} style={{ color: 'var(--gm-green)' }}>{t('home.motor.eyebrow')}</p>
+              <h2 id="feature-tree-title" className={styles.featureTitle}>{t('home.motor.title')}</h2>
               <p className={styles.featureDesc}>
-                Diseñamos y programamos nuestro propio motor gráfico y de base de datos desde cero. Sin depender de librerías externas genéricas que se rompen o desactualizan.
+                {t('home.motor.desc')}
               </p>
               <div className={styles.featurePoints}>
                 <div className={styles.pointItem}>
                   <div className={styles.pointIcon}>✓</div>
                   <div className={styles.pointText}>
-                    <h4>100% Basado en Datos Relacionales</h4>
-                    <p>Toda la información se almacena en esquemas SQL robustos, permitiendo búsquedas rápidas y conexiones dinámicas instantáneas.</p>
+                    <h4>{t('home.motor.punto1_title')}</h4>
+                    <p>{t('home.motor.punto1_desc')}</p>
                   </div>
                 </div>
                 <div className={styles.pointItem}>
                   <div className={styles.pointIcon}>✓</div>
                   <div className={styles.pointText}>
-                    <h4>Visualización Gráfica Interactiva</h4>
-                    <p>Explora tu árbol genealógico en un lienzo interactivo con zoom fluido, perfiles laterales, arrastre y reajuste automático de jerarquías.</p>
+                    <h4>{t('home.motor.punto2_title')}</h4>
+                    <p>{t('home.motor.punto2_desc')}</p>
                   </div>
                 </div>
                 <div className={styles.pointItem}>
                   <div className={styles.pointIcon}>✓</div>
                   <div className={styles.pointText}>
-                    <h4>Condición Migratoria Destacada</h4>
-                    <p>Identifica visualmente en el árbol quiénes nacieron en Galicia, quiénes emigraron y quiénes forman parte de la diáspora retornada.</p>
+                    <h4>{t('home.motor.punto3_title')}</h4>
+                    <p>{t('home.motor.punto3_desc')}</p>
                   </div>
                 </div>
               </div>
@@ -216,21 +215,21 @@ export default function HomePage() {
                 <div className={`${styles.previewNode} ${styles.nodeMale}`} style={{ top: '30px', left: '15px' }}>
                   <span className={styles.nodeName}>Manuel Castro Novo</span>
                   <span className={styles.nodeDates}>1892 – 1968</span>
-                  <span className={`${styles.nodeCondition} ${styles.tagGaliciaBorn}`}>Nacido en Galicia</span>
+                  <span className={`${styles.nodeCondition} ${styles.tagGaliciaBorn}`}>{t('home.motor.mockup_nacido_galicia')}</span>
                 </div>
 
                 {/* Nodo Madre */}
                 <div className={`${styles.previewNode} ${styles.nodeFemale}`} style={{ top: '30px', left: '260px' }}>
                   <span className={styles.nodeName}>María Varela Otero</span>
                   <span className={styles.nodeDates}>1898 – 1974</span>
-                  <span className={`${styles.nodeCondition} ${styles.tagGaliciaBorn}`}>Nacida en Galicia</span>
+                  <span className={`${styles.nodeCondition} ${styles.tagGaliciaBorn}`}>{t('home.motor.mockup_nacida_galicia')}</span>
                 </div>
 
                 {/* Nodo Hijo */}
                 <div className={`${styles.previewNode} ${styles.nodeMale}`} style={{ top: '230px', left: '125px' }}>
                   <span className={styles.nodeName}>José Castro Varela</span>
                   <span className={styles.nodeDates}>1924 – 2005</span>
-                  <span className={`${styles.nodeCondition} ${styles.tagDiaspora}`}>Diáspora (Argentina)</span>
+                  <span className={`${styles.nodeCondition} ${styles.tagDiaspora}`}>{t('home.motor.mockup_diaspora')}</span>
                 </div>
               </div>
             </div>
@@ -247,52 +246,52 @@ export default function HomePage() {
               <div className={styles.territoryHeader}>
                 <span className={styles.territoryPin}>📍</span>
                 <div>
-                  <h4 style={{ fontWeight: 700, color: 'var(--gm-navy)' }}>Raíces Territoriales</h4>
-                  <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>Galicia, España</p>
+                  <h4 style={{ fontWeight: 700, color: 'var(--gm-navy)' }}>{t('home.geografia.mockup_titulo')}</h4>
+                  <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>{t('home.geografia.mockup_subtitulo')}</p>
                 </div>
               </div>
               <div className={styles.territorySearchBox}>
                 <div className={styles.searchField}>
-                  <label>Provincia</label>
+                  <label>{t('home.geografia.mockup_provincia')}</label>
                   <select className={`${styles.searchSelect} ${styles.searchSelectActive}`} disabled>
                     <option>Pontevedra</option>
                   </select>
                 </div>
                 <div className={styles.searchField}>
-                  <label>Concello (Municipio)</label>
+                  <label>{t('home.geografia.mockup_concello')}</label>
                   <select className={`${styles.searchSelect} ${styles.searchSelectActive}`} disabled>
                     <option>Lalín</option>
                   </select>
                 </div>
                 <div className={styles.searchField}>
-                  <label>Parroquia</label>
+                  <label>{t('home.geografia.mockup_parroquia')}</label>
                   <select className={`${styles.searchSelect} ${styles.searchSelectActive}`} disabled>
                     <option>Donramiro (Santa María)</option>
                   </select>
                 </div>
-                <span className={styles.resultsTag}>✓ 12 personas vinculadas a esta parroquia</span>
+                <span className={styles.resultsTag}>{t('home.geografia.mockup_personas_vinculadas')}</span>
               </div>
             </div>
 
             <div className={styles.featureInfo}>
-              <p className={styles.sectionEyebrow} style={{ color: 'var(--gm-blue-dark)' }}>Fidelidad Geográfica</p>
-              <h2 id="feature-territory-title" className={styles.featureTitle}>Conexión geográfica real con la tierra</h2>
+              <p className={styles.sectionEyebrow} style={{ color: 'var(--gm-blue-dark)' }}>{t('home.geografia.eyebrow')}</p>
+              <h2 id="feature-territory-title" className={styles.featureTitle}>{t('home.geografia.title')}</h2>
               <p className={styles.featureDesc}>
-                La emigración gallega no se explica con campos de texto libre generales. Para encontrar el origen real de tu familia necesitas bajar al máximo detalle administrativo gallego.
+                {t('home.geografia.desc')}
               </p>
               <div className={styles.featurePoints}>
                 <div className={styles.pointItem}>
                   <div className={styles.pointIcon}>✓</div>
                   <div className={styles.pointText}>
-                    <h4>Base de datos oficial integrada</h4>
-                    <p>Trabajamos con la estructura territorial oficial de Galicia con sus 4 provincias, 313 concellos y más de 3.800 parroquias históricas.</p>
+                    <h4>{t('home.geografia.punto1_title')}</h4>
+                    <p>{t('home.geografia.punto1_desc')}</p>
                   </div>
                 </div>
                 <div className={styles.pointItem}>
                   <div className={styles.pointIcon}>✓</div>
                   <div className={styles.pointText}>
-                    <h4>Sin Errores de Escritura</h4>
-                    <p>Al seleccionar opciones normalizadas en vez de escribir texto libre, garantizamos que los registros coincidan de forma exacta entre diferentes ramas de la comunidad.</p>
+                    <h4>{t('home.geografia.punto2_title')}</h4>
+                    <p>{t('home.geografia.punto2_desc')}</p>
                   </div>
                 </div>
               </div>
@@ -305,10 +304,10 @@ export default function HomePage() {
       <section className={`${styles.section} ${styles.communitySection}`} aria-labelledby="community-title">
         <div className={styles.container}>
           <div className={styles.sectionHeader}>
-            <p className={styles.sectionEyebrow}>Vida Comunitaria</p>
-            <h2 id="community-title" className={styles.sectionTitle}>Conectados en la diáspora</h2>
+            <p className={styles.sectionEyebrow}>{t('home.comunidad.eyebrow')}</p>
+            <h2 id="community-title" className={styles.sectionTitle}>{t('home.comunidad.title')}</h2>
             <p className={styles.sectionDesc}>
-              Entérate de las actividades de los centros gallegos y disfruta de artículos sobre la historia, el arte y el presente de nuestra colectividad.
+              {t('home.comunidad.desc')}
             </p>
           </div>
 
@@ -324,16 +323,16 @@ export default function HomePage() {
                       fill
                       style={{ objectFit: 'cover' }}
                     />
-                    <span className={styles.blogTag}>Cultura</span>
+                    <span className={styles.blogTag}>{t('home.comunidad.blog_tag')}</span>
                   </div>
                   <div className={styles.blogContent}>
-                    <h3 className={styles.blogTitle}>La huella de la emigración gallega en Sudamérica</h3>
+                    <h3 className={styles.blogTitle}>{t('home.comunidad.blog_title')}</h3>
                     <p className={styles.blogExcerpt}>
-                      Un recorrido histórico sobre los primeros centros gallegos fundados a fines del siglo XIX en Argentina y Uruguay, su rol mutual y la preservación de la lengua gallega.
+                      {t('home.comunidad.blog_desc')}
                     </p>
                     <div className={styles.blogMeta}>
-                      <span>Publicado recientemente en Crónicas</span>
-                      <span className={styles.readMoreLink}>Leer artículo →</span>
+                      <span>{t('home.comunidad.blog_meta')}</span>
+                      <span className={styles.readMoreLink}>{t('home.comunidad.blog_leer')}</span>
                     </div>
                   </div>
                 </article>
@@ -343,9 +342,9 @@ export default function HomePage() {
             {/* Agenda */}
             <div className={styles.agendaColumn}>
               <div className={styles.agendaTitleRow}>
-                <h3>Próximos eventos</h3>
+                <h3>{t('home.comunidad.eventos_titulo')}</h3>
                 <Link href="/agenda" className={styles.agendaLinkAll}>
-                  Ver todos →
+                  {t('home.comunidad.eventos_ver_todos')}
                 </Link>
               </div>
 
@@ -371,16 +370,17 @@ export default function HomePage() {
       <section className={styles.ctaSection} aria-labelledby="cta-title">
         <div className={styles.ctaInner}>
           <h2 id="cta-title" className={styles.ctaTitle}>
-            Tu historia familiar<br />te espera en <em>Galicia</em>.
+            {t('home.cta_final.titulo')}
           </h2>
           <p className={styles.ctaDesc}>
-            Formá parte hoy del primer y único portal diseñado en exclusiva para reconstruir, resguardar y transmitir las raíces y la cultura de la diáspora gallega.
+            {t('home.cta_final.desc')}
           </p>
           <Link href="/auth?mode=register" className={styles.ctaButton} id="final-cta-btn">
-            Registrarme gratis →
+            {t('home.cta_final.boton')}
           </Link>
         </div>
       </section>
     </>
   );
 }
+
