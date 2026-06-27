@@ -4,12 +4,19 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import esARTranslations from '@/locales/es-AR.json';
 import glTranslations from '@/locales/gl.json';
 import enTranslations from '@/locales/en.json';
+import frTranslations from '@/locales/fr.json';
+import deTranslations from '@/locales/de.json';
+import itTranslations from '@/locales/it.json';
 import { supabase } from '@/lib/supabase';
 
+// FR, DE, IT tienen locale mínimo — las claves faltantes caen a es-AR.
 const translations = {
   'es-AR': esARTranslations,
   'gl': glTranslations,
   'en': enTranslations,
+  'fr': frTranslations,
+  'de': deTranslations,
+  'it': itTranslations,
 };
 
 const LanguageContext = createContext(null);

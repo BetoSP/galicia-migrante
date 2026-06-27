@@ -126,28 +126,16 @@ export default function Navbar() {
             onKeyDown={(e) => { if (e.key === 'Escape') setLangOpen(false); }}
           >
             <button className={styles.langBtn} onClick={() => setLangOpen(!langOpen)} onFocus={() => setLangOpen(true)} aria-haspopup="true" aria-expanded={langOpen}>
-              🌐 {locale === 'es-AR' ? 'ES' : locale === 'gl' ? 'GL' : 'EN'}
+              🌐 {locale.toUpperCase().replace('-AR', '').replace('ES', 'ES')}
             </button>
             {langOpen && (
               <div className={styles.langMenu} role="menu">
-                <button 
-                  className={locale === 'es-AR' ? styles.langMenuActive : ''}
-                  onClick={() => { setLocale('es-AR'); setLangOpen(false); }}
-                >
-                  Español (AR)
-                </button>
-                <button 
-                  className={locale === 'gl' ? styles.langMenuActive : ''}
-                  onClick={() => { setLocale('gl'); setLangOpen(false); }}
-                >
-                  Galego
-                </button>
-                <button 
-                  className={locale === 'en' ? styles.langMenuActive : ''}
-                  onClick={() => { setLocale('en'); setLangOpen(false); }}
-                >
-                  English
-                </button>
+                <button className={locale === 'es-AR' ? styles.langMenuActive : ''} onClick={() => { setLocale('es-AR'); setLangOpen(false); }}>Español (AR)</button>
+                <button className={locale === 'gl'    ? styles.langMenuActive : ''} onClick={() => { setLocale('gl');    setLangOpen(false); }}>Galego</button>
+                <button className={locale === 'en'    ? styles.langMenuActive : ''} onClick={() => { setLocale('en');    setLangOpen(false); }}>English</button>
+                <button className={locale === 'fr'    ? styles.langMenuActive : ''} onClick={() => { setLocale('fr');    setLangOpen(false); }}>Français</button>
+                <button className={locale === 'de'    ? styles.langMenuActive : ''} onClick={() => { setLocale('de');    setLangOpen(false); }}>Deutsch</button>
+                <button className={locale === 'it'    ? styles.langMenuActive : ''} onClick={() => { setLocale('it');    setLangOpen(false); }}>Italiano</button>
               </div>
             )}
           </div>
@@ -241,24 +229,22 @@ export default function Navbar() {
         <div className={styles.mobileMenu} role="dialog" aria-label="Menú de navegación">
           {/* Selector de idioma para móvil */}
           <div className={styles.mobileLang}>
-            <button 
-              className={`${styles.mobileLangBtn} ${locale === 'es-AR' ? styles.mobileLangBtnActive : ''}`}
-              onClick={() => setLocale('es-AR')}
-            >
-              ES
-            </button>
-            <button 
-              className={`${styles.mobileLangBtn} ${locale === 'gl' ? styles.mobileLangBtnActive : ''}`}
-              onClick={() => setLocale('gl')}
-            >
-              GL
-            </button>
-            <button 
-              className={`${styles.mobileLangBtn} ${locale === 'en' ? styles.mobileLangBtnActive : ''}`}
-              onClick={() => setLocale('en')}
-            >
-              EN
-            </button>
+            {[
+              { code: 'es-AR', label: 'ES' },
+              { code: 'gl',    label: 'GL' },
+              { code: 'en',    label: 'EN' },
+              { code: 'fr',    label: 'FR' },
+              { code: 'de',    label: 'DE' },
+              { code: 'it',    label: 'IT' },
+            ].map(({ code, label }) => (
+              <button
+                key={code}
+                className={`${styles.mobileLangBtn} ${locale === code ? styles.mobileLangBtnActive : ''}`}
+                onClick={() => setLocale(code)}
+              >
+                {label}
+              </button>
+            ))}
           </div>
 
           {/* Selector de tema para móvil */}
