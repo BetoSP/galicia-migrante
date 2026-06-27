@@ -542,5 +542,8 @@
     "google_notice": "Autenticación de Google requiere configurar credenciales OAuth en consola Supabase.",
     "google_btn": "Ingresar con Google",
     "register_success": "¡Registro completado! Por favor revisa tu correo electrónico para confirmar tu cuenta."
+  },
+  "common": {
+    "loading": "Cargando..."
   }
 }
