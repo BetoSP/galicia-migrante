@@ -2,25 +2,25 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import styles from '../blog.module.css';
-import { initialCategories } from '../lib/categories';
+import styles from './blog.module.css';
+import { BLOG_CATEGORIES } from '@/lib/blog/categories';
 
 export default function BlogList({ posts }) {
   const [selectedCat, setSelectedCat] = useState('todos');
 
-  const activeCategory = initialCategories.find(c => c.id === selectedCat) || initialCategories[0];
+  const activeCategory =
+    BLOG_CATEGORIES.find((c) => c.id === selectedCat) || BLOG_CATEGORIES[0];
 
-  // Filter posts based on selected category
-  const filteredPosts = selectedCat === 'todos'
-    ? posts
-    : posts.filter(post => post.category.toLowerCase() === selectedCat);
+  const filteredPosts =
+    selectedCat === 'todos'
+      ? posts
+      : posts.filter((p) => p.category.toLowerCase() === selectedCat);
 
   return (
     <div className={styles.main}>
-      {/* Category Tabs */}
       <nav className={styles.tabsContainer} aria-label="Categorías del blog">
         <ul className={styles.tabs}>
-          {initialCategories.map((cat) => (
+          {BLOG_CATEGORIES.map((cat) => (
             <li key={cat.id}>
               <button
                 className={`${styles.tabBtn} ${selectedCat === cat.id ? styles.tabBtnActive : ''}`}
@@ -33,12 +33,10 @@ export default function BlogList({ posts }) {
         </ul>
       </nav>
 
-      {/* Category Description */}
       <div className={styles.categoryInfo}>
         <p className={styles.categoryDesc}>{activeCategory.description}</p>
       </div>
 
-      {/* Post Grid */}
       {filteredPosts.length === 0 ? (
         <p className={styles.empty}>No hay publicaciones en esta categoría todavía.</p>
       ) : (

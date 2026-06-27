@@ -1,3 +1,4 @@
+/* ── Blog Page Layout ──────────────────────────────────────────── */
 .page {
   max-width: var(--max-width-content, 1200px);
   margin: 0 auto;
@@ -5,14 +6,14 @@
   min-height: 100vh;
 }
 
-.header {
+.pageHeader {
   margin-bottom: var(--spacing-12, 48px);
   padding-bottom: var(--spacing-8, 32px);
   border-bottom: 1px solid var(--color-border-light);
   text-align: center;
 }
 
-.title {
+.pageTitle {
   font-family: var(--font-display, sans-serif);
   font-size: var(--font-size-4xl, 32px);
   font-weight: var(--font-weight-bold, 700);
@@ -22,7 +23,7 @@
   letter-spacing: -0.02em;
 }
 
-.subtitle {
+.pageSubtitle {
   font-size: var(--font-size-lg, 15px);
   color: var(--color-text-secondary);
   line-height: var(--line-height-base, 1.5);
@@ -30,6 +31,7 @@
   margin: 0 auto;
 }
 
+/* ── BlogList ─────────────────────────────────────────────────── */
 .main {
   display: flex;
   flex-direction: column;
@@ -43,6 +45,63 @@
   padding: 48px 0;
 }
 
+/* ── Category Tabs ────────────────────────────────────────────── */
+.tabsContainer {
+  margin-bottom: var(--spacing-4, 16px);
+  border-bottom: 1px solid var(--color-border-light);
+  padding-bottom: var(--spacing-2, 8px);
+}
+
+.tabs {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  gap: var(--spacing-2, 8px);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.tabBtn {
+  background: none;
+  border: none;
+  padding: 8px 16px;
+  font-family: var(--font-display, sans-serif);
+  font-size: var(--font-size-md, 13px);
+  font-weight: var(--font-weight-medium, 500);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  border-radius: var(--radius-sm, 4px);
+  transition: all var(--transition-fast, 150ms ease);
+}
+
+.tabBtn:hover {
+  color: var(--color-text-primary);
+  background: var(--color-bg-hover);
+}
+
+.tabBtnActive {
+  color: var(--color-secondary, #c8a96e) !important;
+  background: rgba(200, 169, 110, 0.08) !important;
+  font-weight: var(--font-weight-semibold, 600);
+}
+
+.categoryInfo {
+  background: var(--color-bg-soft);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md, 7px);
+  padding: var(--spacing-4, 16px);
+  margin-bottom: var(--spacing-8, 32px);
+  text-align: center;
+}
+
+.categoryDesc {
+  font-size: var(--font-size-md, 13px);
+  color: var(--color-text-secondary);
+  font-style: italic;
+  margin: 0;
+}
+
+/* ── Post Grid ────────────────────────────────────────────────── */
 .postList {
   list-style: none;
   padding: 0;
@@ -66,9 +125,9 @@
 
 .postCard:hover {
   background: var(--color-bg-hover);
-  border-color: rgba(200, 169, 110, 0.3); /* Gold border hover */
+  border-color: rgba(200, 169, 110, 0.3);
   transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(200, 169, 110, 0.15); /* Warm gold drop shadow */
+  box-shadow: 0 12px 40px rgba(200, 169, 110, 0.15);
 }
 
 .postLink {
@@ -138,6 +197,15 @@
   flex-grow: 1;
 }
 
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--color-border-light);
+  padding-top: var(--spacing-4, 16px);
+  margin-top: auto;
+}
+
 .readMore {
   font-size: var(--font-size-sm, 11px);
   font-weight: var(--font-weight-bold, 700);
@@ -153,66 +221,11 @@
   transform: translateX(4px);
 }
 
-/* Categorías y Tabs */
-.tabsContainer {
-  margin-bottom: var(--spacing-4, 16px);
-  border-bottom: 1px solid var(--color-border-light);
-  padding-bottom: var(--spacing-2, 8px);
-}
-
-.tabs {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  gap: var(--spacing-2, 8px);
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.tabBtn {
-  background: none;
-  border: none;
-  padding: 8px 16px;
-  font-family: var(--font-display, sans-serif);
-  font-size: var(--font-size-md, 13px);
-  font-weight: var(--font-weight-medium, 500);
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  border-radius: var(--radius-sm, 4px);
-  transition: all var(--transition-fast, 150ms ease);
-}
-
-.tabBtn:hover {
-  color: var(--color-text-primary);
-  background: var(--color-bg-hover);
-}
-
-.tabBtnActive {
-  color: var(--color-secondary, #c8a96e) !important;
-  background: rgba(200, 169, 110, 0.08) !important;
-  font-weight: var(--font-weight-semibold, 600);
-}
-
-.categoryInfo {
-  background: var(--color-bg-soft);
-  border: 1px solid var(--color-border-light);
-  border-radius: var(--radius-md, 7px);
-  padding: var(--spacing-4, 16px);
-  margin-bottom: var(--spacing-8, 32px);
-  text-align: center;
-}
-
-.categoryDesc {
-  font-size: var(--font-size-md, 13px);
-  color: var(--color-text-secondary);
-  font-style: italic;
-  margin: 0;
-}
-
+/* ── Badges ───────────────────────────────────────────────────── */
 .provisionalBadge {
   font-size: var(--font-size-2xs, 8.5px);
   font-weight: var(--font-weight-bold, 700);
-  color: #e76f51; /* Terracota / Alerta */
+  color: #e76f51;
   background: rgba(231, 111, 81, 0.08);
   border: 1px solid rgba(231, 111, 81, 0.15);
   padding: 1px var(--spacing-2, 8px);
@@ -224,7 +237,7 @@
 .categoryBadge {
   font-size: var(--font-size-2xs, 8.5px);
   font-weight: var(--font-weight-bold, 700);
-  color: #457b9d; /* Ocean blue light */
+  color: #457b9d;
   background: rgba(69, 123, 157, 0.08);
   border: 1px solid rgba(69, 123, 157, 0.15);
   padding: 1px var(--spacing-2, 8px);
@@ -232,13 +245,4 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-left: auto;
-}
-
-.cardFooter {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-top: 1px solid var(--color-border-light);
-  padding-top: var(--spacing-4, 16px);
-  margin-top: auto;
 }
