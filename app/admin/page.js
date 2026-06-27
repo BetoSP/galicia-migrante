@@ -87,10 +87,11 @@ export default function AdminPage() {
         .order('created_at', { ascending: false });
       if (postsData) setPosts(postsData);
 
-      // 2. Cargar traducciones
+      // 2. Cargar traducciones de interfaz
       const { data: tradData } = await supabase
-        .from('traducciones')
-        .select('*');
+        .from('traducciones_interfaz')
+        .select('id, clave, idioma, texto_por_defecto, texto_custom, es_manual')
+        .order('clave', { ascending: true });
       if (tradData) setTraducciones(tradData);
 
       // 3. Cargar catálogo de planes
@@ -206,23 +207,33 @@ export default function AdminPage() {
   };
 
   // --- ACCIONES I18N ---
+  // Guarda una traducción editada manualmente en traducciones_interfaz.
+  // gl/en van a texto_custom con es_manual=true (protección humana).
+  // es va a texto_por_defecto (es el texto canónico de referencia).
   const handleSaveTranslation = async (key) => {
     try {
-      const langs = ['es', 'gl', 'en'];
-      const vals = [editValEs, editValGl, editValEn];
-      for (let i = 0; i < langs.length; i++) {
-        if (vals[i] !== undefined) {
-          const { error } = await supabase
-            .from('traducciones')
-            .upsert({ clave: key, idioma: langs[i], valor: vals[i], modulo: 'portal' }, { onConflict: 'clave, idioma' });
-          if (error) throw error;
-        }
+      const updates = [
+        { idioma: 'es', texto_por_defecto: editValEs, is_default_change: true },
+        { idioma: 'gl', texto_custom: editValGl, es_manual: true },
+        { idioma: 'en', texto_custom: editValEn, es_manual: true },
+      ];
+
+      for (const update of updates) {
+        const { idioma, is_default_change, ...fields } = update;
+        const payload = is_default_change
+          ? { clave: key, idioma, texto_por_defecto: fields.texto_por_defecto }
+          : { clave: key, idioma, texto_custom: fields.texto_custom, es_manual: fields.es_manual };
+
+        const { error } = await supabase
+          .from('traducciones_interfaz')
+          .upsert(payload, { onConflict: 'clave,idioma' });
+        if (error) throw error;
       }
-      alert('Traducción guardada.');
+
       setEditingKey(null);
       loadAllData();
     } catch (err) {
-      alert('Error: ' + err.message);
+      alert('Error al guardar: ' + err.message);
     }
   };
 
@@ -440,14 +451,19 @@ export default function AdminPage() {
     }
   };
 
-  // Agrupar traducciones
+  // Agrupar filas de traducciones_interfaz por clave.
+  // Cada fila es una (clave, idioma). Mostramos texto_custom si existe, si no texto_por_defecto.
   const groupedTranslations = traducciones.reduce((acc, t) => {
-    if (!acc[t.clave]) acc[t.clave] = { clave: t.clave, es: '', gl: '', en: '' };
-    acc[t.clave][t.idioma] = t.valor;
+    if (!acc[t.clave]) acc[t.clave] = { clave: t.clave, es: '', gl: '', en: '', manual: { gl: false, en: false } };
+    const displayed = t.texto_custom || t.texto_por_defecto || '';
+    acc[t.clave][t.idioma] = displayed;
+    if (t.idioma === 'gl' || t.idioma === 'en') {
+      acc[t.clave].manual[t.idioma] = t.es_manual || false;
+    }
     return acc;
   }, {});
 
-  const filteredI18n = Object.values(groupedTranslations).filter(t => 
+  const filteredI18n = Object.values(groupedTranslations).filter(t =>
     t.clave.toLowerCase().includes(searchI18n.toLowerCase()) ||
     t.es.toLowerCase().includes(searchI18n.toLowerCase())
   );
@@ -546,8 +562,18 @@ export default function AdminPage() {
                       <tr key={t.clave}>
                         <td><code>{t.clave}</code></td>
                         <td>{editingKey === t.clave ? <input value={editValEs} onChange={(e) => setEditValEs(e.target.value)} className={styles.inputTable} /> : t.es}</td>
-                        <td>{editingKey === t.clave ? <input value={editValGl} onChange={(e) => setEditValGl(e.target.value)} className={styles.inputTable} /> : t.gl}</td>
-                        <td>{editingKey === t.clave ? <input value={editValEn} onChange={(e) => setEditValEn(e.target.value)} className={styles.inputTable} /> : t.en}</td>
+                        <td>
+                          {editingKey === t.clave
+                            ? <input value={editValGl} onChange={(e) => setEditValGl(e.target.value)} className={styles.inputTable} />
+                            : <span>{t.gl}{t.manual.gl && <span title="Edición manual — protegida del automático" style={{ marginLeft: '6px', color: 'var(--gm-gold)', fontSize: '10px', fontWeight: 700 }}>MANUAL</span>}</span>
+                          }
+                        </td>
+                        <td>
+                          {editingKey === t.clave
+                            ? <input value={editValEn} onChange={(e) => setEditValEn(e.target.value)} className={styles.inputTable} />
+                            : <span>{t.en}{t.manual.en && <span title="Edición manual — protegida del automático" style={{ marginLeft: '6px', color: 'var(--gm-gold)', fontSize: '10px', fontWeight: 700 }}>MANUAL</span>}</span>
+                          }
+                        </td>
                         <td>
                           {editingKey === t.clave ? (
                             <div style={{ display: 'flex', gap: '4px' }}>

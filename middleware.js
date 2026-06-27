@@ -1,87 +1,68 @@
+import { createServerClient } from '@supabase/ssr';
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+
+const PROTECTED_ROUTES = ['/admin', '/dashboard', '/traductor'];
+const ADMIN_ROLES = ['admin_general'];
+const TRANSLATOR_ROLES = ['admin_general', 'traductor_delegado'];
 
 export async function middleware(request) {
   const { pathname } = request.nextUrl;
 
-  // Solo interceptar rutas de administración y dashboard
-  const isAdminRoute = pathname.startsWith('/admin');
-  const isDashboardRoute = pathname.startsWith('/dashboard');
+  const isProtected = PROTECTED_ROUTES.some((r) => pathname.startsWith(r));
+  if (!isProtected) return NextResponse.next();
 
-  if (!isAdminRoute && !isDashboardRoute) {
-    return NextResponse.next();
-  }
+  let response = NextResponse.next({ request });
 
-  // Obtener los tokens de acceso y refresh desde las cookies
-  const accessToken = request.cookies.get('sb-access-token')?.value;
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    {
+      cookies: {
+        getAll: () => request.cookies.getAll(),
+        setAll: (cookiesToSet) => {
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+          response = NextResponse.next({ request });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            response.cookies.set(name, value, options)
+          );
+        },
+      },
+    }
+  );
 
-  if (!accessToken) {
-    // Si no está autenticado, redirigir a /auth con el destino original para posterior redirección
+  const { data: { user }, error } = await supabase.auth.getUser();
+
+  if (error || !user) {
     const url = request.nextUrl.clone();
     url.pathname = '/auth';
     url.searchParams.set('redirect', pathname);
     return NextResponse.redirect(url);
   }
 
-  try {
-    // Instanciar un cliente ligero de Supabase para verificar el token
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-    
-    const supabase = createClient(supabaseUrl, supabaseKey, {
-      auth: {
-        persistSession: false,
-        autoRefreshToken: false,
-      },
-    });
+  const isAdminRoute = pathname.startsWith('/admin');
+  const isTranslatorRoute = pathname.startsWith('/traductor');
 
-    // Validar el token contra Supabase Auth
-    const { data: { user }, error } = await supabase.auth.getUser(accessToken);
+  if (isAdminRoute || isTranslatorRoute) {
+    const { data: userRoles } = await supabase
+      .from('usuarios_roles')
+      .select('roles (nombre)')
+      .eq('usuario_id', user.id);
 
-    if (error || !user) {
-      throw new Error('Sesión inválida o expirada');
+    const roleNames = (userRoles || []).map((ur) => ur.roles?.nombre).filter(Boolean);
+
+    const requiredRoles = isAdminRoute ? ADMIN_ROLES : TRANSLATOR_ROLES;
+    const hasAccess = roleNames.some((r) => requiredRoles.includes(r));
+
+    if (!hasAccess) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/';
+      return NextResponse.redirect(url);
     }
-
-    // Si es ruta de administración, verificar roles administrativos
-    if (isAdminRoute) {
-      // Consultar roles en la tabla usuarios_roles
-      const { data: userRoles, error: rolesError } = await supabase
-        .from('usuarios_roles')
-        .select('rol_id, roles (nombre, es_admin)')
-        .eq('usuario_id', user.id);
-
-      if (rolesError || !userRoles) {
-        throw new Error('Error al validar roles');
-      }
-
-      // Comprobar si tiene algún rol administrativo o con es_admin = true
-      const hasAdminAccess = userRoles.some(
-        (ur) => ur.roles && (ur.roles.es_admin || ur.roles.nombre.startsWith('admin_'))
-      );
-
-      if (!hasAdminAccess) {
-        // Redirigir a una página de no autorizado o al inicio
-        const url = request.nextUrl.clone();
-        url.pathname = '/';
-        return NextResponse.redirect(url);
-      }
-    }
-
-    // Permitir continuar si todo es válido
-    return NextResponse.next();
-  } catch (err) {
-    console.error('Middleware Auth Error:', err.message);
-    // Limpiar cookies e ir a /auth en caso de fallo
-    const url = request.nextUrl.clone();
-    url.pathname = '/auth';
-    url.searchParams.set('redirect', pathname);
-    const response = NextResponse.redirect(url);
-    response.cookies.delete('sb-access-token');
-    response.cookies.delete('sb-refresh-token');
-    return response;
   }
+
+  return response;
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/dashboard/:path*'],
+  matcher: ['/admin/:path*', '/dashboard/:path*', '/traductor/:path*'],
 };
