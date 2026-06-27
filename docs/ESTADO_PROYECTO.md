@@ -94,6 +94,18 @@ Cambios en la base de datos:
 
 ## Pendiente: Tareas de desarrollo
 
+### Módulo Blog — COMPLETAMENTE FUNCIONAL ✅ (2026-06-27)
+Todos los bugs identificados en auditoría exhaustiva han sido corregidos (commits `1ef7b16`, `da51f12`):
+- Markdown corruption en traducción → XML tags fix
+- common.loading i18n key faltante → agregada a los 3 locales
+- motivo estado compartido en ModerationQueue → limpieza automática al cambiar post
+- Sin feedback de error en approve/reject → acción de error con mensaje visible
+- Dead code provisorio → eliminado
+
+Manual técnico disponible en `docs/MANUAL_BLOG.md`.
+
+Pendiente de upgradear la API de traducción a DeepL (mejor calidad en gallego, plan gratuito 500K chars/mes).
+
 ### Prioridad media
 - **Posts inaugurales**: verificar si los 4 posts que tenían estado `provisorio` quedaron como `en_revision` tras la migración y publicarlos desde `/admin/blog`
 - **Refactorizar `app/admin/page.js`**: 835 líneas monolíticas → separar en sub-componentes (no urgente, no bloquea)
