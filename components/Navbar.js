@@ -77,8 +77,15 @@ export default function Navbar() {
             className={styles.dropdown}
             onMouseEnter={() => setOrigenesOpen(true)}
             onMouseLeave={() => setOrigenesOpen(false)}
+            onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setOrigenesOpen(false); }}
+            onKeyDown={(e) => { if (e.key === 'Escape') setOrigenesOpen(false); }}
           >
-            <button className={`${styles.link} ${styles.dropdownTrigger}`} aria-haspopup="true" aria-expanded={origenesOpen}>
+            <button
+              className={`${styles.link} ${styles.dropdownTrigger}`}
+              aria-haspopup="true"
+              aria-expanded={origenesOpen}
+              onFocus={() => setOrigenesOpen(true)}
+            >
               {t('nav.origenes')}
               <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
                 <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
@@ -114,8 +121,12 @@ export default function Navbar() {
         {/* Language Selector & Auth buttons */}
         <div className={styles.auth}>
           {/* Selector de idiomas para Escritorio */}
-          <div className={styles.langDropdown}>
-            <button className={styles.langBtn} onClick={() => setLangOpen(!langOpen)} aria-haspopup="true" aria-expanded={langOpen}>
+          <div
+            className={styles.langDropdown}
+            onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setLangOpen(false); }}
+            onKeyDown={(e) => { if (e.key === 'Escape') setLangOpen(false); }}
+          >
+            <button className={styles.langBtn} onClick={() => setLangOpen(!langOpen)} onFocus={() => setLangOpen(true)} aria-haspopup="true" aria-expanded={langOpen}>
               🌐 {locale === 'es-AR' ? 'ES' : locale === 'gl' ? 'GL' : 'EN'}
             </button>
             {langOpen && (
@@ -143,8 +154,12 @@ export default function Navbar() {
           </div>
 
           {/* Selector de Tema */}
-          <div className={styles.themeDropdown}>
-            <button className={styles.themeBtn} onClick={() => { setThemeOpen(!themeOpen); setLangOpen(false); }} aria-label="Cambiar tema" aria-haspopup="true" aria-expanded={themeOpen}>
+          <div
+            className={styles.themeDropdown}
+            onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setThemeOpen(false); }}
+            onKeyDown={(e) => { if (e.key === 'Escape') setThemeOpen(false); }}
+          >
+            <button className={styles.themeBtn} onClick={() => { setThemeOpen(!themeOpen); setLangOpen(false); }} onFocus={() => setThemeOpen(true)} aria-label="Cambiar tema" aria-haspopup="true" aria-expanded={themeOpen}>
               {theme === 'light' ? '☀️' : theme === 'dark' ? '🌙' : '⚙️'}
             </button>
             {themeOpen && (
@@ -172,11 +187,16 @@ export default function Navbar() {
           </div>
 
           {user ? (
-            <div className={styles.profileDropdown}>
-              <button 
-                className={styles.profileBtn} 
+            <div
+              className={styles.profileDropdown}
+              onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setProfileDropdownOpen(false); }}
+              onKeyDown={(e) => { if (e.key === 'Escape') setProfileDropdownOpen(false); }}
+            >
+              <button
+                className={styles.profileBtn}
                 onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                aria-haspopup="true" 
+                onFocus={() => setProfileDropdownOpen(true)}
+                aria-haspopup="true"
                 aria-expanded={profileDropdownOpen}
               >
                 👤 {user.user_metadata?.nombre || user.email.split('@')[0]}

@@ -1,11 +1,13 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/AuthProvider';
 import { supabase } from '@/lib/supabase';
 import styles from './dashboard.module.css';
 
 export default function DashboardPage() {
+  const router = useRouter();
   const { user, profile, roles, logout, registerPasskey } = useAuth();
   const [subscription, setSubscription] = useState(null);
   const [planLimits, setPlanLimits] = useState({
@@ -115,7 +117,7 @@ export default function DashboardPage() {
           if (error) throw error;
           
           alert(`¡Pago verificado por Mercado Pago! Te has suscrito con éxito al plan ${planName}.`);
-          window.location.reload();
+          router.refresh();
         }
       } catch (err) {
         alert('Error al simular la actualización del plan: ' + err.message);

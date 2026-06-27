@@ -43,48 +43,51 @@ export default function BlogPage() {
     fetchPosts();
   }, []);
 
-  // Traducción en caliente de posts
+  // Traducción en caliente de posts — un request por post, con caché en sessionStorage.
   useEffect(() => {
     if (posts.length === 0 || locale === 'es-AR') return;
     const langCode = locale.split('-')[0];
 
-    posts.forEach(async (post) => {
-      // Buscar en Supabase para ver si ya están traducidos (se asume que blog_posts tiene campos titulo_gl, titulo_en si se requiere, pero si no se autotraduce al vuelo en el state local del cliente para evitar romper el schema de BD)
-      // Si la BD no los tiene aún (nuestro schema tiene 'titulo', 'extracto', 'contenido' genérico),
-      // podemos usar traducción al vuelo en caliente del state
-      const cacheKey = `${post.slug}_${langCode}`;
-      if (translatedPosts[cacheKey]) return;
-
-      try {
-        const resTitle = await fetch('/api/translate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text: post.title, targetLangs: [langCode] })
-        });
-        const dTitle = await resTitle.json();
-        const transTitle = dTitle?.translations?.[langCode];
-
-        const resExcerpt = await fetch('/api/translate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text: post.excerpt, targetLangs: [langCode] })
-        });
-        const dExcerpt = await resExcerpt.json();
-        const transExcerpt = dExcerpt?.translations?.[langCode];
-
-        if (transTitle || transExcerpt) {
-          setTranslatedPosts(prev => ({
-            ...prev,
-            [cacheKey]: {
-              title: transTitle || post.title,
-              excerpt: transExcerpt || post.excerpt
-            }
-          }));
+    const translatePending = async () => {
+      const pending = posts.filter((post) => {
+        const cacheKey = `blog_trans_${post.slug}_${langCode}`;
+        const cached = sessionStorage.getItem(cacheKey);
+        if (cached) {
+          try {
+            setTranslatedPosts(prev => ({ ...prev, [`${post.slug}_${langCode}`]: JSON.parse(cached) }));
+          } catch {}
+          return false;
         }
-      } catch (err) {
-        console.warn('Hot translating blog list error:', err);
+        return !translatedPosts[`${post.slug}_${langCode}`];
+      });
+
+      // Traduce de uno en uno para respetar la cuota de MyMemory
+      for (const post of pending) {
+        const cacheKey = `blog_trans_${post.slug}_${langCode}`;
+        const SEPARATOR = '\n|||SPLIT|||\n';
+        const combined = [post.title, post.excerpt].join(SEPARATOR);
+        try {
+          const res = await fetch('/api/translate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: combined, targetLangs: [langCode] }),
+          });
+          const data = await res.json();
+          const translated = data?.translations?.[langCode] ?? '';
+          const [transTitle, transExcerpt] = translated.split(SEPARATOR);
+          const entry = {
+            title: transTitle?.trim() || post.title,
+            excerpt: transExcerpt?.trim() || post.excerpt,
+          };
+          sessionStorage.setItem(cacheKey, JSON.stringify(entry));
+          setTranslatedPosts(prev => ({ ...prev, [`${post.slug}_${langCode}`]: entry }));
+        } catch (err) {
+          console.warn('Error traduciendo post del blog:', err);
+        }
       }
-    });
+    };
+
+    translatePending();
   }, [locale, posts]);
 
   if (loading) {

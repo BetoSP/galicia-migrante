@@ -67,7 +67,6 @@ export function buildFamilyGraph(people, relationships) {
         death_year: dy,
         dateDisplay,
         gender: person.gender,
-        adopted: person.adopted ?? false,
         is_alive: person.is_alive ?? true,
         migration_condition: person.migration_condition ?? null,
         hasHiddenParents: hiddenParentIds.has(person.id),
@@ -98,12 +97,16 @@ export function buildFamilyGraph(people, relationships) {
 
   // ── Step 3: Couple edges (person → union node) ───────────────────────────
   const edges = [];
+  const coupleEdgeKeys = new Set(); // deduplicar relaciones duplicadas en BD
 
   for (const rel of relationships) {
     if (!COUPLE_TYPES.has(rel.type)) continue;
     const a = Math.min(rel.person_a_id, rel.person_b_id);
     const b = Math.max(rel.person_a_id, rel.person_b_id);
-    const unionId = unionNodeMap.get(`${a}-${b}`).id;
+    const pairKey = `${a}-${b}`;
+    if (coupleEdgeKeys.has(pairKey)) continue;
+    coupleEdgeKeys.add(pairKey);
+    const unionId = unionNodeMap.get(pairKey).id;
 
     edges.push(
       {

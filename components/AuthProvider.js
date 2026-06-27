@@ -25,33 +25,30 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
 
-  const fetchProfileAndRoles = async (userId) => {
+  const fetchProfileAndRoles = async (userId, attempt = 1) => {
     try {
-      // 1. Obtener perfil de usuario
-      const { data: profileData } = await supabase
-        .from('usuarios')
-        .select('*')
-        .eq('id', userId)
-        .single();
-      
-      setProfile(profileData);
+      const [profileRes, rolesRes] = await Promise.all([
+        supabase.from('usuarios').select('*').eq('id', userId).single(),
+        supabase.from('usuarios_roles').select('rol_id, roles (nombre, es_admin)').eq('usuario_id', userId),
+      ]);
 
-      // 2. Obtener roles asignados
-      const { data: rolesData } = await supabase
-        .from('usuarios_roles')
-        .select('rol_id, roles (nombre, es_admin)')
-        .eq('usuario_id', userId);
-      
-      if (rolesData) {
-        const userRoles = rolesData.map((ur) => ({
-          id: ur.rol_id,
-          nombre: ur.roles?.nombre || '',
-          es_admin: ur.roles?.es_admin || false,
-        }));
-        setRoles(userRoles);
-      }
+      if (profileRes.error) throw profileRes.error;
+      setProfile(profileRes.data);
+
+      if (rolesRes.error) throw rolesRes.error;
+      const userRoles = (rolesRes.data ?? []).map((ur) => ({
+        id: ur.rol_id,
+        nombre: ur.roles?.nombre || '',
+        es_admin: ur.roles?.es_admin || false,
+      }));
+      setRoles(userRoles);
     } catch (err) {
-      console.error('Error fetching user roles/profile:', err);
+      if (attempt < 3) {
+        // Retry with exponential backoff: 800ms, 1600ms
+        setTimeout(() => fetchProfileAndRoles(userId, attempt + 1), 800 * attempt);
+      } else {
+        console.error('Error fetching user roles/profile after 3 attempts:', err);
+      }
     }
   };
 

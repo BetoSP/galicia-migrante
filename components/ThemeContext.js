@@ -7,7 +7,6 @@ const ThemeContext = createContext(null);
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState('auto'); // 'light' | 'dark' | 'auto'
   const [resolvedTheme, setResolvedTheme] = useState('light'); // 'light' | 'dark' (actual applied theme)
-  const [mounted, setMounted] = useState(false);
 
   // Apply theme to document element
   const applyTheme = (themeValue, isDarkSystem) => {
@@ -41,7 +40,6 @@ export function ThemeProvider({ children }) {
 
     // 3. Initial apply
     applyTheme(savedTheme, mediaQuery.matches);
-    setMounted(true);
 
     // 4. Ambient Light Sensor API Integration (Auto mode only)
     let sensor = null;
@@ -89,9 +87,7 @@ export function ThemeProvider({ children }) {
 
   return (
     <ThemeContext.Provider value={{ theme, resolvedTheme, setTheme: changeTheme }}>
-      <div style={{ visibility: mounted ? 'visible' : 'hidden' }}>
-        {children}
-      </div>
+      {children}
     </ThemeContext.Provider>
   );
 }

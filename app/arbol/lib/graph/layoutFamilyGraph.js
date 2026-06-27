@@ -21,7 +21,7 @@ import {
 export function layoutFamilyGraph(graph) {
   const { nodes, edges } = graph;
 
-  if (nodes.length === 0) return { nodes: [], edges };
+  if (!nodes || nodes.length === 0) return { nodes: [], edges: edges ?? [] };
 
   // ── 1. Mapas de adyacencia ────────────────────────────────────────────────
 
@@ -88,30 +88,63 @@ export function layoutFamilyGraph(graph) {
   }
 
   // ── 2. Generaciones ───────────────────────────────────────────────────────
+  // Usamos Kahn (BFS topológico) sobre el grafo de ancestros para asignar
+  // generaciones en O(n) y sin riesgo de loop infinito ante ciclos en los datos.
 
   const gen = new Map();
-  let changed = true;
-  while (changed) {
-    changed = false;
-    for (const node of nodes) {
-      if (node.type !== "person" || gen.has(node.id)) continue;
-      const ancestors = ancestorPersonIds(node.id);
-      if (ancestors.length === 0) {
-        gen.set(node.id, 0); changed = true;
-      } else if (ancestors.every((id) => gen.has(id))) {
-        gen.set(node.id, Math.max(...ancestors.map((id) => gen.get(id))) + 1);
-        changed = true;
-      }
+
+  // Calcular in-degree (cuántos ancestros sin generación asignada tiene cada nodo)
+  const inDegree = new Map();
+  const childrenOf = new Map(); // ancestorId → [descendantId]
+  for (const node of nodes) {
+    if (node.type !== "person") continue;
+    const ancestors = ancestorPersonIds(node.id);
+    inDegree.set(node.id, ancestors.length);
+    for (const aid of ancestors) {
+      if (!childrenOf.has(aid)) childrenOf.set(aid, []);
+      childrenOf.get(aid).push(node.id);
     }
   }
+
+  // Enqueue nodos raíz (sin ancestros)
+  const queue = [];
+  for (const node of nodes) {
+    if (node.type !== "person") continue;
+    if ((inDegree.get(node.id) ?? 0) === 0) {
+      gen.set(node.id, 0);
+      queue.push(node.id);
+    }
+  }
+
+  // BFS topológico — ciclos quedan excluidos de la cola y reciben gen=0 al final
+  let qi = 0;
+  while (qi < queue.length) {
+    const current = queue[qi++];
+    const currentGen = gen.get(current) ?? 0;
+    for (const child of childrenOf.get(current) ?? []) {
+      const remaining = (inDegree.get(child) ?? 1) - 1;
+      inDegree.set(child, remaining);
+      const candidateGen = currentGen + 1;
+      if (!gen.has(child) || gen.get(child) < candidateGen) {
+        gen.set(child, candidateGen);
+      }
+      if (remaining === 0) queue.push(child);
+    }
+  }
+
+  // Nodos en ciclos (nunca procesados por BFS) → generación 0 como fallback seguro
   for (const node of nodes) {
     if (node.type === "person" && !gen.has(node.id)) gen.set(node.id, 0);
   }
 
-  // Nivelar cónyuges
+  // Nivelar cónyuges — acotado a nodes.length iteraciones para evitar ciclos
+  // en grafos con relaciones de pareja circulares (caso extremadamente raro pero posible).
+  const maxLevelIterations = nodes.length;
+  let levelIter = 0;
   let leveled = true;
-  while (leveled) {
+  while (leveled && levelIter < maxLevelIterations) {
     leveled = false;
+    levelIter++;
     for (const node of nodes) {
       if (node.type !== "union") continue;
       const spouseIds = unionPersons.get(node.id) ?? [];

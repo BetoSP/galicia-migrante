@@ -16,7 +16,6 @@ const LanguageContext = createContext(null);
 
 export function LanguageProvider({ children }) {
   const [locale, setLocale] = useState('es-AR');
-  const [mounted, setMounted] = useState(false);
   const [mergedTranslations, setMergedTranslations] = useState(translations);
 
   useEffect(() => {
@@ -70,8 +69,6 @@ export function LanguageProvider({ children }) {
         }
       } catch (err) {
         console.warn('Failed to fetch custom translations:', err);
-      } finally {
-        setMounted(true);
       }
     };
 
@@ -103,9 +100,7 @@ export function LanguageProvider({ children }) {
 
   return (
     <LanguageContext.Provider value={{ locale, setLocale: changeLocale, t }}>
-      <div style={{ visibility: mounted ? 'visible' : 'hidden' }}>
-        {children}
-      </div>
+      {children}
     </LanguageContext.Provider>
   );
 }
