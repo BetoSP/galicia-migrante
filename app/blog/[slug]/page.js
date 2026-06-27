@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, use } from 'react';
 import { notFound } from 'next/navigation';
-import { MDXRemote } from 'next-mdx-remote/rsc';
+import ReactMarkdown from 'react-markdown';
 import styles from './post.module.css';
 import AdSlot from '../components/AdSlot';
 import { supabase } from '@/lib/supabase';
@@ -148,7 +148,7 @@ export default function PostPage({ params: paramsPromise }) {
         </header>
 
         <div className={styles.content}>
-          <MDXRemote source={translatedContent.content} />
+          <ReactMarkdown>{translatedContent.content}</ReactMarkdown>
         </div>
 
         <AdSlot id="blog-post-bottom" />
