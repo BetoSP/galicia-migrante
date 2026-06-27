@@ -4,10 +4,12 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/AuthProvider';
 import { supabase } from '@/lib/supabase';
+import { useToast } from '@/components/Toast';
 import styles from './dashboard.module.css';
 
 export default function DashboardPage() {
   const router = useRouter();
+  const { toast } = useToast();
   const { user, profile, roles, logout, registerPasskey } = useAuth();
   const [subscription, setSubscription] = useState(null);
   const [planLimits, setPlanLimits] = useState({
@@ -78,9 +80,9 @@ export default function DashboardPage() {
   const handleRegisterBiometrics = async () => {
     try {
       await registerPasskey();
-      alert('¡Dispositivo Biométrico registrado con éxito! Ahora podrás ingresar con tus credenciales biométricas desde este dispositivo o móvil.');
+      toast('Dispositivo biométrico registrado con éxito.', { type: 'success' });
     } catch (err) {
-      alert(err.message);
+      toast(err.message, { type: 'error' });
     }
   };
 
@@ -115,12 +117,12 @@ export default function DashboardPage() {
             });
 
           if (error) throw error;
-          
-          alert(`¡Pago verificado por Mercado Pago! Te has suscrito con éxito al plan ${planName}.`);
+
+          toast(`Suscripción al plan ${planName} activada con éxito.`, { type: 'success' });
           router.refresh();
         }
       } catch (err) {
-        alert('Error al simular la actualización del plan: ' + err.message);
+        toast('Error al actualizar el plan: ' + err.message, { type: 'error' });
       } finally {
         setProcessingUpgrade(false);
         setShowUpgradeModal(false);

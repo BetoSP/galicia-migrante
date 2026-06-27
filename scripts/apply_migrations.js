@@ -8,10 +8,10 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
-const DB_HOST = 'db.vrtqtltkiifconviaiwf.supabase.co';
-const DB_PORT = 5432;
-const DB_NAME = 'postgres';
-const DB_USER = 'postgres';
+const DB_HOST = process.env.SUPABASE_DB_HOST || 'db.vrtqtltkiifconviaiwf.supabase.co';
+const DB_PORT = parseInt(process.env.SUPABASE_DB_PORT || '5432', 10);
+const DB_NAME = process.env.SUPABASE_DB_NAME || 'postgres';
+const DB_USER = process.env.SUPABASE_DB_USER || 'postgres';
 
 console.log('====================================================');
 console.log('  Portal Galicia Migrante — Database Migration Tool ');

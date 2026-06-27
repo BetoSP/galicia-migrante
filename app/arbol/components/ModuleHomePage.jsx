@@ -122,14 +122,15 @@ export default function ModuleHomePage({ activeTree, onTreeNameChange, people = 
                 const age = person.birth_year ? date.getFullYear() - person.birth_year : null;
                 const ageText = age !== null && age > 0 ? ` — ${age} ${t("tree.home.years")}` : "";
                 
-                const eventText = t("tree.home.birthday_msg")
-                  .replace("{name}", fullName)
-                  .replace("{age}", ageText);
+                const msgTemplate = t("tree.home.birthday_msg");
+                const [before, after] = msgTemplate.replace("{age}", ageText).split("{name}");
 
                 return (
                   <li key={person.id} className="home-events__item">
                     <span className="home-events__icon">🎂</span>
-                    <span className="home-events__text" dangerouslySetInnerHTML={{ __html: eventText.replace(fullName, `<strong>${fullName}</strong>`) }} />
+                    <span className="home-events__text">
+                      {before}<strong>{fullName}</strong>{after}
+                    </span>
                     <span className="home-events__date">{dateStr}</span>
                   </li>
                 );

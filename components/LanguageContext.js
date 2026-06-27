@@ -19,60 +19,53 @@ export function LanguageProvider({ children }) {
   const [mergedTranslations, setMergedTranslations] = useState(translations);
 
   useEffect(() => {
-    // 1. Local storage settings
+    let cancelled = false;
+
+    // 1. Locale inicial desde localStorage o preferencia del navegador
     const savedLocale = localStorage.getItem('gm-locale');
     if (savedLocale && translations[savedLocale]) {
       setLocale(savedLocale);
     } else {
       const browserLang = navigator.language;
-      if (browserLang.startsWith('gl')) {
-        setLocale('gl');
-      } else if (browserLang.startsWith('en')) {
-        setLocale('en');
-      }
+      if (browserLang.startsWith('gl')) setLocale('gl');
+      else if (browserLang.startsWith('en')) setLocale('en');
     }
 
-    // 2. Fetch custom translations from Supabase
+    // 2. Overrides manuales desde Supabase (solo texto_custom donde es_manual=true)
     const fetchCustomTranslations = async () => {
       try {
         const { data, error } = await supabase
           .from('traducciones_interfaz')
-          .select('clave, idioma, texto_custom');
+          .select('clave, idioma, texto_custom')
+          .eq('es_manual', true);
 
+        if (cancelled) return;
         if (error) {
-          console.warn('Error fetching custom translations from Supabase:', error.message);
+          console.warn('Error fetching custom translations:', error.message);
           return;
         }
+        if (!data || data.length === 0) return;
 
-        if (data && data.length > 0) {
-          // Deep copy local translations to override them
-          const updated = JSON.parse(JSON.stringify(translations));
+        const updated = JSON.parse(JSON.stringify(translations));
+        data.forEach(item => {
+          if (!item.texto_custom || !updated[item.idioma]) return;
+          const keys = item.clave.split('.');
+          let obj = updated[item.idioma];
+          for (let i = 0; i < keys.length - 1; i++) {
+            if (!obj[keys[i]]) obj[keys[i]] = {};
+            obj = obj[keys[i]];
+          }
+          obj[keys[keys.length - 1]] = item.texto_custom;
+        });
 
-          data.forEach(item => {
-            if (item.texto_custom && updated[item.idioma]) {
-              const keys = item.clave.split('.');
-              let obj = updated[item.idioma];
-
-              // Traverse keys to set value
-              for (let i = 0; i < keys.length - 1; i++) {
-                const k = keys[i];
-                if (!obj[k]) {
-                  obj[k] = {};
-                }
-                obj = obj[k];
-              }
-              obj[keys[keys.length - 1]] = item.texto_custom;
-            }
-          });
-
-          setMergedTranslations(updated);
-        }
+        setMergedTranslations(updated);
       } catch (err) {
-        console.warn('Failed to fetch custom translations:', err);
+        if (!cancelled) console.warn('Failed to fetch custom translations:', err);
       }
     };
 
     fetchCustomTranslations();
+    return () => { cancelled = true; };
   }, []);
 
   const changeLocale = (newLocale) => {

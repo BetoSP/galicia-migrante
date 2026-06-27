@@ -42,7 +42,7 @@ export default function Navbar() {
     closeAll();
   };
 
-  const isAdmin = roles.some(r => r.es_admin || r.nombre.startsWith('admin_'));
+  const isAdmin = roles.some(r => r.es_admin || r.nombre === 'admin_general');
 
   return (
     <nav className={`${styles.nav} ${(scrolled || !isHome) ? styles.scrolled : ''}`} role="navigation" aria-label="Navegación principal">

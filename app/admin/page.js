@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/components/AuthProvider';
+import { useToast } from '@/components/Toast';
 import styles from './admin.module.css';
 
 export default function AdminPage() {
@@ -70,6 +71,7 @@ export default function AdminPage() {
   const [assocNoticias, setAssocNoticias] = useState([]);
   const [newNoticia, setNewNoticia] = useState({ titulo_es: '', contenido_es: '', publicado: true });
 
+  const { toast, confirm } = useToast();
   const isGeneralAdmin = roles.some(r => r.es_admin || r.nombre === 'admin_general');
 
   useEffect(() => {
@@ -199,10 +201,10 @@ export default function AdminPage() {
         .eq('id', id);
 
       if (error) throw error;
-      alert(`Post actualizado a estado: ${status}`);
+      toast(`Post actualizado a: ${status}`, { type: 'success' });
       setPosts(posts.map(p => p.id === id ? { ...p, estado: status } : p));
     } catch (err) {
-      alert('Error: ' + err.message);
+      toast('Error: ' + err.message, { type: 'error' });
     }
   };
 
@@ -230,10 +232,11 @@ export default function AdminPage() {
         if (error) throw error;
       }
 
+      toast('Traducción guardada.', { type: 'success' });
       setEditingKey(null);
       loadAllData();
     } catch (err) {
-      alert('Error al guardar: ' + err.message);
+      toast('Error al guardar: ' + err.message, { type: 'error' });
     }
   };
 
@@ -265,7 +268,7 @@ export default function AdminPage() {
     try {
       const { data: userProfile } = await supabase.from('usuarios').select('*').eq('email', searchUserEmail).maybeSingle();
       if (!userProfile) {
-        alert('Usuario no encontrado.');
+        toast('Usuario no encontrado.', { type: 'warning' });
         return;
       }
       setSelectedUser(userProfile);
@@ -279,7 +282,7 @@ export default function AdminPage() {
       }
       setUserLimits(limits);
     } catch (err) {
-      alert(err.message);
+      toast(err.message, { type: 'error' });
     }
   };
 
@@ -288,9 +291,9 @@ export default function AdminPage() {
     try {
       await supabase.from('usuario_features').upsert({ usuario_id: selectedUser.id, feature_key: 'limite_personas', limite_valor: userLimits.limite_personas, habilitado: true }, { onConflict: 'usuario_id, feature_key' });
       await supabase.from('usuario_features').upsert({ usuario_id: selectedUser.id, feature_key: 'gedcom', habilitado: userLimits.habilitar_gedcom }, { onConflict: 'usuario_id, feature_key' });
-      alert('Excepciones aplicadas.');
+      toast('Excepciones aplicadas.', { type: 'success' });
     } catch (err) {
-      alert(err.message);
+      toast(err.message, { type: 'error' });
     }
   };
 
@@ -370,10 +373,10 @@ export default function AdminPage() {
         .eq('id', selectedAssocId);
 
       if (error) throw error;
-      alert('¡Perfil de Asociación guardado con éxito!');
+      toast('Perfil de asociación guardado.', { type: 'success' });
       loadAssocSubDetails(selectedAssocId);
     } catch (err) {
-      alert('Error al guardar perfil: ' + err.message);
+      toast('Error al guardar perfil: ' + err.message, { type: 'error' });
     }
   };
 
@@ -391,16 +394,17 @@ export default function AdminPage() {
         });
 
       if (error) throw error;
-      alert('Directivo añadido.');
+      toast('Directivo añadido.', { type: 'success' });
       setNewDirectivo({ nombre: '', cargo: '', orden: 5 });
       loadAssocSubDetails(selectedAssocId);
     } catch (err) {
-      alert('Error: ' + err.message);
+      toast('Error: ' + err.message, { type: 'error' });
     }
   };
 
   const handleDeleteDirectivo = async (dirId) => {
-    if (!confirm('¿Estás seguro de eliminar este directivo?')) return;
+    const ok = await confirm('¿Estás seguro de eliminar este directivo?');
+    if (!ok) return;
     try {
       const { error } = await supabase
         .from('asociaciones_directivos')
@@ -408,9 +412,10 @@ export default function AdminPage() {
         .eq('id', dirId);
 
       if (error) throw error;
+      toast('Directivo eliminado.', { type: 'success' });
       loadAssocSubDetails(selectedAssocId);
     } catch (err) {
-      alert('Error: ' + err.message);
+      toast('Error: ' + err.message, { type: 'error' });
     }
   };
 
@@ -428,16 +433,17 @@ export default function AdminPage() {
         });
 
       if (error) throw error;
-      alert('Noticia / Actividad publicada.');
+      toast('Noticia publicada.', { type: 'success' });
       setNewNoticia({ titulo_es: '', contenido_es: '', publicado: true });
       loadAssocSubDetails(selectedAssocId);
     } catch (err) {
-      alert('Error: ' + err.message);
+      toast('Error: ' + err.message, { type: 'error' });
     }
   };
 
   const handleDeleteNoticia = async (notId) => {
-    if (!confirm('¿Estás seguro de eliminar esta noticia?')) return;
+    const ok = await confirm('¿Estás seguro de eliminar esta noticia?');
+    if (!ok) return;
     try {
       const { error } = await supabase
         .from('asociaciones_noticias')
@@ -445,9 +451,10 @@ export default function AdminPage() {
         .eq('id', notId);
 
       if (error) throw error;
+      toast('Noticia eliminada.', { type: 'success' });
       loadAssocSubDetails(selectedAssocId);
     } catch (err) {
-      alert('Error: ' + err.message);
+      toast('Error: ' + err.message, { type: 'error' });
     }
   };
 

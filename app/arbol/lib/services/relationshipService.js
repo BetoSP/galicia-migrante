@@ -13,10 +13,14 @@ export async function fetchRelationships() {
 
 export async function fetchRelationshipsByPersonIds(ids) {
   if (!ids || ids.length === 0) return [];
+  // Validar que todos los ids sean numéricos antes de interpolarlos
+  const safeIds = ids.map(Number).filter(n => Number.isInteger(n) && n > 0);
+  if (safeIds.length === 0) return [];
+
   const { data, error } = await supabase
     .from("relationships")
     .select("*")
-    .or(`person_a_id.in.(${ids.join(",")}),person_b_id.in.(${ids.join(",")})`);
+    .or(`person_a_id.in.(${safeIds.join(",")}),person_b_id.in.(${safeIds.join(",")})`);
 
   if (error) throw error;
   return data;

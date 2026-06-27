@@ -5,12 +5,14 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/components/AuthProvider';
 import { useTranslation } from '@/components/LanguageContext';
+import { useToast } from '@/components/Toast';
 import styles from './auth.module.css';
 
 function AuthContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, login, register, loginWithPasskey } = useAuth();
+  const { toast } = useToast();
   const { t } = useTranslation();
 
   const initialMode = searchParams.get('mode') === 'register' ? 'register' : 'login';
@@ -250,8 +252,8 @@ function AuthContent() {
           🔑 {t('auth.biometric_btn') || 'Iniciar Sesión con Huella o Rostro (Passkey)'}
         </button>
 
-        <button 
-          onClick={() => alert(t('auth.google_notice') || 'Autenticación de Google requiere configurar credenciales OAuth en consola Supabase.')} 
+        <button
+          onClick={() => toast(t('auth.google_notice') || 'La autenticación con Google requiere configurar credenciales OAuth en el panel de Supabase.', { type: 'info', duration: 6000 })}
           className={styles.btnSocial}
           style={{ marginTop: '10px' }}
         >

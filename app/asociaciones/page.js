@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import styles from './page.module.css';
 import { useTranslation } from '@/components/LanguageContext';
+import { getLocalizedField } from '@/lib/localization';
 
 const FALLBACK_ASOCIACIONES = [
   { id: 'lalin-buenos-aires', nombre: 'Centro Lalín, Golada y Silleda de Buenos Aires', slug: 'centro-lalin-buenos-aires', ciudad: 'Buenos Aires', pais: 'Argentina', fundacion: 1982 },
@@ -45,15 +46,7 @@ export default function AsociacionesPage() {
     fetchAsociaciones();
   }, []);
 
-  const getFieldByLocale = (obj, fieldBase) => {
-    if (!obj) return '';
-    if (locale === 'gl') {
-      return obj[`${fieldBase}_gl`] || obj[`${fieldBase}_es`] || obj[fieldBase] || '';
-    } else if (locale === 'en') {
-      return obj[`${fieldBase}_en`] || obj[`${fieldBase}_es`] || obj[fieldBase] || '';
-    }
-    return obj[`${fieldBase}_es`] || obj[fieldBase] || '';
-  };
+  const getFieldByLocale = (obj, fieldBase) => getLocalizedField(obj, fieldBase, locale);
 
   if (loading) {
     return (

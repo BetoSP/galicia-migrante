@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import styles from './micrositio.module.css';
 import { useTranslation } from '@/components/LanguageContext';
+import { getLocalizedField } from '@/lib/localization';
 
 // Fallback mockup data for Centro Lalin
 const LALIN_MOCK = {

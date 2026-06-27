@@ -50,20 +50,24 @@ export default function BlogPage() {
 
     const translatePending = async () => {
       const pending = posts.filter((post) => {
-        const cacheKey = `blog_trans_${post.slug}_${langCode}`;
+        // La clave incluye fecha de publicación para invalidar caché si el post cambia.
+        const cacheKey = `blog_trans_v1_${post.slug}_${langCode}_${post.date}`;
         const cached = sessionStorage.getItem(cacheKey);
         if (cached) {
           try {
-            setTranslatedPosts(prev => ({ ...prev, [`${post.slug}_${langCode}`]: JSON.parse(cached) }));
-          } catch {}
-          return false;
+            const parsed = JSON.parse(cached);
+            setTranslatedPosts(prev => ({ ...prev, [`${post.slug}_${langCode}`]: parsed }));
+            return false;
+          } catch {
+            sessionStorage.removeItem(cacheKey);
+          }
         }
         return !translatedPosts[`${post.slug}_${langCode}`];
       });
 
       // Traduce de uno en uno para respetar la cuota de MyMemory
       for (const post of pending) {
-        const cacheKey = `blog_trans_${post.slug}_${langCode}`;
+        const cacheKey = `blog_trans_v1_${post.slug}_${langCode}_${post.date}`;
         const SEPARATOR = '\n|||SPLIT|||\n';
         const combined = [post.title, post.excerpt].join(SEPARATOR);
         try {
@@ -79,7 +83,7 @@ export default function BlogPage() {
             title: transTitle?.trim() || post.title,
             excerpt: transExcerpt?.trim() || post.excerpt,
           };
-          sessionStorage.setItem(cacheKey, JSON.stringify(entry));
+          try { sessionStorage.setItem(cacheKey, JSON.stringify(entry)); } catch {}
           setTranslatedPosts(prev => ({ ...prev, [`${post.slug}_${langCode}`]: entry }));
         } catch (err) {
           console.warn('Error traduciendo post del blog:', err);

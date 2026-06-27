@@ -4,6 +4,7 @@ import Footer from '@/components/Footer';
 import { LanguageProvider } from '@/components/LanguageContext';
 import { ThemeProvider } from '@/components/ThemeContext';
 import { AuthProvider } from '@/components/AuthProvider';
+import { ToastProvider } from '@/components/Toast';
 
 export const metadata = {
   title: {
@@ -28,9 +29,11 @@ export default function RootLayout({ children }) {
         <ThemeProvider>
           <LanguageProvider>
             <AuthProvider>
-              <Navbar />
-              <main style={{ paddingTop: '72px' }}>{children}</main>
-              <Footer />
+              <ToastProvider>
+                <Navbar />
+                <main style={{ paddingTop: '72px' }}>{children}</main>
+                <Footer />
+              </ToastProvider>
             </AuthProvider>
           </LanguageProvider>
         </ThemeProvider>
