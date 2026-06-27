@@ -69,6 +69,9 @@ Cambios en la base de datos:
 - ✅ "Leer más" navega sin 404
 - ✅ Post individual renderiza Markdown (headings, negritas, blockquote, tags)
 - ✅ Selector de idioma (ES → GL): navbar y contenido del post se traducen automáticamente vía `/api/translate`; dropdown muestra Español (AR) / Galego / English
+- ✅ Traducción automática GL verificada en DOM: `<h2>` correcto, `<strong>` correcto, bullets correctos (commit `1ef7b16`)
+- ✅ Traducción automática EN verificada en DOM: ídem
+- ✅ `common.loading` i18n bug corregido (clave faltaba en los 3 archivos de locale)
 
 ### Bloque 2 — Dashboard usuario ✅
 - ✅ Login usuario no-admin (`usuario.prueba@galiciamigrante.com`, rol visor)
