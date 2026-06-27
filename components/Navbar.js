@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import styles from './Navbar.module.css';
 import { useTranslation } from '@/components/LanguageContext';
@@ -50,17 +51,18 @@ export default function Navbar() {
 
         {/* Logo */}
         <Link href="/" className={styles.logo} onClick={closeAll} aria-label="Galicia Migrante — Inicio">
-          <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true">
-            <rect width="36" height="36" rx="8" fill="#4A90B8"/>
-            {/* Olas */}
-            <path d="M4 22 Q9 18 14 22 Q19 26 24 22 Q29 18 32 22" stroke="#C8A96E" strokeWidth="2" fill="none" strokeLinecap="round"/>
-            <path d="M4 26 Q9 22 14 26 Q19 30 24 26 Q29 22 32 26" stroke="#ffffff60" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
-            {/* Cruz de Santiago */}
-            <path d="M18 8 V16 M14 12 H22" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
-          </svg>
+          <Image
+            src="/trisquel.svg"
+            alt=""
+            aria-hidden="true"
+            width={48}
+            height={34}
+            className={styles.logoImg}
+            priority
+          />
           <span className={styles.logoText}>
-            <span className={styles.logoMain}>Galicia</span>
-            <span className={styles.logoSub}>Migrante</span>
+            <span className={styles.logoMain}>GALICIA</span>
+            <span className={styles.logoSub}>MIGRANTE</span>
           </span>
         </Link>
 

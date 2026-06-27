@@ -1,10 +1,18 @@
 import './globals.css';
+import { Montserrat } from 'next/font/google';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { LanguageProvider } from '@/components/LanguageContext';
 import { ThemeProvider } from '@/components/ThemeContext';
 import { AuthProvider } from '@/components/AuthProvider';
 import { ToastProvider } from '@/components/Toast';
+
+const montserrat = Montserrat({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '700'],
+  variable: '--font-montserrat',
+  display: 'swap',
+});
 
 export const metadata = {
   title: {
@@ -24,7 +32,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="es">
+    <html lang="es" className={montserrat.variable}>
       <body>
         <ThemeProvider>
           <LanguageProvider>

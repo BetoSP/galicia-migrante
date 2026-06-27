@@ -3,6 +3,7 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuth } from '@/components/AuthProvider';
 import { useTranslation } from '@/components/LanguageContext';
 import { useToast } from '@/components/Toast';
@@ -107,13 +108,19 @@ function AuthContent() {
       <div className={styles.card}>
         <div className={styles.header}>
           <div className={styles.logoWrapper}>
-            <svg width="44" height="44" viewBox="0 0 36 36" fill="none">
-              <rect width="36" height="36" rx="8" fill="#4A90B8"/>
-              <path d="M4 22 Q9 18 14 22 Q19 26 24 22 Q29 18 32 22" stroke="#C8A96E" strokeWidth="2" fill="none" strokeLinecap="round"/>
-              <path d="M18 8 V16 M14 12 H22" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
-            </svg>
+            <Image
+              src="/trisquel.svg"
+              alt="Trisquel de las Dos Orillas — Galicia Migrante"
+              width={80}
+              height={57}
+              priority
+            />
           </div>
-          <h1 className={styles.title}>Galicia Migrante</h1>
+          <h1 className={styles.title}>
+            <span style={{ fontFamily: "var(--font-montserrat, 'Montserrat', sans-serif)", fontWeight: 700, letterSpacing: '0.04em' }}>GALICIA</span>
+            {' '}
+            <span style={{ fontFamily: "var(--font-montserrat, 'Montserrat', sans-serif)", fontWeight: 300, letterSpacing: '0.18em' }}>MIGRANTE</span>
+          </h1>
           <p className={styles.subtitle}>
             {mode === 'login' 
               ? (t('auth.welcome_back') || 'Bienvenido de nuevo a tu portal') 
