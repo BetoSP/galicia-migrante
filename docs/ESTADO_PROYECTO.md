@@ -68,10 +68,13 @@ Cambios en la base de datos:
 - ✅ Filtrado por categoría funciona
 - ✅ "Leer más" navega sin 404
 - ✅ Post individual renderiza Markdown (headings, negritas, blockquote, tags)
-- ✅ Selector de idioma (ES → GL): navbar y contenido del post se traducen automáticamente vía `/api/translate`; dropdown muestra Español (AR) / Galego / English
-- ✅ Traducción automática GL verificada en DOM: `<h2>` correcto, `<strong>` correcto, bullets correctos (commit `1ef7b16`)
-- ✅ Traducción automática EN verificada en DOM: ídem
-- ✅ `common.loading` i18n bug corregido (clave faltaba en los 3 archivos de locale)
+- ✅ Selector de idioma (ES / GL / EN / FR / DE / IT): navbar y contenido del post se traducen automáticamente vía `/api/translate`
+- ✅ Traducción GL verificada en DOM: `<h2>` correcto, `<strong>` correcto, bullets correctos (MyMemory, commit `b4139ed`)
+- ✅ Traducción EN verificada en DOM: ídem (DeepL con fallback MyMemory, commit `b822581`)
+- ✅ Traducción FR verificada en DOM: `<h2>`, `<strong>` correctos
+- ✅ Traducción DE verificada en DOM: `<h2>`, `<strong>` correctos
+- ✅ Traducción IT verificada en DOM: `<h2>`, `<strong>` correctos
+- ✅ `common.loading` i18n bug corregido — clave añadida a los 6 archivos de locale (es-AR, gl, en, fr, de, it)
 
 ### Bloque 2 — Dashboard usuario ✅
 - ✅ Login usuario no-admin (`usuario.prueba@galiciamigrante.com`, rol visor)
@@ -104,14 +107,14 @@ Todos los bugs identificados en auditoría exhaustiva han sido corregidos (commi
 
 Manual técnico disponible en `docs/MANUAL_BLOG.md`.
 
-Traducción migrada a arquitectura dual (commit `b822581`):
-- GL → Apertium (open source, sin cuotas, especializado es↔gl)
-- EN/FR/DE/IT → DeepL (500K chars/mes gratis, tag handling nativo)
-- Fallback automático a MyMemory si el motor principal falla
-- Idiomas disponibles en el blog: ES, GL, EN, FR, DE, IT
+Traducción con arquitectura dual implementada y verificada en browser (commits `b822581`, `b4139ed`):
+- GL → MyMemory (mejor cobertura léxica gallega; Apertium evaluado y descartado: omite tildes y cae a español sin traducción disponible)
+- EN/FR/DE/IT → DeepL (500K chars/mes gratis, tag handling nativo con XML)
+- Fallback automático a MyMemory si DeepL falla o key no configurada
+- Idiomas disponibles en el blog: ES, GL, EN, FR, DE, IT — todos verificados en DOM
 
 **PENDIENTE ÚNICO:** Configurar `DEEPL_API_KEY` en `.env.local` y en Vercel para activar DeepL.
-Hasta que se configure, FR/DE/IT caen a MyMemory (funcional pero menor calidad).
+Hasta que se configure, EN/FR/DE/IT caen a MyMemory (funcional pero menor calidad).
 Registro gratuito en: https://www.deepl.com/pro-api
 
 ### Prioridad media

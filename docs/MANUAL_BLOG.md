@@ -1,5 +1,5 @@
 # Manual del Blog — Galicia Migrante
-**Versión 1.0 · Actualizado: 2026-06-27**
+**Versión 1.1 · Actualizado: 2026-06-27**
 
 ---
 
@@ -162,7 +162,7 @@ Hacé click en **Leer más →** en cualquier tarjeta para abrir el artículo co
 
 ### Cambiar el idioma del contenido
 
-El blog soporta traducción automática al **Galego** y al **English**. Hacé click en el botón **🌐 ES** en la barra de navegación y seleccioná el idioma deseado.
+El blog soporta traducción automática a **6 idiomas**: Español (AR), Galego, English, Français, Deutsch, Italiano. Hacé click en el botón **🌐 ES** en la barra de navegación y seleccioná el idioma deseado.
 
 > **Importante:** La traducción automática requiere tener una sesión iniciada. Si sos visitante sin cuenta, el contenido se mostrará en español.
 
@@ -174,13 +174,15 @@ El blog soporta traducción automática al **Galego** y al **English**. Hacé cl
 
 El sistema de traducción tiene tres capas:
 
-1. **Selección de idioma** — El botón 🌐 en la navbar abre un dropdown con Español (AR), Galego, English. La elección se guarda en `localStorage` y persiste entre visitas.
+1. **Selección de idioma** — El botón 🌐 en la navbar abre un dropdown con 6 opciones: Español (AR), Galego, English, Français, Deutsch, Italiano. La elección se guarda en `localStorage` y persiste entre visitas.
 
-2. **Ruta `/api/translate`** — Cuando se selecciona un idioma distinto al español, el componente `PostContent` envía el texto (título, extracto y contenido por separado) a esta ruta interna de Next.js. La ruta requiere autenticación para evitar abuso de la API gratuita.
+2. **Ruta `/api/translate`** — Cuando se selecciona un idioma distinto al español, el componente `PostContent` envía el texto (título, extracto y contenido por separado) a esta ruta interna de Next.js. La ruta requiere autenticación para evitar abuso de las APIs.
 
-3. **MyMemory API** — La ruta llama a la API pública de MyMemory (`api.mymemory.translated.net`) con el par de idiomas `es|gl` o `es|en`. El resultado se devuelve al cliente y se cachea en `sessionStorage`.
+3. **Motores de traducción duales** — La ruta usa dos motores según el idioma de destino:
+   - **GL (Galego)** → **MyMemory API** — mejor cobertura léxica gallega, preservación correcta de tildes, gratuito sin límite de API key.
+   - **EN / FR / DE / IT** → **DeepL API** — calidad de traducción élite, preservación nativa de tags XML, 500K chars/mes gratis. Requiere `DEEPL_API_KEY` en variables de entorno. Si no está configurada, cae automáticamente a MyMemory.
 
-4. **Protección de Markdown** — Antes de enviar el texto a MyMemory, el sistema reemplaza los tokens de Markdown (`##`, `**`, `- `) con etiquetas XML (`<mk0/>`, `<mk1/>`, etc.) que los motores de traducción preservan por diseño (los tratan como HTML/XML). Al recibir la traducción, las etiquetas se restauran al Markdown original.
+4. **Protección de Markdown** — Antes de enviar el texto, el sistema reemplaza los tokens de Markdown (`##`, `**`, `- `) con etiquetas XML (`<mk0/>`, `<mk1/>`, etc.) que los motores de traducción preservan por diseño (los tratan como HTML/XML). Al recibir la traducción, las etiquetas se restauran al Markdown original. Verificado en DOM para los 5 idiomas: `<h2>`, `<strong>`, `<li>` correctos.
 
 5. **Caché por sesión** — Las traducciones se cachean en `sessionStorage` con la clave `post_trans_v1_{slug}_{lang}_{fecha}`. No se vuelve a llamar a la API en la misma sesión para el mismo artículo e idioma.
 
@@ -189,75 +191,48 @@ El sistema de traducción tiene tres capas:
 | Limitación | Descripción | Impacto |
 |-----------|-------------|---------|
 | Requiere autenticación | La API solo se llama si hay sesión activa | Visitantes no registrados no reciben traducción |
-| Calidad de traducción | MyMemory es una API gratuita de calidad moderada | Algunas frases pueden sonar poco naturales |
-| Reformateo de contenido | MyMemory puede insertar saltos de línea en oraciones largas con bold | Un bullet largo ocasionalmente muestra `**` literal |
-| Cuota diaria | 10,000 palabras/día con email registrado | Suficiente para el volumen actual; puede crecer |
+| DEEPL_API_KEY no configurada | EN/FR/DE/IT caen a MyMemory (menor calidad) | Temporal hasta configurar la key en Vercel |
+| Calidad GL | MyMemory es moderada para gallego | Algunas frases pueden sonar poco naturales |
+| Cuota MyMemory | 10,000 palabras/día con email registrado | Suficiente para el volumen actual |
 | Caching solo en sesión | Al cerrar el tab, se necesita re-traducir | Sin impacto en UX (rápido) |
 
 ---
 
-### API de traducción: MyMemory
+### APIs de traducción en uso
 
-**¿Qué es MyMemory?**
-MyMemory es el motor de traducción automática gratuito más grande del mundo basado en memoria de traducción. Combina traducciones humanas profesionales de organismos como la Unión Europea y las Naciones Unidas con traducciones automáticas de Google y Microsoft.
+#### Motor 1: MyMemory (GL — Galego)
 
 **URL del servicio:**
 ```
-https://api.mymemory.translated.net/get?q={texto}&langpair={desde}|{hasta}&de={email}
+https://api.mymemory.translated.net/get?q={texto}&langpair=es|gl&de=galiciamigrante2026@gmail.com
 ```
 
-**Configuración actual del portal:**
+**Configuración actual:**
 - Email registrado: `galiciamigrante2026@gmail.com`
-- Par de idiomas: `es|gl` (español → gallego) y `es|en` (español → inglés)
-- Límite por request: ~5,000 caracteres
-- Cuota diaria: 10,000 palabras con email registrado (vs. 1,000 sin email)
-- Costo: **Gratuito**
+- Par de idiomas: `es|gl` (español → gallego)
+- Límite por request: ~5,000 bytes
+- Cuota diaria: 10,000 palabras con email registrado
+- Costo: **Gratuito, sin API key**
 
-**Prestaciones actuales:**
-- ✅ Traducción español ↔ gallego
-- ✅ Traducción español ↔ inglés
-- ✅ Preservación de HTML/XML (via nuestro sistema de protección Markdown)
-- ✅ Caché via `next: { revalidate: 3600 }` (reutilización en SSR por 1 hora)
-- ✅ Sin API key requerida (solo email para cuota extendida)
+**Por qué MyMemory para gallego:** Apertium (el motor open source especializado es↔gl) fue evaluado y descartado por omitir tildes (`diaspora` en vez de `diáspora`) y caer a español en términos sin traducción. MyMemory tiene mejor cobertura léxica gallega y respeta acentos correctamente.
 
-**Prestaciones NO disponibles en la configuración actual:**
-- ❌ Traducción en tiempo real durante la escritura
-- ❌ Memoria de traducción personalizada del portal
-- ❌ Glosario técnico (ej. "diáspora" → "diáspora" siempre, no "dispersión")
-- ❌ Detección automática de idioma origen
-- ❌ Traducción de más de 70+ idiomas (solo usamos 2)
-
----
-
-### Alternativas de API disponibles
-
-#### 1. DeepL API ⭐ Recomendada para producción
+#### Motor 2: DeepL (EN, FR, DE, IT) ⭐ En producción
 
 | Característica | Valor |
 |---------------|-------|
 | Calidad | Mejor del mercado |
-| Soporte Galego | ✅ Desde 2023 |
-| Preservación HTML | ✅ Nativo (`tag_handling=html`) |
+| Soporte idiomas | EN, FR, DE, IT (y 30+ más) |
+| Preservación XML | ✅ Nativo (`tag_handling: 'xml'`) |
 | Costo | Gratuito hasta 500,000 chars/mes; luego €5.49/M chars |
-| API key | Requerida (registro gratuito) |
-| Documentación | [developers.deepl.com](https://developers.deepl.com) |
+| Variable de entorno | `DEEPL_API_KEY` (registro gratuito en deepl.com/pro-api) |
 
-**Por qué es la mejor alternativa:** DeepL preserva nuestro sistema de etiquetas XML de forma nativa, genera traducciones de mucha mejor calidad en gallego, y el plan gratuito es más que suficiente para el volumen actual del portal. La migración sería mínima: cambiar el URL y el formato del request en `/api/translate/route.js`.
+**Fallback automático:** Si `DEEPL_API_KEY` no está configurada o DeepL devuelve error, la ruta cae automáticamente a MyMemory para esos idiomas sin intervención manual.
 
-```javascript
-// Ejemplo de llamada a DeepL (cambio mínimo en route.js)
-const url = 'https://api-free.deepl.com/v2/translate';
-const body = new URLSearchParams({
-  auth_key: process.env.DEEPL_API_KEY,
-  text: protectedText,
-  source_lang: 'ES',
-  target_lang: targetLang.toUpperCase(),
-  tag_handling: 'xml',           // Preserva nuestras etiquetas <mk0/> nativamente
-  ignore_tags: 'mk',             // No traduce el contenido de las etiquetas mk*
-});
-```
+---
 
-#### 2. Google Cloud Translation API
+### Otras APIs disponibles (no usadas actualmente)
+
+#### Google Cloud Translation API
 
 | Característica | Valor |
 |---------------|-------|
@@ -297,13 +272,13 @@ const body = new URLSearchParams({
 
 #### Comparativa resumen
 
-| API | Calidad Gallego | Costo | Complejidad setup | Recomendación |
-|-----|----------------|-------|-------------------|--------------|
-| MyMemory (actual) | ⭐⭐ | Gratis | Ninguna | Dev / bajo volumen |
-| **DeepL** | **⭐⭐⭐⭐⭐** | **Gratis 500K** | **Baja** | **Producción** |
-| Google Translate | ⭐⭐⭐⭐ | Gratis 500K | Media | Alternativa sólida |
-| Azure Translator | ⭐⭐⭐⭐ | Gratis 2M | Media | Escala alta |
-| LibreTranslate | ⭐⭐ | Gratis | Alta | Privacy-first |
+| API | Calidad | Costo | Setup | Estado |
+|-----|---------|-------|-------|--------|
+| **MyMemory** | ⭐⭐⭐ (GL) / ⭐⭐ (resto) | Gratis | Ninguno | ✅ Activo (GL + fallback) |
+| **DeepL** | ⭐⭐⭐⭐⭐ | Gratis 500K/mes | API key gratuita | ✅ Activo (EN/FR/DE/IT), pendiente key |
+| Google Translate | ⭐⭐⭐⭐ | Gratis 500K/mes | Cuenta GCloud | ⬜ Disponible si DeepL satura |
+| Azure Translator | ⭐⭐⭐⭐ | Gratis 2M/mes | Cuenta Azure | ⬜ Opción para alta escala |
+| LibreTranslate | ⭐⭐ | Gratis (self-hosted) | Servidor propio | ⬜ Privacy-first a futuro |
 
 ---
 
@@ -431,14 +406,20 @@ No. El editor no tiene auto-guardado. Guardá el borrador manualmente cada tanto
 **¿Por qué no se traduce el blog si no estoy registrado?**
 La traducción usa una API externa que tiene una cuota diaria limitada. Para proteger ese límite de posibles bots y abuso masivo, la traducción solo se activa para usuarios autenticados.
 
+**¿A cuántos idiomas puedo traducir?**
+El blog soporta 5 idiomas de destino: Galego, English, Français, Deutsch, Italiano. El español (AR) es el idioma original y no necesita traducción.
+
 **¿La traducción al gallego es perfecta?**
 No. Es una traducción automática de calidad moderada (MyMemory API). Para contenido oficial o literario de alta calidad, la traducción manual siempre será superior. El sistema es útil para la comprensión general del contenido.
+
+**¿La traducción al inglés/francés/alemán/italiano es de mejor calidad?**
+Sí. Inglés, francés, alemán e italiano usan DeepL, el mejor motor de traducción automática disponible. La calidad es notablemente superior a la del gallego. Solo requiere configurar `DEEPL_API_KEY` en el entorno de producción.
 
 **¿Se traduce también el título y el extracto?**
 Sí. Los tres elementos se traducen: título, extracto y contenido del artículo.
 
 **La traducción al gallego no se parece al gallego estándar. ¿Por qué?**
-La API de MyMemory usa memorias de traducción de múltiples fuentes. La variedad gallega puede variar. Estamos evaluando migrar a DeepL (que tiene mejor calidad para el gallego) en el futuro.
+MyMemory usa memorias de traducción de múltiples fuentes con variedad dialectal. Para el gallego disponemos de MyMemory que ofrece el mejor equilibrio de calidad disponible entre APIs gratuitas.
 
 **¿Si cambio de idioma y vuelvo al español, se pierde la traducción?**
 No. Las traducciones se guardan en la sesión del navegador (sessionStorage). Mientras no cierres la pestaña, no se vuelve a llamar a la API.
@@ -474,7 +455,7 @@ No. Desde la versión actual (commit `da51f12`), el campo de motivo se limpia au
 | Renderizado Markdown | `react-markdown` |
 | Base de datos | Supabase (PostgreSQL + RLS) |
 | Autenticación | Supabase Auth (SSR) |
-| Traducción | `/api/translate` → MyMemory API |
+| Traducción | `/api/translate` → MyMemory (GL) + DeepL (EN/FR/DE/IT) |
 | Caché de traducción | `sessionStorage` del navegador |
 | Protección de rutas | Next.js Middleware |
 
@@ -518,7 +499,10 @@ lib/blog/
 locales/
 ├── es-AR.json                         # Traducciones de interfaz (español)
 ├── gl.json                            # Traducciones de interfaz (gallego)
-└── en.json                            # Traducciones de interfaz (inglés)
+├── en.json                            # Traducciones de interfaz (inglés)
+├── fr.json                            # Traducciones de interfaz (francés)
+├── de.json                            # Traducciones de interfaz (alemán)
+└── it.json                            # Traducciones de interfaz (italiano)
 ```
 
 ### Tabla de estados de posts (blog_posts.estado)
@@ -544,7 +528,12 @@ NEXT_PUBLIC_SUPABASE_URL=          # URL del proyecto Supabase
 NEXT_PUBLIC_SUPABASE_ANON_KEY=     # Clave anon pública
 ```
 
-La clave de la API de traducción (MyMemory) no requiere variable de entorno — el email de registro se incluye en el URL de la request.
+```env
+DEEPL_API_KEY=                     # Clave DeepL para EN/FR/DE/IT (registro gratuito en deepl.com/pro-api)
+                                   # Si no está configurada, todos los idiomas caen a MyMemory automáticamente
+```
+
+MyMemory no requiere API key — el email de registro se incluye directamente en el URL del request.
 
 ---
 
