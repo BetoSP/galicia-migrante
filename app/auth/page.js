@@ -21,6 +21,7 @@ function AuthContent() {
   const [mode, setMode] = useState(initialMode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [nombre, setNombre] = useState('');
   const [apellido, setApellido] = useState('');
   const [aceptoTerminos, setAceptoTerminos] = useState(false);
@@ -56,6 +57,10 @@ function AuthContent() {
         }
         if (!aceptoTerminos || !aceptoPrivacidad) {
           throw new Error(t('auth.error_accept_terms') || 'Debes aceptar los términos y condiciones y las políticas de privacidad.');
+        }
+
+        if (password !== confirmPassword) {
+          throw new Error(t('auth.error_passwords_mismatch') || 'Las contraseñas no coinciden. Por favor verifica.');
         }
 
         // Validación de complejidad de contraseña (mínimo 10 caracteres, una mayúscula, una minúscula, un número y un caracter especial)
@@ -119,13 +124,13 @@ function AuthContent() {
         <div className={styles.tabs}>
           <button 
             className={`${styles.tabBtn} ${mode === 'login' ? styles.tabBtnActive : ''}`}
-            onClick={() => { setMode('login'); setErrorMsg(''); setSuccessMsg(''); }}
+            onClick={() => { setMode('login'); setErrorMsg(''); setSuccessMsg(''); setConfirmPassword(''); }}
           >
             {t('nav.ingresar') || 'Iniciar Sesión'}
           </button>
           <button 
             className={`${styles.tabBtn} ${mode === 'register' ? styles.tabBtnActive : ''}`}
-            onClick={() => { setMode('register'); setErrorMsg(''); setSuccessMsg(''); }}
+            onClick={() => { setMode('register'); setErrorMsg(''); setSuccessMsg(''); setConfirmPassword(''); }}
           >
             {t('nav.registrarse') || 'Registrarse'}
           </button>
@@ -176,15 +181,29 @@ function AuthContent() {
 
           <div className={styles.formGroup}>
             <label className={styles.label}>{t('auth.password') || 'Contraseña'}</label>
-            <input 
-              type="password" 
-              className={styles.input} 
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)} 
+            <input
+              type="password"
+              className={styles.input}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              required 
+              required
             />
           </div>
+
+          {mode === 'register' && (
+            <div className={styles.formGroup}>
+              <label className={styles.label}>{t('auth.confirm_password') || 'Confirmar contraseña'}</label>
+              <input
+                type="password"
+                className={styles.input}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+              />
+            </div>
+          )}
 
           {mode === 'login' ? (
             <div className={styles.row}>

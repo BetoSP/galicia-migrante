@@ -7,6 +7,8 @@ const ThemeContext = createContext(null);
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState('auto'); // 'light' | 'dark' | 'auto'
   const [resolvedTheme, setResolvedTheme] = useState('light'); // 'light' | 'dark' (actual applied theme)
+  // 'unavailable' = API not in browser | 'active' = sensor running | 'blocked' = permission denied or init error
+  const [sensorStatus, setSensorStatus] = useState('unavailable');
 
   // Apply theme to document element
   const applyTheme = (themeValue, isDarkSystem) => {
@@ -45,22 +47,26 @@ export function ThemeProvider({ children }) {
     let sensor = null;
     if (savedTheme === 'auto' && 'AmbientLightSensor' in window) {
       try {
-        // We use a try-catch because permissions or browser security settings might block it
-        sensor = new window.AmbientLightSensor({ frequency: 0.5 }); // check every 2 seconds
-        
+        sensor = new window.AmbientLightSensor({ frequency: 0.5 });
+
         const handleSensorReading = () => {
           // lux levels: < 15 lux is typical for dim/dark rooms
           const isDarkRoom = sensor.illuminance < 15;
           applyTheme('auto', isDarkRoom);
         };
 
-        sensor.addEventListener('reading', handleSensorReading);
+        sensor.addEventListener('reading', () => {
+          setSensorStatus('active');
+          handleSensorReading();
+        });
         sensor.addEventListener('error', (event) => {
+          setSensorStatus('blocked');
           console.warn('AmbientLightSensor error:', event.error.name, event.error.message);
         });
-        
+
         sensor.start();
       } catch (err) {
+        setSensorStatus('blocked');
         console.warn('AmbientLightSensor failed to initialize:', err);
       }
     }
@@ -86,7 +92,7 @@ export function ThemeProvider({ children }) {
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, resolvedTheme, setTheme: changeTheme }}>
+    <ThemeContext.Provider value={{ theme, resolvedTheme, setTheme: changeTheme, sensorStatus }}>
       {children}
     </ThemeContext.Provider>
   );

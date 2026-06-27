@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/components/AuthProvider';
+import { useToast } from '@/components/Toast';
 import styles from './traductor.module.css';
 
 const IDIOMAS = ['gl', 'en'];
@@ -10,9 +11,11 @@ const IDIOMA_LABELS = { gl: 'Galego', en: 'English' };
 
 export default function TraductorPage() {
   const { user, roles } = useAuth();
+  const { toast } = useToast();
 
   // Notificaciones
   const [notifs, setNotifs] = useState([]);
+  const [markingLeida, setMarkingLeida] = useState(null); // notifId being marked
 
   // Traducciones de interfaz
   const [interfazRows, setInterfazRows] = useState([]);
@@ -72,11 +75,17 @@ export default function TraductorPage() {
 
   // ── Marcar notificación como leída ────────────────
   const handleMarcarLeida = async (notifId) => {
-    const { error } = await supabase
-      .from('notificaciones_leidas')
-      .insert({ notificacion_id: notifId, usuario_id: user.id });
-    if (!error) {
+    setMarkingLeida(notifId);
+    try {
+      const { error } = await supabase
+        .from('notificaciones_leidas')
+        .insert({ notificacion_id: notifId, usuario_id: user.id });
+      if (error) throw error;
       setNotifs(prev => prev.map(n => n.id === notifId ? { ...n, leida: true } : n));
+    } catch (err) {
+      toast('Error al marcar el aviso como leído: ' + err.message, { type: 'error' });
+    } finally {
+      setMarkingLeida(null);
     }
   };
 
@@ -116,7 +125,7 @@ export default function TraductorPage() {
       setEditVal('');
       await loadData();
     } catch (err) {
-      alert('Error al guardar: ' + err.message);
+      toast('Error al guardar la traducción: ' + err.message, { type: 'error' });
     } finally {
       setSaving(false);
     }
@@ -163,8 +172,9 @@ export default function TraductorPage() {
                 <button
                   className={styles.btnMarcarLeida}
                   onClick={() => handleMarcarLeida(n.id)}
+                  disabled={markingLeida === n.id}
                 >
-                  Marcar leída
+                  {markingLeida === n.id ? 'Marcando...' : 'Marcar leída'}
                 </button>
               </div>
             ))}
