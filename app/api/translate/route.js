@@ -81,33 +81,25 @@ async function translateWithDeepL(text, targetLang) {
   return data.translations?.[0]?.text ?? text;
 }
 
-// ── Motor 2: Apertium (GL — gallego) ─────────────────────────────────────────
-// Open source, gratuito, sin cuotas, especializado en lenguas ibéricas minoritarias.
-// spa→glg es uno de sus mejores pares de traducción.
-// Los motores RBMT preservan marcado XML por diseño estructural.
-async function translateWithApertium(text, targetLang) {
-  if (targetLang !== 'gl') {
-    throw new Error(`Apertium solo se usa para GL, recibido: ${targetLang}`);
-  }
-
-  const url = `https://www.apertium.org/apy/translate?q=${encodeURIComponent(text)}&langpair=spa|glg&markUnknown=no`;
+// ── Motor 2: MyMemory (GL — gallego y fallback general) ──────────────────────
+// Gratuito, 10K palabras/día con email registrado. Mejor cobertura léxica gallega
+// y preservación de tildes que Apertium. Funciona con nuestro sistema de XML tags.
+async function translateWithMyMemory(text, targetLang) {
+  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=es|${targetLang}&de=galiciamigrante2026@gmail.com`;
 
   const response = await fetch(url, {
-    headers: { 'User-Agent': 'GaliciaMigrante/1.0 (portal@galiciamigrante.com)' },
+    headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
   });
 
   if (!response.ok) {
-    throw new Error(`Apertium error ${response.status}`);
+    throw new Error(`MyMemory error ${response.status}`);
   }
 
   const data = await response.json();
-  const translated = data?.responseData?.translatedText;
-
-  if (!translated || translated === 'ERROR') {
-    throw new Error('Apertium no devolvió traducción válida');
+  if (data?.responseStatus === 200 && data.responseData?.translatedText) {
+    return data.responseData.translatedText;
   }
-
-  return translated;
+  throw new Error(`MyMemory respuesta inválida: ${data?.responseStatus}`);
 }
 
 // ── Dispatcher principal ──────────────────────────────────────────────────────
@@ -126,24 +118,18 @@ const translateText = async (text, targetLang) => {
 
   try {
     if (targetLang === 'gl') {
-      translated = await translateWithApertium(protectedText, targetLang);
+      // MyMemory tiene mejor vocabulario gallego y preserva tildes correctamente.
+      // Apertium (spa|glg) tiene cobertura léxica incompleta: cae a español en términos
+      // sin traducción (ej. 'arbol' en lugar de 'árbore') y omite tildes.
+      translated = await translateWithMyMemory(protectedText, targetLang);
     } else {
       translated = await translateWithDeepL(protectedText, targetLang);
     }
   } catch (primaryError) {
-    // Fallback a MyMemory si el motor principal falla (red, cuota, key no configurada)
+    // Fallback a MyMemory si DeepL falla (red, cuota, key no configurada)
     console.warn(`[translate] Motor principal falló para '${targetLang}', usando MyMemory:`, primaryError.message);
     try {
-      const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(protectedText)}&langpair=es|${targetLang}&de=galiciamigrante2026@gmail.com`;
-      const res = await fetch(url, {
-        headers: { 'User-Agent': 'Mozilla/5.0' },
-      });
-      const data = await res.json();
-      if (data?.responseStatus === 200 && data.responseData?.translatedText) {
-        translated = data.responseData.translatedText;
-      } else {
-        return cleanText;
-      }
+      translated = await translateWithMyMemory(protectedText, targetLang);
     } catch {
       return cleanText;
     }
