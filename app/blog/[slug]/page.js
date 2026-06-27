@@ -105,7 +105,7 @@ export default function PostPage({ params: paramsPromise }) {
     translatePostData();
   }, [locale, post]);
 
-  if (loading) {
+  if (loading || (post && !translatedContent)) {
     return (
       <div style={{ display: 'flex', minHeight: '80vh', justifyContent: 'center', alignItems: 'center', color: 'var(--text-secondary)' }}>
         {t('common.loading') || 'Cargando...'}
@@ -113,7 +113,7 @@ export default function PostPage({ params: paramsPromise }) {
     );
   }
 
-  if (!post || !translatedContent) notFound();
+  if (!post) notFound();
 
   return (
     <div className={styles.page}>
