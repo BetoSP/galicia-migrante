@@ -142,6 +142,16 @@
 }
 
 /* ── Moderation queue ─────────────────────────────────────────── */
+.actionError {
+  background: #fff5f5;
+  border: 1px solid #feb2b2;
+  color: #c53030;
+  border-radius: var(--radius-md, 7px);
+  padding: 10px 16px;
+  margin-bottom: 16px;
+  font-size: var(--font-size-sm, 12px);
+}
+
 .queueEmpty {
   text-align: center;
   padding: 48px;

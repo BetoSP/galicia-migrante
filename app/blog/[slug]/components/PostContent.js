@@ -82,19 +82,6 @@ export default function PostContent({ post }) {
   return (
     <div className={styles.page}>
       <article className={styles.article}>
-        {post.status === 'provisorio' && (
-          <div className={styles.provisionalWarning}>
-            ⚠️{' '}
-            <span>
-              <strong>
-                {t('blog.provisional_title') || 'Publicación Provisional:'}
-              </strong>{' '}
-              {t('blog.provisional_desc') ||
-                'Este artículo ha sido publicado de forma provisoria y se encuentra en revisión de cumplimiento de pautas editoriales y éticas.'}
-            </span>
-          </div>
-        )}
-
         <header className={styles.header}>
           <div className={styles.meta}>
             <time className={styles.date}>{formatDate(post.date, locale)}</time>

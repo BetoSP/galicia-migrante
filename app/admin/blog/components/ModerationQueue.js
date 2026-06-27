@@ -15,24 +15,33 @@ export default function ModerationQueue({ initialPosts }) {
   const [working, setWorking] = useState(null);
   const [rejectingId, setRejectingId] = useState(null);
   const [motivo, setMotivo] = useState('');
+  const [actionError, setActionError] = useState(null);
 
   async function approve(id) {
     setWorking(id);
+    setActionError(null);
     const { error } = await supabase
       .from('blog_posts')
       .update({ estado: 'publicado', motivo_rechazo: null })
       .eq('id', id);
-    if (!error) setPosts((p) => p.filter((post) => post.id !== id));
+    if (error) {
+      setActionError(`Error al aprobar: ${error.message}`);
+    } else {
+      setPosts((p) => p.filter((post) => post.id !== id));
+    }
     setWorking(null);
   }
 
   async function reject(id) {
     setWorking(id);
+    setActionError(null);
     const { error } = await supabase
       .from('blog_posts')
       .update({ estado: 'rechazado', motivo_rechazo: motivo || null })
       .eq('id', id);
-    if (!error) {
+    if (error) {
+      setActionError(`Error al rechazar: ${error.message}`);
+    } else {
       setPosts((p) => p.filter((post) => post.id !== id));
       setRejectingId(null);
       setMotivo('');
@@ -56,6 +65,9 @@ export default function ModerationQueue({ initialPosts }) {
 
   return (
     <div>
+      {actionError && (
+        <div className={styles.actionError}>{actionError}</div>
+      )}
       {posts.map((post) => (
         <div key={post.id} className={styles.postCard}>
           <div className={styles.postCardHeader}>
@@ -88,7 +100,11 @@ export default function ModerationQueue({ initialPosts }) {
             </button>
             <button
               className={styles.btnReject}
-              onClick={() => setRejectingId(rejectingId === post.id ? null : post.id)}
+              onClick={() => {
+                const next = rejectingId === post.id ? null : post.id;
+                setRejectingId(next);
+                if (next !== null) setMotivo('');
+              }}
               disabled={working === post.id}
             >
               Rechazar
