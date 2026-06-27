@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import styles from './Navbar.module.css';
 import { useTranslation } from '@/components/LanguageContext';
@@ -51,14 +50,12 @@ export default function Navbar() {
 
         {/* Logo */}
         <Link href="/" className={styles.logo} onClick={closeAll} aria-label="Galicia Migrante — Inicio">
-          <Image
-            src="/trisquel.svg"
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/trisquel.png"
             alt=""
             aria-hidden="true"
-            width={48}
-            height={34}
             className={styles.logoImg}
-            priority
           />
           <span className={styles.logoText}>
             <span className={styles.logoMain}>GALICIA</span>

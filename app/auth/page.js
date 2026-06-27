@@ -3,7 +3,6 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useAuth } from '@/components/AuthProvider';
 import { useTranslation } from '@/components/LanguageContext';
 import { useToast } from '@/components/Toast';
@@ -108,12 +107,11 @@ function AuthContent() {
       <div className={styles.card}>
         <div className={styles.header}>
           <div className={styles.logoWrapper}>
-            <Image
-              src="/trisquel.svg"
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/trisquel.png"
               alt="Trisquel de las Dos Orillas — Galicia Migrante"
-              width={80}
-              height={57}
-              priority
+              style={{ height: '72px', width: 'auto' }}
             />
           </div>
           <h1 className={styles.title}>

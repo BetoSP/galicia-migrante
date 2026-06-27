@@ -35,9 +35,9 @@
 }
 
 .logoImg {
+  height: 36px;
   width: auto;
-  height: 34px;
-  object-fit: contain;
+  display: block;
 }
 
 .logoText {
