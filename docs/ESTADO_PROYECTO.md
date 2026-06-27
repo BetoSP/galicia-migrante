@@ -104,7 +104,15 @@ Todos los bugs identificados en auditoría exhaustiva han sido corregidos (commi
 
 Manual técnico disponible en `docs/MANUAL_BLOG.md`.
 
-Pendiente de upgradear la API de traducción a DeepL (mejor calidad en gallego, plan gratuito 500K chars/mes).
+Traducción migrada a arquitectura dual (commit `b822581`):
+- GL → Apertium (open source, sin cuotas, especializado es↔gl)
+- EN/FR/DE/IT → DeepL (500K chars/mes gratis, tag handling nativo)
+- Fallback automático a MyMemory si el motor principal falla
+- Idiomas disponibles en el blog: ES, GL, EN, FR, DE, IT
+
+**PENDIENTE ÚNICO:** Configurar `DEEPL_API_KEY` en `.env.local` y en Vercel para activar DeepL.
+Hasta que se configure, FR/DE/IT caen a MyMemory (funcional pero menor calidad).
+Registro gratuito en: https://www.deepl.com/pro-api
 
 ### Prioridad media
 - **Posts inaugurales**: verificar si los 4 posts que tenían estado `provisorio` quedaron como `en_revision` tras la migración y publicarlos desde `/admin/blog`
