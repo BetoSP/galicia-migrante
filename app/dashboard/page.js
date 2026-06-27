@@ -148,7 +148,30 @@ export default function DashboardPage() {
       </div>
 
       <div className={styles.grid}>
-        
+
+        {/* Card 0: Acciones rápidas del blog */}
+        <div className={styles.card}>
+          <div className={styles.cardHeader}>
+            <div className={styles.iconWrapper}>✍️</div>
+            <div>
+              <h2 className={styles.cardTitle}>Mi Blog</h2>
+              <p className={styles.cardSubtitle}>Escribí y gestioná tus artículos</p>
+            </div>
+          </div>
+          <p className={styles.cardText}>
+            Compartí tu historia, una crónica familiar, poesía o una guía práctica.
+            Tus artículos pasan por una breve revisión editorial antes de publicarse.
+          </p>
+          <div style={{ display: 'flex', gap: '10px', marginTop: 'auto', flexWrap: 'wrap' }}>
+            <a href="/dashboard/posts/nuevo" className={styles.btnAction} style={{ textDecoration: 'none', textAlign: 'center' }}>
+              + Nuevo artículo
+            </a>
+            <a href="/dashboard/posts" className={styles.btnActionSecondary} style={{ textDecoration: 'none', textAlign: 'center' }}>
+              Ver mis artículos
+            </a>
+          </div>
+        </div>
+
         {/* Card 1: Membresía */}
         <div className={styles.card}>
           <div className={styles.cardHeader}>
