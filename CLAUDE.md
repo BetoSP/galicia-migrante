@@ -5,6 +5,22 @@ Este archivo define las directrices y estándares obligatorios de desarrollo par
 
 ---
 
+## 📚 PROTOCOLO DE INICIO DE SESIÓN (OBLIGATORIO)
+
+**Al comenzar CUALQUIER sesión de trabajo, antes de responder al usuario o tocar cualquier archivo:**
+
+1. Leer `docs/ESTADO_PROYECTO.md` — estado actual, qué está pendiente de prueba, tareas en curso.
+2. Leer `docs/PRD.md` — requerimientos del producto y visión general.
+3. Leer `docs/manual-de-marca.md` — identidad visual, colores oficiales, tipografía, tono.
+4. Leer `docs/LEGAJO_FUTURO_legacy.md` — contexto histórico y decisiones de arquitectura pasadas.
+5. Consultar la memoria del proyecto en `~/.claude/projects/*/memory/MEMORY.md`.
+
+**Al finalizar cada sesión:**
+- Actualizar `docs/ESTADO_PROYECTO.md` con el estado real: qué se hizo, qué quedó pendiente, qué falta probar.
+- Hacer commit y push del archivo actualizado.
+
+---
+
 ## 🚨 PRINCIPIO RECTOR ABSOLUTO
 
 **CERO PARCHES. CERO IMPROVISACIONES. SOLUCIONES DEFINITIVAS DESDE EL INICIO.**
