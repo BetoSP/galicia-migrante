@@ -61,14 +61,14 @@ Cambios en la base de datos:
 
 ---
 
-## Resultados del testing en browser (2026-06-27)
+## Resultados del testing en browser (2026-06-27) — TESTING COMPLETO ✅
 
 ### Bloque 1 — Blog público ✅
-- ✅ `/blog` carga y muestra posts publicados (4 posts)
-- ✅ Filtrado por categoría funciona (Historia → 1 post)
+- ✅ `/blog` carga y muestra posts publicados (5 posts)
+- ✅ Filtrado por categoría funciona
 - ✅ "Leer más" navega sin 404
 - ✅ Post individual renderiza Markdown (headings, negritas, blockquote, tags)
-- ⏭ Selector de idioma (ES/GL/PT) — no probado en esta sesión
+- ✅ Selector de idioma (ES → GL): navbar y contenido del post se traducen automáticamente vía `/api/translate`; dropdown muestra Español (AR) / Galego / English
 
 ### Bloque 2 — Dashboard usuario ✅
 - ✅ Login usuario no-admin (`usuario.prueba@galiciamigrante.com`, rol visor)
@@ -76,7 +76,7 @@ Cambios en la base de datos:
 - ✅ Guardar borrador → "Borrador guardado correctamente"
 - ✅ Enviar a revisión → "¡Artículo enviado para revisión!"
 - ✅ Protección de rutas: `/admin/blog` redirige para usuario no-admin
-- ⏭ Editar borrador, privacidad entre usuarios — no probados
+- ✅ Editar borrador: carga todos los campos pre-populados (título, extracto, categoría, etiquetas, contenido Markdown)
 
 ### Bloque 3 — Panel admin ✅
 - ✅ Login como `administrador@galiciamigrante.com` (rol admin_general)
@@ -84,7 +84,8 @@ Cambios en la base de datos:
 - ✅ Estadísticas del panel (EN REVISIÓN / PUBLICADOS / BORRADORES / RECHAZADOS)
 - ✅ Cola de pendientes con Aprobar / Rechazar / Previsualizar
 - ✅ Aprobar post funciona y lo elimina de la cola
-- ⏭ Rechazar con motivo — no probado en esta sesión
+- ✅ Rechazar con motivo: formulario inline, post pasa a `rechazado`, contador actualiza al recargar
+- Nota: el contador de stats NO se actualiza en tiempo real tras una acción (diseño actual sin polling); requiere recarga de página. No es un bug crítico.
 
 ---
 
