@@ -109,7 +109,7 @@ function AuthContent() {
           <div className={styles.logoWrapper}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/trisquel.png"
+              src="/logo.png"
               alt="Trisquel de las Dos Orillas — Galicia Migrante"
               style={{ height: '72px', width: 'auto' }}
             />

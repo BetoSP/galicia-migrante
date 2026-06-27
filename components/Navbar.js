@@ -52,7 +52,7 @@ export default function Navbar() {
         <Link href="/" className={styles.logo} onClick={closeAll} aria-label="Galicia Migrante — Inicio">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/trisquel.png"
+            src="/logo.png"
             alt=""
             aria-hidden="true"
             className={styles.logoImg}
