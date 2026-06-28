@@ -124,6 +124,7 @@ Manual técnico: `docs/MANUAL_BLOG.md`
 - **Limpiar Vercel**: eliminar env vars stale `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY`
 
 ### Baja prioridad (sprints futuros)
+- **"Mostrar contraseña"** en la página de login (`/auth`): agregar toggle de visibilidad al campo password.
 - Logo: versión clara del trisquel para navbar oscura (contraste insuficiente actualmente)
 - Admin sub-panels: Usuarios, Asociaciones (habilitarlos en AdminSidebar)
 - AbortController en fetches del árbol genealógico
