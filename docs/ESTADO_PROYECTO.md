@@ -174,6 +174,19 @@ Monolito de 835 líneas eliminado. Panel modular con RBAC implementado:
 
 ---
 
+## Documento de visión y filosofía
+
+**`docs/VISION.md`** — creado el 2026-06-28. Documento autoritativo sobre filosofía, audiencia, emoción y estrategia del portal. Gobierna al PRD y al manual de marca cuando hay contradicción filosófica. Incluye:
+- La idea central: el portal como centro gallego del siglo XXI
+- Los dos públicos (25-40 y 40-65) y cómo hablarles
+- La emoción objetivo y el concepto de "momento mágico"
+- Arquitectura del portal por analogía con el centro físico
+- Tono de voz, paleta visual definitiva
+- Pruebas de éxito para cualquier decisión de diseño
+- Prompts operativos para diseño, contenido, producto y revisión de código
+
+---
+
 ## Stack técnico
 
 | Capa | Tecnología |
