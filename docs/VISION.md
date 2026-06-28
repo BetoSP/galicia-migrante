@@ -22,11 +22,11 @@
 
 ## 1. LA IDEA CENTRAL
 
-**Galicia Migrante es el centro gallego del siglo XXI.**
+**Galicia Migrante es la asociación gallega del siglo XXI.**
 
-Los centros gallegos físicos construyeron comunidad durante décadas. Daban un lugar donde reunirse, conversar, jugar a las cartas, celebrar al patrón del pueblo con gaitas y empanada, organizar fiestas, recordar juntos. Eran el ancla de la identidad gallega fuera de Galicia.
+Las asociaciones gallegas construyeron comunidad durante décadas. Daban un lugar donde reunirse, conversar, jugar a las cartas, celebrar las fiestas patronales con gaitas y empanada, organizar bailes, recordar juntos. Eran el ancla de la identidad gallega fuera de Galicia.
 
-Esos centros están en decadencia. La gente mayor ya no sale tanto. Los jóvenes no van. Las paredes no los convocan.
+Esas asociaciones están en decadencia. La gente mayor ya no sale tanto. Los jóvenes no van. Las paredes no los convocan.
 
 Galicia Migrante es su equivalente tecnológico. No su reemplazo — su continuación en el medio donde vive la generación que hay que alcanzar. Un espacio donde los 200.000 gallegos de la diáspora que están dispersos en barrios, ciudades y países distintos puedan encontrarse, reconocerse, compartir y sentir que pertenecen a algo más grande que sus cuatro paredes.
 
@@ -38,9 +38,9 @@ Galicia Migrante es su equivalente tecnológico. No su reemplazo — su continua
 
 ### 2.1 Los centros físicos se están apagando
 
-Los centros gallegos tradicionales tienen un problema estructural: el tiempo pasa. La primera generación de emigrantes — los que llegaron con la memoria viva de Galicia, los que fundaron los centros, los que enseñaron las canciones y cocinaron el caldo — está envejeciendo. Muchos ya no están.
+Las asociaciones gallegas tienen un problema estructural: el tiempo pasa. La primera generación de emigrantes — los que llegaron con la memoria viva de Galicia, los que fundaron las asociaciones, los que enseñaron las canciones y cocinaron el caldo — está envejeciendo. Muchos ya no están.
 
-Sus hijos y nietos heredaron el apellido pero no siempre la conexión. Trabajan, tienen hijos, viven a miles de kilómetros del centro gallego más cercano (cuando hay uno), y no sienten que ese lugar sea para ellos.
+Sus hijos y nietos heredaron el apellido pero no siempre la conexión. Trabajan, tienen hijos, viven a miles de kilómetros de la asociación gallega más cercana (cuando hay una), y no sienten que ese lugar sea para ellos.
 
 ### 2.2 La cultura se está perdiendo, y nadie más lo está resolviendo
 
@@ -160,7 +160,7 @@ El portal nunca debe hacer que un joven de 28 años sienta que llegó al lugar e
 
 ## 6. EL CENTRO VIRTUAL — ARQUITECTURA POR ANALOGÍA
 
-El centro gallego físico tenía espacios con funciones específicas. El portal los replica en digital. Esta analogía es el mapa conceptual del producto:
+La asociación gallega física tenía espacios con funciones específicas. El portal los replica en digital. Esta analogía es el mapa conceptual del producto:
 
 | Centro físico | Equivalente digital | Módulo del portal |
 |---|---|---|
@@ -180,16 +180,16 @@ El centro gallego físico tenía espacios con funciones específicas. El portal 
 
 ### 6.1 La Mediateca — el espacio cultural del centro virtual
 
-El centro gallego físico no era solo genealogía y trámites. Tenía una biblioteca con libros sobre emigración y cultura, un tocadiscos con música de gaitas y cantautores, un archivo de periódicos viejos de Galicia, álbumes de fotos de las fiestas del patrón.
+La asociación gallega no era solo genealogía y trámites. Tenía una biblioteca con libros sobre emigración y cultura, un tocadiscos con música de gaitas y cantautores, un archivo de periódicos viejos de Galicia, álbumes de fotos de las fiestas patronales.
 
 La **Mediateca** es el equivalente digital de todo eso. Un solo espacio con múltiples "salas":
 
 | Sala | Contenido | Contribución |
 |---|---|---|
 | **Biblioteca** | Libros digitales sobre emigración gallega, historia, cultura, literatura | Curada por el equipo + aportes de usuarios |
-| **Hemeroteca** | Prensa gallega histórica, publicaciones de la diáspora, revistas de centros gallegos | Digitalización colaborativa |
+| **Hemeroteca** | Prensa gallega histórica, publicaciones de la diáspora, revistas de asociaciones gallegas | Digitalización colaborativa |
 | **Musicoteca** | Música gallega: tradicional, contemporánea, cantautores, grupos de la diáspora | Curada + aportes de la comunidad |
-| **Fototeca** | Fotografías históricas de la diáspora: barcos, puertos, llegadas, fiestas, centros gallegos | Aporte comunitario con moderación |
+| **Fototeca** | Fotografías históricas de la diáspora: barcos, puertos, llegadas, fiestas patronales, sedes de asociaciones | Aporte comunitario con moderación |
 | **Fonoteca** | Testimonios orales, entrevistas a mayores, grabaciones históricas | Historia oral — el activo más valioso |
 | **Filmoteca** | Documentales, cortometrajes, material de archivo audiovisual sobre la diáspora gallega | Curada + posibles aportes |
 
@@ -310,8 +310,8 @@ Un diseño, módulo, o pieza de contenido tuvo éxito si puede responder SÍ a e
 - ¿Siente que lo que sabe y custodia tiene valor en este espacio?
 - ¿Puede confiarle la historia de su familia a esta plataforma?
 
-### La prueba del centro gallego
-- ¿Esto podría pasar en un centro gallego físico, aunque fuera en formato digital?
+### La prueba comunitaria
+- ¿Esto podría pasar en una asociación gallega, aunque fuera en formato digital?
 - ¿Une a la comunidad o solo informa?
 - ¿Genera conversación, recuerdo, encuentro — o solo transacción?
 
@@ -349,7 +349,7 @@ ría, niebla, granito.
 
 **Para landing page — hero section:**
 ```
-Diseña el hero de una landing page para Galicia Migrante. El portal es el centro gallego 
+Diseña el hero de una landing page para Galicia Migrante. El portal es la asociación gallega 
 virtual del siglo XXI — para descendientes de gallegos de 25 a 65 años.
 
 Objetivo del hero: producir una emoción de pertenencia e identidad en los primeros 5 segundos. 
@@ -387,7 +387,7 @@ Incluir un texto secundario que contextualice qué puede llegar a ver una vez qu
 
 **Para artículo del blog — tono y estructura:**
 ```
-Escribe un artículo para el blog de Galicia Migrante. El portal es el centro gallego virtual 
+Escribe un artículo para el blog de Galicia Migrante. El portal es la asociación gallega virtual 
 para la diáspora — lectores de 25 a 65 años, descendientes de gallegos en Argentina y América.
 
 Tema: [TEMA DEL ARTÍCULO]
@@ -408,7 +408,7 @@ Evitar: tono enciclopédico, clichés sobre "las raíces", menciones a trámites
 ```
 Escribe 5 opciones de tagline para la sección "[NOMBRE DE LA SECCIÓN]" de Galicia Migrante.
 
-El portal es el centro gallego virtual — une a descendientes de gallegos de 25 a 65 años.
+El portal es la asociación gallega virtual — une a descendientes de gallegos de 25 a 65 años.
 La sección tiene como función: [DESCRIPCIÓN FUNCIONAL].
 La emoción que debe producir: [EMOCIÓN OBJETIVO].
 
@@ -425,7 +425,7 @@ Requisitos:
 
 **Para diseñar un nuevo módulo:**
 ```
-Estoy diseñando el módulo "[NOMBRE]" para Galicia Migrante, el centro gallego virtual para 
+Estoy diseñando el módulo "[NOMBRE]" para Galicia Migrante, la asociación gallega virtual para 
 la diáspora. Antes de codificar, quiero definir el diseño de producto.
 
 Contexto del portal:
@@ -445,15 +445,15 @@ Quiero definir:
 
 **Para revisar una decisión de diseño:**
 ```
-Estoy tomando una decisión de diseño para Galicia Migrante. El portal es el centro gallego 
-virtual para la diáspora — une a descendientes de gallegos de 25 a 65 años.
+Estoy tomando una decisión de diseño para Galicia Migrante. El portal es la asociación gallega 
+virtual de la diáspora — une a descendientes de gallegos de 25 a 65 años.
 
 La decisión es: [DESCRIPCIÓN DE LA DECISIÓN].
 
 Evaluala contra estos criterios:
 1. ¿Pasa la prueba del joven? (28 años, primera visita, sin contexto previo)
 2. ¿Pasa la prueba del mayor? (60 años, poca experiencia digital, mucha memoria familiar)
-3. ¿Pasa la prueba del centro gallego? (¿une o solo informa?)
+3. ¿Pasa la prueba comunitaria? (¿une o solo informa?)
 4. ¿Pasa la prueba de la cultura viva? (¿Galicia como hoy, no solo como pasado?)
 5. ¿Genera o destruye el "momento mágico"?
 
@@ -475,7 +475,7 @@ Contexto técnico:
 - Cero parches. Solución definitiva. Sin hardcoding.
 
 Contexto de producto:
-- El portal es el centro gallego virtual — comunidad es el producto.
+- El portal es la asociación gallega virtual — comunidad es el producto.
 - Dos públicos: jóvenes 25-40 y mayores 40-65.
 - El componente debe producir una emoción de pertenencia, no solo mostrar datos.
 
@@ -501,5 +501,5 @@ y cualquier decisión de diseño que contradiga la filosofía de producto.
 ---
 
 *Documento creado el 28 de junio de 2026.*
-*Origen: conversación estratégica sobre la visión del portal como "centro gallego del siglo XXI".*
+*Origen: conversación estratégica sobre la visión del portal como "asociación gallega del siglo XXI".*
 *Próxima revisión: cuando haya cambios significativos en la estrategia de producto o audiencia.*

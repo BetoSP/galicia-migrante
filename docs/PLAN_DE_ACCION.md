@@ -15,7 +15,7 @@
 - Sistema de i18n (ES/GL/EN/FR/DE/IT)
 - Deploy en Vercel, base en Supabase, 37+ tablas
 
-### Lo que falta para ser el "centro gallego del siglo XXI"
+### Lo que falta para ser la "asociación gallega del siglo XXI"
 - **La primera impresión no cumple la visión** — la landing page y la estética general no producen el "momento mágico" en 10 segundos.
 - **No hay modo día/noche** — sin eso no se puede hacer el refresh visual.
 - **La Mediateca no existe** — no hay espacio cultural (biblioteca, música, fotos históricas, etc.).
@@ -54,7 +54,7 @@ Cada fase se construye sobre la anterior. No se avanza a la siguiente sin que la
 
 ## FASE 1 — FUNDACIÓN VISUAL
 **Duración estimada:** 1 semana
-**Objetivo:** Que el portal se vea y sienta como el "centro gallego del siglo XXI" antes de seguir construyendo módulos.
+**Objetivo:** Que el portal se vea y sienta como la "asociación gallega del siglo XXI" antes de seguir construyendo módulos.
 
 > **Por qué primero:** Todo lo que construyamos después va a heredar la estética. Si construimos módulos sobre un diseño que no está bien, tenemos que redeseñar dos veces.
 
@@ -121,7 +121,7 @@ Publicar al menos 6-8 artículos con los que el portal abra sus puertas:
 | "El barco que trajo a los gallegos a Argentina" | Historia documental con impacto emocional |
 | "Las parroquias de Galicia: por qué no alcanza saber el apellido" | Contextualiza el módulo territorial |
 | "5 canciones que definen la música gallega contemporánea" | Introduce la futura Musicoteca + comparte en redes |
-| "Los centros gallegos de Buenos Aires: historia y presente" | Conecta con las asociaciones |
+| "Las asociaciones gallegas de Buenos Aires: historia y presente" | Conecta con las asociaciones |
 | "Entroido, Magosto y San Xoán: las fiestas que viajaron con la diáspora" | Cultura viva, compartible |
 | "Cómo contribuir a Galicia Migrante: tu historia también es nuestra" | Convoca a la comunidad a participar |
 
@@ -136,7 +136,7 @@ La sección existe pero necesita contenido real:
 ### 2.3 Seed de la agenda
 
 Cargar al menos 10-15 eventos reales de la colectividad gallega para que la sección no esté vacía al lanzar:
-- Eventos de centros gallegos en Argentina
+- Eventos de asociaciones gallegas en Argentina
 - Fiestas patronales
 - Eventos de GaliciaAberta (Xunta)
 
@@ -176,7 +176,7 @@ Cargar al menos 10-15 eventos reales de la colectividad gallega para que la secc
 **Duración estimada:** 4-6 semanas (diseño + seed inicial de contenido)
 **Objetivo:** Convertir el portal en un destino cultural, no solo en una herramienta genealógica.
 
-> **Por qué cuarto:** La Mediateca es la sala del centro gallego donde la gente se queda más tiempo. Pero necesita contenido para funcionar. Sin contenido inicial es una sala vacía — por eso va después de que el blog y la agenda están activos y generando comunidad.
+> **Por qué cuarto:** La Mediateca es la sala de la asociación donde la gente se queda más tiempo. Pero necesita contenido para funcionar. Sin contenido inicial es una sala vacía — por eso va después de que el blog y la agenda están activos y generando comunidad.
 
 ### Arquitectura de la Mediateca
 
@@ -273,7 +273,7 @@ Una fase no está completa hasta que pasa las cuatro pruebas de `VISION.md`:
 
 1. **Prueba del joven** — ¿Un joven de 28 años sin contexto previo entiende y se emociona?
 2. **Prueba del mayor** — ¿Una persona de 60 años con poca experiencia digital puede usarlo?
-3. **Prueba del centro gallego** — ¿Une o solo informa?
+3. **Prueba comunitaria** — ¿Une o solo informa?
 4. **Prueba de la cultura viva** — ¿Muestra Galicia como algo que existe hoy?
 
 Y los criterios técnicos de siempre:
