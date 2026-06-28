@@ -97,25 +97,23 @@ Cambios en la base de datos:
 
 ## Pendiente: Tareas de desarrollo
 
-### Módulo Blog — COMPLETAMENTE FUNCIONAL ✅ (2026-06-27)
-Todos los bugs identificados en auditoría exhaustiva han sido corregidos (commits `1ef7b16`, `da51f12`):
-- Markdown corruption en traducción → XML tags fix
-- common.loading i18n key faltante → agregada a los 3 locales
-- motivo estado compartido en ModerationQueue → limpieza automática al cambiar post
-- Sin feedback de error en approve/reject → acción de error con mensaje visible
-- Dead code provisorio → eliminado
+### Módulo Blog — COMPLETAMENTE FUNCIONAL ✅ (2026-06-28)
 
-Manual técnico disponible en `docs/MANUAL_BLOG.md`.
+**Arquitectura de traducción definitiva (commit `d07d852`, migración 022 ejecutada 2026-06-28):**
+- Pre-traducción al publicar → `blog_post_translations` en Supabase (5 idiomas × post)
+- Visitantes SIN cuenta ven contenido traducido — sin auth requerida
+- Cambio de idioma instantáneo: traducciones llegan como prop SSR (zero llamadas API cliente)
+- GL → MyMemory | EN/FR/DE/IT → DeepL (key configurada en `.env.local` y Vercel ✅)
+- Verificado en Supabase: GL/EN/FR/DE/IT con títulos y contenido completo para posts aprobados
+- Verificado HTTP anónimo: página retorna 200 con contenido correcto sin sesión activa
 
-Traducción con arquitectura dual implementada y verificada en browser (commits `b822581`, `b4139ed`):
-- GL → MyMemory (mejor cobertura léxica gallega; Apertium evaluado y descartado: omite tildes y cae a español sin traducción disponible)
-- EN/FR/DE/IT → DeepL (500K chars/mes gratis, tag handling nativo con XML)
-- Fallback automático a MyMemory si DeepL falla o key no configurada
-- Idiomas disponibles en el blog: ES, GL, EN, FR, DE, IT — todos verificados en DOM
+**Bugs del módulo blog corregidos (commits `1ef7b16`, `da51f12`):**
+- Markdown corruption en traducción → sistema XML tags (`<mk0/>`)
+- common.loading i18n faltante → clave en los 6 locales (es-AR, gl, en, fr, de, it)
+- motivo estado compartido en ModerationQueue → limpieza al cambiar post
+- Sin feedback en approve/reject → estado de error con mensaje visible
 
-**PENDIENTE ÚNICO:** Configurar `DEEPL_API_KEY` en `.env.local` y en Vercel para activar DeepL.
-Hasta que se configure, EN/FR/DE/IT caen a MyMemory (funcional pero menor calidad).
-Registro gratuito en: https://www.deepl.com/pro-api
+Manual técnico: `docs/MANUAL_BLOG.md`
 
 ### Prioridad media
 - **Posts inaugurales**: verificar si los 4 posts que tenían estado `provisorio` quedaron como `en_revision` tras la migración y publicarlos desde `/admin/blog`
