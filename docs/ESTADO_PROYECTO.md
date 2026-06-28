@@ -115,6 +115,9 @@ Cambios en la base de datos:
 
 Manual técnico: `docs/MANUAL_BLOG.md`
 
+### PRÓXIMA ACCIÓN (prioridad alta)
+- **Botón "Traducir todo"** en `/admin/blog/[slug]/traducciones`: procesa los 5 idiomas de una vez para posts publicados sin traducciones. Los 5 posts publicados antes de la migración 022 aún no tienen entradas en `blog_post_translations` — son invisibles en GL/EN/FR/DE/IT. Implementar: endpoint `POST /api/blog/[id]/translate-all` + botón en `TranslationEditor.js`.
+
 ### Prioridad media
 - **Posts inaugurales**: verificar si los 4 posts que tenían estado `provisorio` quedaron como `en_revision` tras la migración y publicarlos desde `/admin/blog`
 - **Refactorizar `app/admin/page.js`**: 835 líneas monolíticas → separar en sub-componentes (no urgente, no bloquea)
