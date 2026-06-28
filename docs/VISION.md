@@ -169,22 +169,45 @@ El centro gallego físico tenía espacios con funciones específicas. El portal 
 | El tablero de avisos | Agenda de la colectividad | Agenda |
 | El archivo de papeles | Árbol genealógico + documentos | Tu árbol genealógico |
 | El mapa del pueblo en la pared | Territorialidad gallega navegable | Tu lugar en Galicia |
-| La biblioteca del centro | Biblioteca digital, recursos | Biblioteca |
+| La biblioteca del centro | Libros, publicaciones, hemeroteca | La Mediateca |
+| El tocadiscos — la música del centro | Canciones, bandas, cantautores gallegos | Musicoteca |
+| El archivo de periódicos | Diarios, revistas de la diáspora, prensa gallega | Hemeroteca |
+| La colección de fotos históricas | Documentos fotográficos de la diáspora | Fototeca |
 | La ventanilla de trámites | Información Xunta y España | Sección institucional |
 | El directorio de socios | Directorio de asociaciones | Asociaciones |
 | Las reuniones y fiestas | Eventos, encuentros, actividades presenciales | Agenda + futuras actividades |
 | Los testimonios de los mayores | Historia oral, testimonios en audio y video | Historia oral (segunda etapa) |
 
-### 6.1 Jerarquía de contenido
+### 6.1 La Mediateca — el espacio cultural del centro virtual
+
+El centro gallego físico no era solo genealogía y trámites. Tenía una biblioteca con libros sobre emigración y cultura, un tocadiscos con música de gaitas y cantautores, un archivo de periódicos viejos de Galicia, álbumes de fotos de las fiestas del patrón.
+
+La **Mediateca** es el equivalente digital de todo eso. Un solo espacio con múltiples "salas":
+
+| Sala | Contenido | Contribución |
+|---|---|---|
+| **Biblioteca** | Libros digitales sobre emigración gallega, historia, cultura, literatura | Curada por el equipo + aportes de usuarios |
+| **Hemeroteca** | Prensa gallega histórica, publicaciones de la diáspora, revistas de centros gallegos | Digitalización colaborativa |
+| **Musicoteca** | Música gallega: tradicional, contemporánea, cantautores, grupos de la diáspora | Curada + aportes de la comunidad |
+| **Fototeca** | Fotografías históricas de la diáspora: barcos, puertos, llegadas, fiestas, centros gallegos | Aporte comunitario con moderación |
+| **Fonoteca** | Testimonios orales, entrevistas a mayores, grabaciones históricas | Historia oral — el activo más valioso |
+| **Filmoteca** | Documentales, cortometrajes, material de archivo audiovisual sobre la diáspora gallega | Curada + posibles aportes |
+
+**Principio de la Mediateca:** el contenido no está muerto en estantería — está contextualizado con la historia que lo rodea. Un disco de música gallega de 1950 está conectado a los centros que lo tocaban, a los barcos que llegaron ese año, a las parroquias de origen de los emigrantes de esa época.
+
+**Modelo de contenido:** mixto — una base curada por el equipo más aportes de la comunidad con moderación. Los usuarios no solo consumen: pueden subir la foto del abuelo en el barco, el recuerdo oral de la abuela, el periódico gallego que guardó la familia.
+
+### 6.2 Jerarquía de contenido
 
 No todos los módulos son iguales. Esta es la jerarquía por impacto emocional y poder de adquisición:
 
 1. **Árbol genealógico** — el gancho más fuerte. Genera el momento mágico más potente.
 2. **Blog y comunidad** — mantiene vivo el espacio entre visitas. Sin esto, el centro está vacío.
 3. **Tu lugar en Galicia** — conecta al usuario con el territorio concreto. Personaliza la pertenencia.
-4. **Historia oral** — la joya del largo plazo. Requiere masa crítica pero tiene el poder más duradero.
-5. **Asociaciones** — conecta el mundo digital con el físico. Puente entre generaciones.
-6. **Biblioteca e institucional** — profundidad para quien ya está comprometido.
+4. **La Mediateca** — la sala cultural. Convierte el portal en un destino de descubrimiento, no solo de gestión.
+5. **Historia oral / Fonoteca** — la joya del largo plazo. Requiere masa crítica pero tiene el poder más duradero.
+6. **Asociaciones** — conecta el mundo digital con el físico. Puente entre generaciones.
+7. **Biblioteca e institucional** — profundidad para quien ya está comprometido.
 
 ### 6.2 Principio de contenido
 
