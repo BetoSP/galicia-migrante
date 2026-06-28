@@ -8,26 +8,32 @@ const NAV = [
   {
     label: 'General',
     items: [
-      { href: '/admin', icon: '📊', label: 'Panel principal' },
+      { href: '/admin', icon: '📊', label: 'Dashboard', exact: true },
     ],
   },
   {
     label: 'Contenido',
     items: [
-      { href: '/admin/blog', icon: '✍️', label: 'Blog' },
+      { href: '/admin/blog',        icon: '✍️', label: 'Blog' },
+      { href: '/admin/i18n',        icon: '🌐', label: 'Interfaz i18n' },
+      { href: '/admin/delegacion',  icon: '🔑', label: 'Delegación' },
     ],
   },
   {
-    label: 'Comunidad',
+    label: 'Sistema',
     items: [
-      { href: '/admin/usuarios', icon: '👥', label: 'Usuarios', disabled: true },
-      { href: '/admin/asociaciones', icon: '🏛️', label: 'Asociaciones', disabled: true },
+      { href: '/admin/planes',       icon: '👑', label: 'Planes y límites' },
+      { href: '/admin/asociaciones', icon: '🏛️', label: 'Asociaciones' },
     ],
   },
 ];
 
 export default function AdminSidebar() {
   const pathname = usePathname();
+
+  function isActive(href, exact) {
+    return exact ? pathname === href : pathname === href || pathname.startsWith(href + '/');
+  }
 
   return (
     <aside className={styles.sidebar}>
@@ -39,27 +45,16 @@ export default function AdminSidebar() {
       {NAV.map((section) => (
         <div key={section.label} className={styles.navSection}>
           <div className={styles.navLabel}>{section.label}</div>
-          {section.items.map((item) =>
-            item.disabled ? (
-              <span
-                key={item.href}
-                className={styles.navLink}
-                style={{ opacity: 0.4, cursor: 'default' }}
-              >
-                <span className={styles.navIcon}>{item.icon}</span>
-                {item.label}
-              </span>
-            ) : (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`${styles.navLink} ${pathname === item.href ? styles.navLinkActive : ''}`}
-              >
-                <span className={styles.navIcon}>{item.icon}</span>
-                {item.label}
-              </Link>
-            )
-          )}
+          {section.items.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`${styles.navLink} ${isActive(item.href, item.exact) ? styles.navLinkActive : ''}`}
+            >
+              <span className={styles.navIcon}>{item.icon}</span>
+              {item.label}
+            </Link>
+          ))}
         </div>
       ))}
     </aside>

@@ -48,3 +48,5 @@ no_pushear/
 
 # Supabase CLI temp files
 supabase/.temp/
+
+.vercel
