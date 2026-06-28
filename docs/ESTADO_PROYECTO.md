@@ -122,29 +122,26 @@ Manual técnico: `docs/MANUAL_BLOG.md`
 - **Posts inaugurales**: verificar si los 4 posts que tenían estado `provisorio` quedaron como `en_revision` tras la migración y publicarlos desde `/admin/blog`
 - **Limpiar Vercel**: eliminar env vars stale `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY`
 
-### Prioridad media-alta — Refactor del panel de administración
-**Objetivo:** Panel único modular con RBAC (Role-Based Access Control).
+### ✅ Refactor del panel de administración — COMPLETADO (2026-06-28)
+**Commit:** `1df4c05`
 
-**Problema actual:**
-- Hay dos paneles separados (`/admin` monolito 835 líneas + `/admin/blog`) con dos CSS distintos
-- El monolito mezcla lógica de blog, i18n, delegación, membresías y CMS de asociaciones
-- No hay separación clara de visibilidad por rol
+Monolito de 835 líneas eliminado. Panel modular con RBAC implementado:
 
-**Diseño objetivo** (referencia: Vercel Dashboard, Linear, Retool):
-- Un único layout `/admin/layout.js` con sidebar de navegación
-- Cada sección del admin es un módulo independiente en `/admin/[módulo]/page.js`
-- Visibilidad por rol: `admin_general` ve todo; `admin_asociacion` solo ve su CMS; `moderador_blog` solo ve blog
-- Middleware o Server Component guard por sección que verifica rol específico
-- Un solo CSS: `app/admin/components/admin.module.css` (ya corregido)
-- Eliminar `/admin/page.js` (835 líneas) y `app/admin/admin.module.css` — reemplazar por módulos
+| Ruta | Descripción | RBAC |
+|---|---|---|
+| `/admin` | Dashboard: stats + accesos directos | admin_general |
+| `/admin/blog` | Moderación de artículos | admin_general |
+| `/admin/blog/[slug]/traducciones` | Editor de traducciones por post | admin_general |
+| `/admin/i18n` | Edición de textos de interfaz | admin_general |
+| `/admin/delegacion` | Asignar rol Traductor Delegado | admin_general |
+| `/admin/planes` | Planes y excepciones por usuario | admin_general |
+| `/admin/asociaciones` | Lista de asociaciones gestionables | admin_general o admin_id |
+| `/admin/asociaciones/[id]` | CMS completo del micrositio | admin_general o propietario |
 
-**Módulos a extraer:**
-  - `/admin/blog` — ya existe ✅
-  - `/admin/blog/[slug]/traducciones` — ya existe ✅
-  - `/admin/i18n` — Mini-app traductora de interfaz (actualmente tab 2 del monolito)
-  - `/admin/delegacion` — Delegar i18n (actualmente tab 3)
-  - `/admin/planes` — Membresías y Excepciones (actualmente tab 4, solo admin_general)
-  - `/admin/asociaciones/[id]` — CMS de asociación (actualmente tab 5)
+- Un solo CSS: `app/admin/components/admin.module.css` con todos los brand tokens
+- Sidebar actualizado con todos los módulos y detección de ruta activa
+- Todos los Server Components usan `rpc('es_admin_general')` para RBAC
+- Build limpio ✅
 
 ### Prioridad alta estética — Modo día/noche
 **Problema actual:** `globals.css` tiene overrides `@media (prefers-color-scheme: dark)` que siguen el sistema operativo, pero no hay toggle manual ni persistencia de preferencia del usuario.
