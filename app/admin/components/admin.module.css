@@ -511,6 +511,32 @@
 
 .btnRetranslate:disabled { opacity: 0.45; cursor: not-allowed; }
 
+.translateAllBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 14px 16px;
+  background: var(--color-bg-soft);
+  border: 1px solid var(--color-border-medium);
+  border-radius: var(--r-md);
+}
+
+.btnTranslateAll {
+  padding: 9px 20px;
+  border-radius: var(--r-sm);
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--gm-green);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: all var(--t-fast);
+}
+
+.btnTranslateAll:hover:not(:disabled) { background: #006b47; }
+.btnTranslateAll:disabled { opacity: 0.45; cursor: not-allowed; }
+
 .translationField {
   margin-bottom: 20px;
   padding: 18px 20px;

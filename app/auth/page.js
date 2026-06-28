@@ -33,6 +33,8 @@ function AuthContent() {
   
   // Turnstile Simulado/Real
   const [turnstileToken, setTurnstileToken] = useState('mock-turnstile-token');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -186,27 +188,47 @@ function AuthContent() {
 
           <div className={styles.formGroup}>
             <label className={styles.label}>{t('auth.password') || 'Contraseña'}</label>
-            <input
-              type="password"
-              className={styles.input}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-            />
+            <div className={styles.passwordWrapper}>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                className={styles.input}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+              />
+              <button
+                type="button"
+                className={styles.togglePassword}
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+              >
+                {showPassword ? '🙈' : '👁️'}
+              </button>
+            </div>
           </div>
 
           {mode === 'register' && (
             <div className={styles.formGroup}>
               <label className={styles.label}>{t('auth.confirm_password') || 'Confirmar contraseña'}</label>
-              <input
-                type="password"
-                className={styles.input}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-              />
+              <div className={styles.passwordWrapper}>
+                <input
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  className={styles.input}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                />
+                <button
+                  type="button"
+                  className={styles.togglePassword}
+                  onClick={() => setShowConfirmPassword((v) => !v)}
+                  aria-label={showConfirmPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                >
+                  {showConfirmPassword ? '🙈' : '👁️'}
+                </button>
+              </div>
             </div>
           )}
 

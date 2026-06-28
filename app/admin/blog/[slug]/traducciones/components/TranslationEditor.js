@@ -27,7 +27,7 @@ export default function TranslationEditor({ postId, original, initialTranslation
   const [activeLang, setActiveLang] = useState('gl');
   const [data, setData] = useState(buildMap(initialTranslations));
   const [editing, setEditing] = useState({});   // { lang_field: value }
-  const [saving, setSaving] = useState(null);   // 'gl_titulo' | 'gl_reset' | null
+  const [saving, setSaving] = useState(null);   // 'gl_titulo' | 'gl_reset' | 'all' | null
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState({});
 
@@ -107,8 +107,55 @@ export default function TranslationEditor({ postId, original, initialTranslation
     setSaving(null);
   }
 
+  async function translateAll() {
+    setSaving('all');
+    setErrors((e) => ({ ...e, all: null }));
+
+    const res = await fetch(`/api/blog/${postId}/translate-all`, { method: 'POST' });
+
+    if (res.ok) {
+      const body = await res.json();
+      setData((d) => {
+        const next = { ...d };
+        LANGS.forEach(({ code }) => {
+          if (body.translations?.[code]) {
+            next[code] = {
+              ...next[code],
+              lang:      code,
+              titulo:    body.translations[code].titulo,
+              extracto:  body.translations[code].extracto,
+              contenido: body.translations[code].contenido,
+              es_manual: false,
+            };
+          }
+        });
+        return next;
+      });
+      setEditing({});
+      setSuccess((s) => ({ ...s, all: true }));
+      setTimeout(() => setSuccess((s) => ({ ...s, all: false })), 4000);
+    } else {
+      const body = await res.json().catch(() => ({}));
+      setErrors((e) => ({ ...e, all: body.error || 'Error al traducir' }));
+    }
+    setSaving(null);
+  }
+
   return (
     <div className={styles.translationEditor}>
+      {/* Traducir todo */}
+      <div className={styles.translateAllBar}>
+        <button
+          className={styles.btnTranslateAll}
+          onClick={translateAll}
+          disabled={saving !== null}
+        >
+          {saving === 'all' ? 'Traduciendo los 5 idiomas...' : '🌐 Traducir todo (5 idiomas)'}
+        </button>
+        {success.all && <span className={styles.successMsg}>✓ Todos los idiomas traducidos</span>}
+        {errors.all && <span className={styles.errorMsg}>{errors.all}</span>}
+      </div>
+
       {/* Language tabs */}
       <div className={styles.translationTabs}>
         {LANGS.map(({ code, label }) => {
