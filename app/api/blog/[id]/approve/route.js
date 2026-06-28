@@ -11,14 +11,13 @@ export async function POST(request, { params }) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { data: isAdmin, error: roleError } = await supabase.rpc('es_admin_general');
-    if (roleError || !isAdmin) {
+    const { data: isAdmin } = await supabase.rpc('es_admin_general');
+    if (!isAdmin) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const { id } = await params;
 
-    // Fetch post content for translation
     const { data: post, error: postError } = await supabase
       .from('blog_posts')
       .select('id, titulo, extracto, contenido, estado')
@@ -33,32 +32,49 @@ export async function POST(request, { params }) {
       return NextResponse.json({ error: 'Post already published' }, { status: 409 });
     }
 
-    // Translate to all target languages in parallel
-    const translations = await translatePost(
-      post.titulo || '',
-      post.extracto || '',
-      post.contenido || ''
+    // Determine which langs have manual translations — those are preserved
+    const { data: existing } = await supabase
+      .from('blog_post_translations')
+      .select('lang, es_manual')
+      .eq('post_id', id);
+
+    const manualLangs = new Set(
+      (existing || []).filter((r) => r.es_manual).map((r) => r.lang)
     );
 
-    // Upsert translations into blog_post_translations
-    const rows = ALL_TARGET_LANGS.map((lang) => ({
-      post_id:     id,
-      lang,
-      titulo:      translations[lang]?.titulo   ?? null,
-      extracto:    translations[lang]?.extracto ?? null,
-      contenido:   translations[lang]?.contenido ?? null,
-      traducido_en: new Date().toISOString(),
-    }));
+    const langsToTranslate = ALL_TARGET_LANGS.filter((l) => !manualLangs.has(l));
 
-    const { error: upsertError } = await supabase
-      .from('blog_post_translations')
-      .upsert(rows, { onConflict: 'post_id,lang' });
+    let translatedLangs = [...manualLangs];
 
-    if (upsertError) {
-      return NextResponse.json({ error: `Error guardando traducciones: ${upsertError.message}` }, { status: 500 });
+    if (langsToTranslate.length > 0) {
+      const translations = await translatePost(
+        post.titulo || '',
+        post.extracto || '',
+        post.contenido || '',
+        langsToTranslate
+      );
+
+      const rows = langsToTranslate.map((lang) => ({
+        post_id:      id,
+        lang,
+        titulo:       translations[lang]?.titulo   ?? null,
+        extracto:     translations[lang]?.extracto ?? null,
+        contenido:    translations[lang]?.contenido ?? null,
+        es_manual:    false,
+        traducido_en: new Date().toISOString(),
+      }));
+
+      const { error: upsertError } = await supabase
+        .from('blog_post_translations')
+        .upsert(rows, { onConflict: 'post_id,lang' });
+
+      if (upsertError) {
+        return NextResponse.json({ error: `Error guardando traducciones: ${upsertError.message}` }, { status: 500 });
+      }
+
+      translatedLangs = [...translatedLangs, ...langsToTranslate];
     }
 
-    // Mark post as published
     const { error: updateError } = await supabase
       .from('blog_posts')
       .update({ estado: 'publicado', motivo_rechazo: null })
@@ -68,7 +84,11 @@ export async function POST(request, { params }) {
       return NextResponse.json({ error: `Error publicando post: ${updateError.message}` }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true, translatedLangs: ALL_TARGET_LANGS });
+    return NextResponse.json({
+      success: true,
+      translatedLangs,
+      preservedManual: [...manualLangs],
+    });
   } catch (err) {
     console.error('[approve]', err);
     return NextResponse.json({ error: err.message }, { status: 500 });

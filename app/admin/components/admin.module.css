@@ -298,6 +298,304 @@
 .badge.borrador    { color: #718096; background: rgba(113,128,150,0.1);border: 1px solid rgba(113,128,150,0.2);}
 .badge.bloqueado   { color: #742a2a; background: rgba(116,42,42,0.1);  border: 1px solid rgba(116,42,42,0.2);  }
 
+/* ── Published posts list ─────────────────────────────────────── */
+.publishedList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.publishedRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.publishedInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.publishedTitle {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.publishedMeta {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.publishedActions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.btnTranslations {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  background: rgba(0, 135, 90, 0.12);
+  color: #00875a;
+  border: 1px solid rgba(0, 135, 90, 0.3);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.btnTranslations:hover {
+  background: rgba(0, 135, 90, 0.22);
+}
+
+/* ── Translation Editor ───────────────────────────────────────── */
+.translationsHeader {
+  margin-bottom: 24px;
+}
+
+.backLink {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+
+.backLink:hover { color: var(--color-text); }
+
+.translationsSubtitle {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  margin: 4px 0 0;
+}
+
+.translationEditor {
+  max-width: 900px;
+}
+
+.translationTabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.translationTab {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s;
+}
+
+.translationTab:hover {
+  border-color: var(--color-primary);
+  color: var(--color-text);
+}
+
+.translationTabActive {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}
+
+.manualDot, .missingDot { font-size: 0.75rem; }
+
+.translationMeta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 10px 14px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  flex-wrap: wrap;
+}
+
+.manualBadge {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #d69e2e;
+  background: rgba(214, 158, 46, 0.12);
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.autoBadge {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #718096;
+  background: rgba(113, 128, 150, 0.1);
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.btnRetranslate {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  background: rgba(10, 37, 64, 0.08);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btnRetranslate:hover:not(:disabled) { background: rgba(10, 37, 64, 0.15); }
+.btnRetranslate:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.translationField {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+}
+
+.translationFieldHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  gap: 8px;
+}
+
+.translationLabel {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.translationFieldActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btnEditField {
+  padding: 4px 10px;
+  border-radius: 5px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: transparent;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btnEditField:hover { background: rgba(10, 37, 64, 0.06); }
+
+.btnSaveField {
+  padding: 4px 10px;
+  border-radius: 5px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: #00875a;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.btnSaveField:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.btnCancelEdit {
+  padding: 4px 10px;
+  border-radius: 5px;
+  font-size: 0.8rem;
+  background: transparent;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+}
+
+.translationOriginal {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding: 8px 10px;
+  background: rgba(0,0,0,0.03);
+  border-radius: 5px;
+  font-size: 0.83rem;
+}
+
+.originalLabel {
+  font-weight: 700;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.originalText {
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+.translationValue {
+  font-size: 0.93rem;
+  color: var(--color-text);
+  line-height: 1.6;
+  padding: 6px 0;
+}
+
+.translationValueMulti {
+  white-space: pre-wrap;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.translationTextarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 0.9rem;
+  font-family: inherit;
+  line-height: 1.6;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.translationInput {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 0.9rem;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.noTranslation { color: var(--color-text-muted); font-style: italic; font-size: 0.85rem; }
+.successMsg { font-size: 0.8rem; color: #00875a; font-weight: 600; }
+.errorMsg { font-size: 0.8rem; color: #e53e3e; margin-top: 4px; }
+
 /* ── Responsive ───────────────────────────────────────────────── */
 @media (max-width: 900px) {
   .sidebar { display: none; }

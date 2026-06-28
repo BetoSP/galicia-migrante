@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { createSupabaseServerClient } from '@/lib/supabase-server';
 import ModerationQueue from './components/ModerationQueue';
 import styles from '@/app/admin/components/admin.module.css';
@@ -17,7 +18,13 @@ export default async function AdminBlogPage() {
     .eq('estado', 'en_revision')
     .order('created_at', { ascending: true });
 
-  const { data: all, count } = await supabase
+  const { data: published } = await supabase
+    .from('blog_posts')
+    .select('id, slug, autor_nombre, titulo, fecha_publicacion')
+    .eq('estado', 'publicado')
+    .order('fecha_publicacion', { ascending: false });
+
+  const { data: all } = await supabase
     .from('blog_posts')
     .select('estado', { count: 'exact', head: false });
 
@@ -46,6 +53,43 @@ export default async function AdminBlogPage() {
 
       <h2 className={styles.sectionTitle}>Pendientes de aprobación</h2>
       <ModerationQueue initialPosts={pending || []} />
+
+      <h2 className={styles.sectionTitle} style={{ marginTop: '2.5rem' }}>Posts publicados</h2>
+      {(published || []).length === 0 ? (
+        <p className={styles.queueEmpty}>No hay posts publicados aún.</p>
+      ) : (
+        <div className={styles.publishedList}>
+          {(published || []).map((post) => (
+            <div key={post.id} className={styles.publishedRow}>
+              <div className={styles.publishedInfo}>
+                <span className={styles.publishedTitle}>{post.titulo}</span>
+                <span className={styles.publishedMeta}>{post.autor_nombre} · {formatDate(post.fecha_publicacion)}</span>
+              </div>
+              <div className={styles.publishedActions}>
+                <Link
+                  href={`/blog/${post.slug}`}
+                  className={styles.btnPreview}
+                  target="_blank"
+                >
+                  Ver →
+                </Link>
+                <Link
+                  href={`/admin/blog/${post.slug}/traducciones`}
+                  className={styles.btnTranslations}
+                >
+                  🌐 Traducciones
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </>
   );
+}
+
+function formatDate(str) {
+  if (!str) return '';
+  const [y, m, d] = str.split('T')[0].split('-').map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString('es-AR', { day: 'numeric', month: 'short', year: 'numeric' });
 }
