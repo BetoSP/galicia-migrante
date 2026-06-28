@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { getPostBySlug } from '@/lib/blog/posts';
+import { getPostBySlug, getPostTranslations } from '@/lib/blog/posts';
 import PostContent from './components/PostContent';
 
 export const dynamic = 'force-dynamic';
@@ -28,5 +28,7 @@ export default async function PostPage({ params }) {
 
   if (!post) notFound();
 
-  return <PostContent post={post} />;
+  const translations = await getPostTranslations(post.id);
+
+  return <PostContent post={post} translations={translations} />;
 }

@@ -17,28 +17,37 @@ export default function ModerationQueue({ initialPosts }) {
   const [motivo, setMotivo] = useState('');
   const [actionError, setActionError] = useState(null);
 
+  // Aprueba el post: cambia estado a publicado y genera las traducciones en Supabase.
+  // La traducción ocurre server-side una sola vez; visitantes sin cuenta las reciben desde DB.
   async function approve(id) {
     setWorking(id);
     setActionError(null);
-    const { error } = await supabase
-      .from('blog_posts')
-      .update({ estado: 'publicado', motivo_rechazo: null })
-      .eq('id', id);
-    if (error) {
-      setActionError(`Error al aprobar: ${error.message}`);
-    } else {
-      setPosts((p) => p.filter((post) => post.id !== id));
+
+    try {
+      const res = await fetch(`/api/blog/${id}/approve`, { method: 'POST' });
+      const body = await res.json();
+
+      if (!res.ok) {
+        setActionError(`Error al aprobar: ${body.error || res.statusText}`);
+      } else {
+        setPosts((p) => p.filter((post) => post.id !== id));
+      }
+    } catch (err) {
+      setActionError(`Error de red: ${err.message}`);
     }
+
     setWorking(null);
   }
 
   async function reject(id) {
     setWorking(id);
     setActionError(null);
+
     const { error } = await supabase
       .from('blog_posts')
       .update({ estado: 'rechazado', motivo_rechazo: motivo || null })
       .eq('id', id);
+
     if (error) {
       setActionError(`Error al rechazar: ${error.message}`);
     } else {
@@ -46,6 +55,7 @@ export default function ModerationQueue({ initialPosts }) {
       setRejectingId(null);
       setMotivo('');
     }
+
     setWorking(null);
   }
 
@@ -96,7 +106,7 @@ export default function ModerationQueue({ initialPosts }) {
               onClick={() => approve(post.id)}
               disabled={working === post.id}
             >
-              {working === post.id ? '...' : '✓ Aprobar'}
+              {working === post.id ? 'Traduciendo...' : '✓ Aprobar'}
             </button>
             <button
               className={styles.btnReject}
