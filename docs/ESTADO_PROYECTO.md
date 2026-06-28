@@ -115,8 +115,19 @@ Cambios en la base de datos:
 
 Manual técnico: `docs/MANUAL_BLOG.md`
 
-### PRÓXIMA ACCIÓN (prioridad alta)
-- **Botón "Traducir todo"** en `/admin/blog/[slug]/traducciones`: procesa los 5 idiomas de una vez para posts publicados sin traducciones. Los 5 posts publicados antes de la migración 022 aún no tienen entradas en `blog_post_translations` — son invisibles en GL/EN/FR/DE/IT. Implementar: endpoint `POST /api/blog/[id]/translate-all` + botón en `TranslationEditor.js`.
+### ✅ Botón "Traducir todo" — COMPLETADO (2026-06-28)
+**Commit:** `056b397`
+
+- `POST /api/blog/[id]/translate-all` — traduce los 3 campos × 5 idiomas en paralelo con `translatePost()`, hace upsert en `blog_post_translations`
+- `TranslationEditor.js` — botón "🌐 Traducir todo (5 idiomas)" en la parte superior; actualiza todos los tabs de idioma en estado local al terminar; feedback de carga/error/éxito
+- Pendiente de prueba en browser: ir a `/admin/blog/[slug]/traducciones` en los 5 posts sin traducciones y presionar el botón
+
+### ✅ Toggle "Mostrar contraseña" en /auth — COMPLETADO (2026-06-28)
+**Commit:** `056b397`
+
+- Ambos campos de password (login + confirmar registro) tienen ahora botón 👁️/🙈
+- CSS: `.passwordWrapper` + `.togglePassword` en `auth.module.css`
+- Pendiente de prueba visual en browser
 
 ### Prioridad media
 - **Posts inaugurales**: verificar si los 4 posts que tenían estado `provisorio` quedaron como `en_revision` tras la migración y publicarlos desde `/admin/blog`
