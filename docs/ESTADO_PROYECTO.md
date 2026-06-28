@@ -120,13 +120,46 @@ Manual técnico: `docs/MANUAL_BLOG.md`
 
 ### Prioridad media
 - **Posts inaugurales**: verificar si los 4 posts que tenían estado `provisorio` quedaron como `en_revision` tras la migración y publicarlos desde `/admin/blog`
-- **Refactorizar `app/admin/page.js`**: 835 líneas monolíticas → separar en sub-componentes (no urgente, no bloquea)
 - **Limpiar Vercel**: eliminar env vars stale `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY`
+
+### Prioridad media-alta — Refactor del panel de administración
+**Objetivo:** Panel único modular con RBAC (Role-Based Access Control).
+
+**Problema actual:**
+- Hay dos paneles separados (`/admin` monolito 835 líneas + `/admin/blog`) con dos CSS distintos
+- El monolito mezcla lógica de blog, i18n, delegación, membresías y CMS de asociaciones
+- No hay separación clara de visibilidad por rol
+
+**Diseño objetivo** (referencia: Vercel Dashboard, Linear, Retool):
+- Un único layout `/admin/layout.js` con sidebar de navegación
+- Cada sección del admin es un módulo independiente en `/admin/[módulo]/page.js`
+- Visibilidad por rol: `admin_general` ve todo; `admin_asociacion` solo ve su CMS; `moderador_blog` solo ve blog
+- Middleware o Server Component guard por sección que verifica rol específico
+- Un solo CSS: `app/admin/components/admin.module.css` (ya corregido)
+- Eliminar `/admin/page.js` (835 líneas) y `app/admin/admin.module.css` — reemplazar por módulos
+
+**Módulos a extraer:**
+  - `/admin/blog` — ya existe ✅
+  - `/admin/blog/[slug]/traducciones` — ya existe ✅
+  - `/admin/i18n` — Mini-app traductora de interfaz (actualmente tab 2 del monolito)
+  - `/admin/delegacion` — Delegar i18n (actualmente tab 3)
+  - `/admin/planes` — Membresías y Excepciones (actualmente tab 4, solo admin_general)
+  - `/admin/asociaciones/[id]` — CMS de asociación (actualmente tab 5)
+
+### Prioridad alta estética — Modo día/noche
+**Problema actual:** `globals.css` tiene overrides `@media (prefers-color-scheme: dark)` que siguen el sistema operativo, pero no hay toggle manual ni persistencia de preferencia del usuario.
+
+**Diseño objetivo:**
+- Toggle en la Navbar (☀️/🌙) que aplica clase `dark` al `<html>` y guarda en `localStorage`
+- Leer preferencia al iniciar: primero `localStorage`, fallback `prefers-color-scheme`
+- Reescribir las reglas dark de `globals.css` usando `.dark` en lugar de `@media (prefers-color-scheme: dark)` para que el toggle manual funcione
+- La estética general del portal (fuera del árbol) necesita un refresh visual — los colores actuales no hacen justicia al manual de marca
+
+**Nota:** Implementar modo día/noche antes del refresh visual es el orden correcto, porque el refresh debe hacerse para ambos modos.
 
 ### Baja prioridad (sprints futuros)
 - **"Mostrar contraseña"** en la página de login (`/auth`): agregar toggle de visibilidad al campo password.
 - Logo: versión clara del trisquel para navbar oscura (contraste insuficiente actualmente)
-- Admin sub-panels: Usuarios, Asociaciones (habilitarlos en AdminSidebar)
 - AbortController en fetches del árbol genealógico
 - Paginación de personas en el árbol
 - Navegación por teclado en nodos del grafo SVG
